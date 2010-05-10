@@ -1,5 +1,7 @@
 function [pout, vout, viout, facevout, faceiout]  = select3d(obj)
 
+% [pout, vout, viout, facevout, faceiout]  = select3d(obj)
+%
 % Copyright (c) 2009, The MathWorks, Inc.
 % All rights reserved.
 % 
