@@ -90,10 +90,17 @@ for i=1:2:k
     [wvmesh.mua, wvmesh.mus, wvmesh.kappa] = calc_mua_mus(mesh_homog,mesh.wv(((i-1)/2)+1));
     
     % Calculate global mua and mus plus offsets for phantom data
-    [mua_h,mus_h,lnI_h,phase_h,data_h_fem] = fit_data(wvmesh,...
-                                                      paa_homog(:,i:i+1),...
-                                                      frequency,...
-                                                      iteration);
+    if frequency == 0
+        [mua_h,mus_h,lnI_h,data_h_fem] = fit_data_cw(wvmesh,...
+                                                          paa_homog(:,i),...
+                                                          iteration);
+        phase_h = zeros(size(lnI_h,1),1);
+    else
+        [mua_h,mus_h,lnI_h,phase_h,data_h_fem] = fit_data(wvmesh,...
+                                                          paa_homog(:,i:i+1),...
+                                                          frequency,...
+                                                          iteration);
+    end
     mtit(['Homog ' num2str(mesh.wv(((i-1)/2)+1)) 'nm'],'FontSize',14);
     clear wvmesh;
     
@@ -103,10 +110,17 @@ for i=1:2:k
     [wvmesh.mua, wvmesh.mus, wvmesh.kappa] = calc_mua_mus(mesh_anom,mesh.wv(((i-1)/2)+1));
 
     % Calculate global mua and mus plus offsets for patient data
-    [mua_a,mus_a,lnI_a,phase_a,data_a_fem] = fit_data(wvmesh,...
-                                                      paa_anom(:,i:i+1),...
-                                                      frequency,...
-                                                      iteration);
+    if frequency == 0
+        [mua_a,mus_a,lnI_a,data_a_fem] = fit_data_cw(wvmesh,...
+                                                          paa_anom(:,i),...
+                                                          iteration);
+        phase_a = zeros(size(lnI_a,1),1);
+    else
+        [mua_a,mus_a,lnI_a,phase_a,data_a_fem] = fit_data(wvmesh,...
+                                                          paa_anom(:,i:i+1),...
+                                                          frequency,...
+                                                          iteration);
+    end
     mtit(['Anom ' num2str(mesh.wv(((i-1)/2)+1)) 'nm'],'FontSize',14);                                                  
     clear wvmesh;
     
@@ -157,12 +171,7 @@ mesh.conc = repmat(C',length(mesh.nodes),1);
 xdata = wv_array./1000;
 ydata = mus_big;
 p = polyfit(log(xdata),log(ydata),1);
-%If this fails, it's usually because 661 phase is noisy
-while -p(1)<0 | exp(p(2))<0
-    xdata = xdata(2:end);
-    ydata = ydata(2:end);
-    p = polyfit(log(xdata),log(ydata),1);
-end
+
 mesh.sp(:,1) = -p(1);
 mesh.sa(:,1) = exp(p(2));
 
