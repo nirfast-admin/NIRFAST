@@ -196,6 +196,10 @@ end
 
 %% fix surface orientation for bem meshes
 if strcmp(mesh.type,'stnd_bem')
+    if ~isfield(mesh,'region')
+        errordlg('.region file is not present, required for BEM','NIRFAST Error');
+        error('.region file is not present, required for BEM');
+    end
     mesh.elements(mesh.region(:,2)==0,:) = ...
         FixPatchOrientation(mesh.nodes,mesh.elements(mesh.region(:,2)==0,:));
     for regn=2:size(unique(mesh.region),1)-1
