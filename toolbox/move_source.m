@@ -1,95 +1,148 @@
-function mesh=move_source(mesh,mus_eff,w)
+function mesh = move_source(mesh,mus_eff,w)
 
-% mesh=move_source(mesh,mus_eff,w)
+% mesh = move_source(mesh,mus_eff)
 %
-% This function moves the source location to make sure that it:
-% (a) falls on the boundary and
-% (b) it is moved one scattering distance (mus_eff) within the outer boundary
-% Used as part of load_mesh and femdata program
-% WARNING Assumes covex hull meshes!!
-% 
-% mesh is the input mesh (workspace variable)
-% mus_eff is the scattering distance
-% w is the distance for averaging scattering distance
+% Moves the sources inside the mesh by 1 scattering distance
+%
+% mesh is the mesh location or variable
+% mus_eff is the mus to use for computing scattering distance
 
 
-
-% To start with, make sure the mesh is centered at [0 0 0]
-x = (min(mesh.nodes(:,1)) + max(mesh.nodes(:,1)))/2;
-y = (min(mesh.nodes(:,2)) + max(mesh.nodes(:,2)))/2;
-z = (min(mesh.nodes(:,3)) + max(mesh.nodes(:,3)))/2;
-mesh.nodes(:,1) = mesh.nodes(:,1) - x;
-mesh.nodes(:,2) = mesh.nodes(:,2) - y;
-mesh.nodes(:,3) = mesh.nodes(:,3) - z;
-
-% apply same transformation to source positions
-mesh.source.coord(:,1) = mesh.source.coord(:,1) - x;
-mesh.source.coord(:,2) = mesh.source.coord(:,2) - y;
-if mesh.dimension == 3
-  mesh.source.coord(:,3) = mesh.source.coord(:,3) - z;
+%% load mesh
+if ischar(mesh)
+  mesh = load_mesh(mesh);
+end
+if ~isfield(mesh,'source') || ~isfield(mesh.source,'coord')
+    errordlg('No sources present','NIRFAST Error');
+    error('No sources present');
 end
 
-[nsource,msource]=size(mesh.source.coord);
-for i = 1 : nsource
-  if mesh.dimension == 2
-    % distance of each boundary nodes from source
-    dist = distance(mesh.nodes,mesh.bndvtx,[mesh.source.coord(i,:) 0]);
-    % index of nearest boundary node
-    r0_ind = find(dist==min(dist));
-    r0_ind = r0_ind(1);
-    % radius of nearest boundary node
-    [th,r0]=cart2pol(mesh.nodes(r0_ind,1),mesh.nodes(r0_ind,2));
-    % angle of source point
-    [th1,r1]=cart2pol(mesh.source.coord(i,1),mesh.source.coord(i,2));
-    % mean scatter value of where source will be
-    dist = distance(mesh.nodes,ones(length(mesh.bndvtx),1),...
-		    [mesh.nodes(r0_ind,1) ...
-		     mesh.nodes(r0_ind,2) ...
-		     mesh.nodes(r0_ind,3)]);
-    scat_dist = 1./mean(mus_eff(dist<=w));
-    % Corrected position
-    [mesh.source.coord(i,1),...
-     mesh.source.coord(i,2)] = pol2cart(th,r0-scat_dist);
+if size(mesh.source.coord,2) == 2
+    mesh.source.coord(:,end+1) = 0;
+end
 
-  elseif mesh.dimension == 3
-    % distance of each boundary nodes from source
-    dist = distance(mesh.nodes,mesh.bndvtx,mesh.source.coord(i,:));
-    % index of nearest boundary node
-    r0_ind = find(dist==min(dist));
-    r0_ind = r0_ind(1);
-    % radius of nearest boundary node
-    [th,phi,r0]=cart2sph(mesh.nodes(r0_ind,1),...
-			 mesh.nodes(r0_ind,2),...
-			 mesh.nodes(r0_ind,3));
-    % angle of source point
-    [th1,phi,r1]=cart2sph(mesh.source.coord(i,1),...
-			 mesh.source.coord(i,2),...
-			 mesh.source.coord(i,3));
-    % mean scatter value of where source will be
-    dist = distance(mesh.nodes,ones(length(mesh.bndvtx),1),...
-		    [mesh.nodes(r0_ind,1) ...
-		     mesh.nodes(r0_ind,2) ...
-		     mesh.nodes(r0_ind,3)]);
-    if isscalar(mus_eff) % for BEM you only have one value
-        scat_dist = 1/mus_eff;
-    else
-        scat_dist = 1./mean(mus_eff(find(dist<=w)));
+%% check if mus_eff is unrealistic for the mesh size
+scatt_dist = 1/mean(mus_eff);
+xd = max(mesh.nodes(:,1)) - min(mesh.nodes(:,1));
+yd = max(mesh.nodes(:,2)) - min(mesh.nodes(:,2));
+if scatt_dist*10 > min(xd,yd)
+    scatt_dist = 1;
+    errordlg('Mesh is too small for the scattering coefficient given, 1mm will be used for scattering distance. You might want to ensure that the scale of your mesh is in mm.','NIRFAST Warning');
+end
+
+
+%% get list of boundary faces
+out_normal = 0;
+if size(mesh.elements,2) == 4
+    faces = [mesh.elements(:,[1,2,3]);
+              mesh.elements(:,[1,2,4]);
+              mesh.elements(:,[1,3,4]);
+              mesh.elements(:,[2,3,4])];
+    faces = sort(faces,2);
+    faces = unique(faces,'rows');
+    faces = faces(sum(mesh.bndvtx(faces),2)==3,:);
+elseif size(mesh.elements,2) == 3
+    if mesh.dimension == 3
+        faces = mesh.elements(sum(mesh.bndvtx(mesh.elements),2)==3,:);
+        out_normal = 1;
+    elseif mesh.dimension == 2
+        faces = [mesh.elements(:,[1,2]);
+                  mesh.elements(:,[1,3]);
+                  mesh.elements(:,[2,3])];
+        faces = sort(faces,2);
+        faces = unique(faces,'rows');
+        faces = faces(sum(mesh.bndvtx(faces),2)==2,:);
     end
-    % Corrected position
-    [mesh.source.coord(i,1),...
-     mesh.source.coord(i,2),...
-     mesh.source.coord(i,3)] = sph2cart(th,phi,r0-scat_dist);
-  end
 end
 
-% Re-transform mesh back to original coordinates
-mesh.nodes(:,1) = mesh.nodes(:,1) + x;
-mesh.nodes(:,2) = mesh.nodes(:,2) + y;
-mesh.nodes(:,3) = mesh.nodes(:,3) + z;
+%% loop through sources
+for i=1:size(mesh.source.coord,1)
+    
+    if mesh.dimension == 2
+        
+        % find closest boundary node
+        dist = distance(mesh.nodes,mesh.bndvtx,[mesh.source.coord(i,:) 0]);
+        r0_ind = find(dist==min(dist));
+        r0_ind = r0_ind(1);
+        
+        % find faces including the closest boundary node
+        fi = faces(sum(faces==r0_ind,2)>0,:);
 
-% apply same transformation to source positions
-mesh.source.coord(:,1) = mesh.source.coord(:,1) + x;
-mesh.source.coord(:,2) = mesh.source.coord(:,2) + y;
-if mesh.dimension == 3
-  mesh.source.coord(:,3) = mesh.source.coord(:,3) + z;
+        % find closest face
+        dist = zeros(size(fi,1),1);
+        point = zeros(size(fi,1),3);
+        for j=1:size(fi,1)
+            [dist(j),point(j,:)] = pointLineDistance(mesh.nodes(fi(j,1),:), ...
+                mesh.nodes(fi(j,2),:),mesh.source.coord(i,:));
+        end
+        smallest = find(dist == min(dist));
+        
+        % find normal of that face
+        a = mesh.nodes(fi(smallest(1),1),:);
+        b = mesh.nodes(fi(smallest(1),2),:);
+        n = [a(2)-b(2) b(1)-a(1)];
+        n = n/norm(n);
+        
+        % move source inside mesh by 1 scattering distance
+        pos1 = point(smallest(1),1:2) + n*scatt_dist;
+        pos2 = point(smallest(1),1:2) - n*scatt_dist;
+        ind = mytsearchn(mesh,[pos1;pos2]);
+        if ~isnan(ind(1))
+            mesh.source.coord(i,1) = pos1(1);
+            mesh.source.coord(i,2) = pos1(2);
+        elseif ~isnan(ind(2))
+            mesh.source.coord(i,1) = pos2(1);
+            mesh.source.coord(i,2) = pos2(2);
+        else
+            errordlg('The mesh structure is poor, smoothing the mesh may help','NIRFAST Error');
+            error('The mesh structure is poor, smoothing the mesh may help');
+        end
+        
+    elseif mesh.dimension == 3
+
+        % find closest boundary node
+        dist = distance(mesh.nodes,mesh.bndvtx,mesh.source.coord(i,:));
+        r0_ind = find(dist==min(dist));
+        r0_ind = r0_ind(1);
+
+        % find faces including the closest boundary node
+        fi = faces(sum(faces==r0_ind,2)>0,:);
+
+        % find closest face
+        dist = zeros(size(fi,1),1);
+        point = zeros(size(fi,1),3);
+        for j=1:size(fi,1)
+            [dist(j),point(j,:)] = pointTriangleDistance([mesh.nodes(fi(j,1),:);...
+                mesh.nodes(fi(j,2),:);mesh.nodes(fi(j,3),:)],mesh.source.coord(i,:));
+        end
+        smallest = find(dist == min(dist));
+        
+        % find normal of that face
+        a = mesh.nodes(fi(smallest(1),1),:);
+        b = mesh.nodes(fi(smallest(1),2),:);
+        c = mesh.nodes(fi(smallest(1),3),:);
+        n = cross(b-a,c-a);
+        n = n/norm(n);
+        
+        % move source inside mesh by 1 scattering distance
+        pos2 = point(smallest(1),:) + n*scatt_dist;
+        pos1 = point(smallest(1),:) - n*scatt_dist;
+        if ~out_normal
+            ind = mytsearchn(mesh,[pos1;pos2]);
+        end
+        if out_normal || ~isnan(ind(1))
+            mesh.source.coord(i,1) = pos1(1);
+            mesh.source.coord(i,2) = pos1(2);
+            mesh.source.coord(i,3) = pos1(3);
+        elseif ~isnan(ind(2))
+            mesh.source.coord(i,1) = pos2(1);
+            mesh.source.coord(i,2) = pos2(2);
+            mesh.source.coord(i,3) = pos2(3);
+        else
+            errordlg('The mesh structure is poor, smoothing the mesh may help','NIRFAST Error');
+            error('The mesh structure is poor, smoothing the mesh may help');
+        end
+    
+    end
+        
 end

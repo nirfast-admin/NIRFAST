@@ -40,7 +40,7 @@ else
             j=1; true = 0;
 
             % find elements with node 'x' as a vertex
-            while true == 0 & j <= 20
+            while true == 0 & j <= 10
                 % temp_ind is list of node numbers in order of distance from
                 % det point.  Find the elements which contain this node:
                 [r,c] = find(mesh.elements == temp_ind(j));
@@ -98,7 +98,7 @@ else
             j=1; true = 0;
 
             % find elements with node 'x' as a vertex
-            while true == 0 & j <= 20
+            while true == 0 & j <= 10
                 % temp_ind is list of node numbers in order of distance from
                 % det point.  Find the elements which contain this node:
                 [r,c] = find(mesh.elements == temp_ind(j));

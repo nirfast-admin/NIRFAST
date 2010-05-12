@@ -19,8 +19,8 @@ function mesh = load_mesh(fn)
 % Set mesh name
 mesh.name = fn;
 
-%**********************************************
-%Read mesh nodes
+
+%% Read mesh nodes
 if exist([fn '.node']) == 0
   errordlg('.node file is not present','NIRFAST Error');
   error('.node file is not present');
@@ -31,10 +31,7 @@ elseif exist([fn '.node']) == 2
 end
 
 
-
-%**********************************************
-%Read appriopriate mesh parameters
-
+%% Read appriopriate mesh parameters
 
 if exist([fn '.param']) == 0
   errordlg('.param file is not present','NIRFAST Error');
@@ -171,9 +168,7 @@ elseif exist([fn '.param']) == 2
 end
 
 
-
-%**********************************************
-%Read mesh element
+%% Read mesh element
 if exist([fn '.elem']) == 0
   errordlg('.elem file is not present','NIRFAST Error');
         error('.elem file is not present');
@@ -191,16 +186,26 @@ elseif exist([fn '.elem']) == 2
 end
 
 
-
-%**********************************************
+%% Region file
 if exist([fn '.region']) ~= 0
   mesh.region = load(strcat(fn, '.region'));
 elseif exist([fn '.region']) ~= 2
   mesh.region = zeros(length(mesh.nodes),1);
 end
 
-%**********************************************
-% Load source locations
+
+%% fix surface orientation for bem meshes
+if strcmp(mesh.type,'stnd_bem')
+    mesh.elements(mesh.region(:,2)==0,:) = ...
+        FixPatchOrientation(mesh.nodes,mesh.elements(mesh.region(:,2)==0,:));
+    for regn=2:size(unique(mesh.region),1)-1
+        mesh.elements(mesh.region(:,2)==regn,:) = ...
+            FixPatchOrientation(mesh.nodes,mesh.elements(mesh.region(:,2)==regn,:));
+    end
+end
+
+
+%% Load source locations
 if exist([fn '.source']) == 0
   disp([fn '.source file is not present']);
 elseif exist([fn '.source']) == 2
@@ -251,8 +256,8 @@ elseif exist([fn '.source']) == 2
   clear source mus_eff
 end
 
-%**********************************************
-% Load detector locations
+
+%% Load detector locations
 if exist([fn '.meas']) == 0
   disp([fn '.meas file is not present']);
 elseif exist([fn '.meas']) == 2
@@ -280,8 +285,8 @@ elseif exist([fn '.meas']) == 2
   clear meas
 end
 
-%**********************************************
-% Load link list for source and detector
+
+%% Load link list for source and detector
 if exist([fn '.link']) == 0
   disp([fn '.link file is not present']);
 elseif exist([fn '.link']) == 2
@@ -312,21 +317,21 @@ elseif exist([fn '.link']) == 2
   clear junk i k max_length
 end
 
-%**********************************************
-% Load identidity list if exists for the internal RI boundary nodes
+
+%% Load identidity list if exists for the internal RI boundary nodes
 if exist([fn '.ident']) == 2
   mesh.ident = load(strcat(fn, '.ident'));
 end
 
-%**********************************************
-% speed of light in medium
+
+%% speed of light in medium
 % If a spectral mesh, assume Refractive index = 1.33
 if strcmp(mesh.type,'spec') == 1
   mesh.ri = ones(length(mesh.nodes),1).*1.33;
 end
 mesh.c=(3e11./mesh.ri);
 
-% Set boundary coefficient using definition of A using the Fresenel's law:
+%% Set boundary coefficient using definition of A using the Fresenel's law:
 if strcmp(mesh.type,'stnd_spn') ~= 1
     f=0.9;
     Ro=((mesh.ri-1).^2)./((mesh.ri+1).^2);
@@ -336,8 +341,8 @@ if strcmp(mesh.type,'stnd_spn') ~= 1
     mesh.ksi=1./(2*A);
 end
 
-%**********************************************
-% area of each element
+
+%% area of each element
 if ~strcmp(mesh.type,'stnd_bem')
     if mesh.dimension == 2
       mesh.element_area = ele_area_c(mesh.nodes(:,1:2),...
