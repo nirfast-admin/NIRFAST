@@ -4,7 +4,8 @@ function inp2nirfast_bem(fnprefix,saveloc,type)
 %
 % Converts inp files to a nirfast bem mesh
 %
-% fnprefix is the prefix location of the inp files
+% fnprefix is the prefix  of the inp files ('fnprefix1.inp or
+% fnprefix_2.inp or ...)
 % saveloc is the location to save the mesh to
 % type is the mesh type ('stnd', 'fluor', etc)
 
@@ -73,7 +74,7 @@ mesh.dimension = 3;
 mesh.mua = ones(nregions,1);
 mesh.mus = ones(nregions,1);
 mesh.kappa = 1./(3.*(mesh.mua+mesh.mus));
-mesh.ri = ones(nregions,1);
+mesh.ri = ones(nregions,1)*1.33;
 mesh.type = type;
 
 save_mesh(mesh,saveloc);
