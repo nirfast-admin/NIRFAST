@@ -271,6 +271,16 @@ elseif exist([fn '.meas']) == 2
     mesh.meas.coord = meas;
     disp('Moving Detectors');
     [mesh]=move_detector(mesh);
+    if mesh.dimension == 2
+      [ind,int_func] = mytsearchn(mesh,mesh.meas.coord(:,1:2));
+    elseif mesh.dimension == 3
+      [ind,int_func] = mytsearchn(mesh,mesh.meas.coord);
+    end
+    if any(isnan(ind)) == 1
+      errordlg('Detector(s) outside the mesh','NIRFAST Warning');
+    else
+      mesh.meas.int_func = [ind int_func];
+    end
   elseif isfield(meas,'textdata') == 1
     mesh.meas.fixed = 1;
     mesh.meas.coord = meas.data;
