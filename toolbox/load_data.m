@@ -74,13 +74,13 @@ if ischar(fn) ~= 0
         
         % construct paa*
         if isfield(data,'phasex') && isfield(data,'amplitudex')
-            data.paax = [data.phasex data.amplitudex];
+            data.paax = [data.amplitudex data.phasex];
         end
         if isfield(data,'phasemm') && isfield(data,'amplitudemm')
-            data.paamm = [data.phasemm data.amplitudemm];
+            data.paamm = [data.amplitudemm data.phasemm];
         end
         if isfield(data,'phasefl') && isfield(data,'amplitudefl')
-            data.paafl = [data.phasefl data.amplitudefl];
+            data.paafl = [data.amplitudefl data.phasefl];
         end
         if isfield(data,'paax') && isfield(data,'paafl')
             data.paaxfl = [data.paax data.paafl];
