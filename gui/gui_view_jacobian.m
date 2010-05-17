@@ -205,20 +205,20 @@ meshloc = get_pathloc(get(handles.mesh,'String'));
 
 if wv_array
     content{end+1} = strcat('J = jacobian(',meshloc,',',...
-        get(handles.frequency,'String'),',',wv_array,')');
+        get(handles.frequency,'String'),',',wv_array,');');
     if ~batch
         evalin('base',content{end});
     end
 elseif strcmp(handles.type,'stnd_spn')
     n = get(handles.spn,'Value');
     content{end+1} = strcat('J = jacobian_sp',num2str(n*2-1),'(',meshloc,',',...
-        get(handles.frequency,'String'),')');
+        get(handles.frequency,'String'),');');
     if ~batch
         evalin('base',content{end});
     end
 else
     content{end+1} = strcat('J = jacobian(',meshloc,',',...
-        get(handles.frequency,'String'),')');
+        get(handles.frequency,'String'),');');
     if ~batch
         evalin('base',content{end});
     end
