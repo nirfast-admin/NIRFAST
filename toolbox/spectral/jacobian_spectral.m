@@ -15,15 +15,18 @@ function [J,data,mesh] = jacobian_spectral(mesh,frequency,wv_array,mesh2)
 % data is the calculated data
 
 
+%% initialize parallel workers if toolbox is available
+parallel = parallel_init();
 
-% error checking
+%% load mesh
+if ischar(mesh)== 1
+  mesh = load_mesh(mesh);
+end
+
+%% error checking
 if frequency < 0
     errordlg('Frequency must be nonnegative','NIRFAST Error');
     error('Frequency must be nonnegative');
-end
-
-if ischar(mesh)== 1
-  mesh = load_mesh(mesh);
 end
 
 if exist('wv_array') == 1
@@ -49,6 +52,7 @@ else
     wv_array = mesh.wv;
 end
 
+%% allocate/initialize variables
 % get number of wavelengths
 nwv = length(wv_array);
 
@@ -70,96 +74,110 @@ if exist('mesh2') == 1
     mesh2.linkorig = mesh2.link;
 end
 
-% allocate Jacobian size
-J_mua_big = zeros(ndata*2*nwv,nnodes*m);
-J_big_sa = zeros(ndata*2*nwv,nnodes);
-J_big_sp = zeros(ndata*2*nwv,nnodes);
-J_mua_temp = zeros(ndata*2,nnodes*m);
-J_sa_temp = zeros(ndata*2,nnodes);
-J_sp_temp = zeros(ndata*2,nnodes);
-data.paa = [];
-data.wv=[];
-
-% for each wavelength
-for i = 1:nwv
-  disp(sprintf('Calculating data for: %g nm',(wv_array(i))))
-  
-  %****************************************************************
-  % calculate absorption and scattering coefficients from concetrations and
-  % scattering parameters a and b
-  [mesh.mua,mesh.mus,mesh.kappa,E] = calc_mua_mus(mesh,wv_array(i));
-  if exist('mesh2') == 1
-      [mesh2.mua,mesh2.mus,mesh2.kappa, E] = calc_mua_mus(mesh2,wv_array(i));
-  end
-  
-  % if sources are not fixed, move sources depending on mus
-  if mesh.source.fixed == 0
-    mus_eff = mesh.mus;
-    [mesh]=move_source(mesh,mus_eff,3);
-    clear mus_eff
-  end
-  
-  % set mesh linkfile not to calculate NaN pairs:
-  if isfield(mesh,'ind')
-      link = mesh.linkorig';
-      eval(['ind = mesh.ind.l' num2str(wv_array(i)) ';']);
-      link(ind) = 0;
-      mesh.link = link';
-      if exist('mesh2') == 1
-        mesh2.link = link';
-      end
-  end
-  clear link
-  
-  %%calculating jacobian for absorption and scatter at each wavelength
-  if exist('mesh2') == 1
-      [J,data1,mesh]=jacobian_stnd(mesh,frequency,mesh2);
-  else
-      [J,data1,mesh]=jacobian_stnd(mesh,frequency);
-  end
-  J_mua = J.complete(:,nnodes+1 : end);
-  J_kappa = J.complete(:,1:nnodes);
-  
-  % make sure we have equal length jacobians to output, to do this we
-  % will NaN pad
-  J_mua(end+1:ndata*2,:) = NaN;
-  J_kappa(end+1:ndata*2,:) = NaN;
-  
-  for j = 1:m
-    J_mua_temp(:,(j-1)*nnodes+1:(j)*nnodes) = ...
-	[E(j).*(J_mua)];
-  end
-  J_mua_big(((i-1)*ndata*2)+1:i*ndata*2,:) = J_mua_temp;
-  
-  % looping through is much more efficient than creating a diagonal matrix
-  % and multiplying
-  if exist('mesh2') == 1
-      sa_factor = -3*(mesh2.kappa.^2).*((wv_array(i)./1000).^(-mesh2.sp));
-      sp_factor = ((-3*(mesh2.kappa.^2).*(mesh2.mus)).*(-log(wv_array(i)./1000)));
-  else
-      sa_factor = -3*(mesh.kappa.^2).*((wv_array(i)./1000).^(-mesh.sp));
-      sp_factor = ((-3*(mesh.kappa.^2).*(mesh.mus)).*(-log(wv_array(i)./1000)));
-  end
-    
-  for ii = 1 : ndata*2
-      J_sa_temp(ii,:) = J_kappa(ii,:).*sa_factor';
-      J_sp_temp(ii,:) = J_kappa(ii,:).*sp_factor';
-  end
-  
-  J_big_sa(((i-1)*ndata*2)+1:i*ndata*2,:) = J_sa_temp;
-  J_big_sp(((i-1)*ndata*2)+1:i*ndata*2,:) = J_sp_temp;
-  
-  % make sure we have equal length data.paa files to output, to do this we
-  % will NaN pad
-  data1.paa(end+1:ndata,:) = NaN;
-  data.paa = [data.paa data1.paa];
-  data.wv = [data.wv wv_array(i)];
-  clear ref J
+if exist('mesh2')
+    mesh_basis = 1;
+else
+    mesh_basis = 0;
 end
-clear J*_tmp mesh1.mua_big mesh1.mus_big mesh1.kappa_big *_factor
 
-%%building new big jacobian for conc/scatter
-J = [J_mua_big,J_big_sa,J_big_sp];
-clear J_mua_big J_big_sa J_big_sp mesh_temp;
+%% Calculate inputs for jacobian at each wavelength
+mesh_J(1:nwv) = mesh;
+if exist('mesh2')
+    mesh2_J(1:nwv) = mesh2;
+else
+    mesh2_J(1:nwv) = mesh;
+end
+for i = 1:nwv
+      % calculate absorption and scattering coefficients
+      [mesh_J(i).mua,mesh_J(i).mus,mesh_J(i).kappa,E(i).val] = calc_mua_mus(mesh,wv_array(i));
+      if exist('mesh2') == 1
+          [mesh2_J(i).mua,mesh2_J(i).mus,mesh2_J(i).kappa, E(i).val] = calc_mua_mus(mesh2,wv_array(i));
+      end
+
+      % if sources are not fixed, move sources depending on mus
+      if mesh_J(i).source.fixed == 0
+        mus_eff = mesh_J(i).mus;
+        [mesh_J(i)]=move_source(mesh_J(i),mus_eff,3);
+        clear mus_eff
+      end
+
+      % set mesh linkfile not to calculate NaN pairs:
+      if isfield(mesh,'ind')
+          link = mesh.linkorig';
+          eval(['ind = mesh.ind.l' num2str(wv_array(i)) ';']);
+          link(ind) = 0;
+          mesh_J(i).link = link';
+          if exist('mesh2') == 1
+            mesh2_J(i).link = link';
+          end
+      end
+      clear link
+end
+
+%% Parallel Jacobian
+if parallel
+    
+    parfor i = 1:nwv
+        
+        if mesh_basis
+            [J_tmp(i),data_tmp(i)]=jacobian_stnd(mesh_J(i),frequency,mesh2_J(i));
+        else
+            [J_tmp(i),data_tmp(i)]=jacobian_stnd(mesh_J(i),frequency);
+        end
+        
+    end
+    
+%% Serial Jacobian
+else   
+    
+    for i = 1:nwv
+        
+        if mesh_basis
+            [J_tmp(i),data_tmp(i)]=jacobian_stnd(mesh_J(i),frequency,mesh2_J(i));
+        else
+            [J_tmp(i),data_tmp(i)]=jacobian_stnd(mesh_J(i),frequency);
+        end
+        
+    end
+
+end
+
+%% Assign outputs
+data.paa = zeros(ndata,nwv*2);
+data.wv = wv_array;
+J = [];
+J_small = zeros(ndata*2,nnodes*(m+2));
+for i = 1:nwv
+    data_tmp(i).paa(end+1:ndata,:) = NaN;
+    data.paa(:,i*2-1:i*2) = data_tmp(i).paa;
+    
+    J_mua = J_tmp(i).complete(:,nnodes+1 : end);
+    J_kappa = J_tmp(i).complete(:,1:nnodes);
+
+    % NaN pad for equal length jacobians
+    J_mua(end+1:ndata*2,:) = NaN;
+    J_kappa(end+1:ndata*2,:) = NaN;
+
+    for j = 1:m
+      J_small(:,(j-1)*nnodes+1:(j)*nnodes) = E(i).val(j).*(J_mua);
+    end
+
+    if exist('mesh2') == 1
+      sa_factor = -3*(mesh2_J(i).kappa.^2).*((wv_array(i)./1000).^(-mesh2_J(i).sp));
+      sp_factor = ((-3*(mesh2_J(i).kappa.^2).*(mesh2_J(i).mus)).*(-log(wv_array(i)./1000)));
+    else
+      sa_factor = -3*(mesh_J(i).kappa.^2).*((wv_array(i)./1000).^(-mesh_J(i).sp));
+      sp_factor = ((-3*(mesh_J(i).kappa.^2).*(mesh_J(i).mus)).*(-log(wv_array(i)./1000)));
+    end
+
+    for ii = 1 : ndata*2
+      J_small(ii,m*nnodes+1:(m+1)*nnodes) = J_kappa(ii,:).*sa_factor';
+      J_small(ii,(m+1)*nnodes+1:(m+2)*nnodes) = J_kappa(ii,:).*sp_factor';
+    end
+    
+    J = [J;J_small];
+    J_tmp(i).complete = [];
+    J_tmp(i).complex = [];
+end
 
 mesh.link = mesh.linkorig;
