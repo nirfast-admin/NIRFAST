@@ -19,7 +19,7 @@ function [fn,pn] = myuiputfile(ext,title)
 if ispref('nirfast_gui','lastpath')
     lastpath = getpref('nirfast_gui','lastpath');
 else
-    lastpath = '/';
+    lastpath = pwd;
 end
 
 % get file
