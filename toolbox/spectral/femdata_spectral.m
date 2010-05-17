@@ -42,10 +42,10 @@ nwv = length(wv_array);
 
 %**************************************************************
 % Initiate log file
-fid_log = fopen([mesh.name,'.log'],'w');
-fprintf(fid_log,'**************************\n\nForward Model Log\n\n*************************\n\n');
-fprintf(fid_log,'Forward Mesh  = %s\n',mesh.name);
-fprintf(fid_log,'Wavelength Array  =  %dnm\n',wv_array);
+% fid_log = fopen([mesh.name,'.log'],'w');
+% fprintf(fid_log,'**************************\n\nForward Model Log\n\n*************************\n\n');
+% fprintf(fid_log,'Forward Mesh  = %s\n',mesh.name);
+% fprintf(fid_log,'Wavelength Array  =  %dnm\n',wv_array);
 
 %****************************************************************
 % Run femdata for each wavelength and save data as .paa
