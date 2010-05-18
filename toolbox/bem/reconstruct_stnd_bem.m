@@ -75,19 +75,20 @@ pj_error=zeros(1,iteration);
 
 % Initiate log file
 fid_log = fopen([output_fn '.log'],'w');
-fprintf(fid_log,'Forward Mesh   = %s\n',fwd_mesh.name);
-fprintf(fid_log,'Frequency      = %f MHz\n',frequency);
+write_log(fid_log,'Forward Mesh   = %s\n',fwd_mesh.name);
+write_log(fid_log,'Forward Mesh   = %s\n',fwd_mesh.name);
+write_log(fid_log,'Frequency      = %f MHz\n',frequency);
 if ischar(data_fn) ~= 0
-    fprintf(fid_log,'Data File      = %s\n',data_fn);
+    write_log(fid_log,'Data File      = %s\n',data_fn);
 end
 if isstruct(lambda)
-    fprintf(fid_log,'Initial Regularization  = %d\n',lambda.value);
+    write_log(fid_log,'Initial Regularization  = %d\n',lambda.value);
 else
-    fprintf(fid_log,'Initial Regularization  = %d\n',lambda);
+    write_log(fid_log,'Initial Regularization  = %d\n',lambda);
 end
-fprintf(fid_log,'Filter         = %d\n',filter_n);
-fprintf(fid_log,'Output Files   = %s_mua.sol\n',output_fn);
-fprintf(fid_log,'               = %s_mus.sol\n',output_fn);
+write_log(fid_log,'Filter         = %d\n',filter_n);
+write_log(fid_log,'Output Files   = %s_mua.sol\n',output_fn);
+write_log(fid_log,'               = %s_mus.sol\n',output_fn);
 
 
 % start non-linear itertaion image reconstruction part
@@ -110,23 +111,18 @@ for it = 1 : iteration
   % PJ error
   pj_error(it) = sum(abs(data_diff.^2));
  
-  disp('---------------------------------');
-  disp(['Iteration Number          = ' num2str(it)]);
-  disp(['Projection error          = ' num2str(pj_error(it))]);
-
-  fprintf(fid_log,'---------------------------------\n');
-  fprintf(fid_log,'Iteration Number          = %d\n',it);
-  fprintf(fid_log,'Projection error          = %f\n',pj_error(it));
+  msg={'---------------------------------\n';...
+       'Iteration Number          = %d\n';...
+       'Projection error          = %f\n'};
+  msgdata{1}=[]; msgdata{2}=it;msgdata{3}=pj_error(it);
+  write_log(fid_log,msg,msgdata,1);
   
   if it ~= 1
     p = (pj_error(it-1)-pj_error(it))*100/pj_error(it-1);
-    fprintf('Projection error change   = %f %%\n', p);
-    fprintf(fid_log,'Projection error change   = %.12g %%\n',p);
+    write_log(fid_log,'Projection error change   = %f %%\n',p,1);
     if p <= 2 || (pj_error(it) < (10^-18)) % stopping criteria is currently set at 2% decrease change
-      disp('---------------------------------');
-      disp('STOPPING CRITERIA REACHED');
-      fprintf(fid_log,'---------------------------------\n');
-      fprintf(fid_log,'STOPPING CRITERIA REACHED\n');
+      write_log(fid_log,{'---------------------------------\n';...
+                         'STOPPING CRITERIA REACHED\n'},{[];[]},1);
      break
     end
   end
@@ -143,8 +139,7 @@ for it = 1 : iteration
   Hess = (J'*J);
 
   reg = lambda*max(diag(Hess));
-  fprintf(fid_log,'Regularization            = %f\n',reg);
-  disp(['Regularization           = ' num2str(reg)]);
+  write_log(fid_log,'Regularization            = %f\n',reg,1);
   Hess = Hess + reg*eye(length(Hess));
   data_diff = J'*data_diff;
  
@@ -162,10 +157,9 @@ for it = 1 : iteration
   
   % We dont like -ve mua or mus! so if this happens, terminate
   if (any(fwd_mesh.mua<0) || any(fwd_mesh.mus<0))
-    disp('---------------------------------');
-    disp('-ve mua or mus calculated...not saving solution');
-    fprintf(fid_log,'---------------------------------\n');
-    fprintf(fid_log,'STOPPING CRITERIA REACHED\n');
+    write_log(fid_log,{'Negative mua or mus calculated...not saving solution';...
+                       '---------------------------------\n';...
+                       'STOPPING CRITERIA REACHED\n'},{[];[];[]},1);
     break
   end
   
@@ -205,5 +199,29 @@ end
 
 % close log file!
 time = toc;
-fprintf(fid_log,'Computation TimeRegularization = %f\n',time);
+write_log(fid_log,'Computation TimeRegularization = %f\n',time,1);
 fclose(fid_log);
+
+
+
+function write_log(fid,msg,msgdata,printflag)
+% writes the info in msgdata formatted as msg into file whose id is 'fid'
+% if 4th argument is present it will also print on screen.
+if nargin<=3
+    printflag=0;
+end
+
+if ~iscell(msg)
+    mymsg={msg};
+    mymsgdata={msgdata};
+else
+    mymsg=msg;
+    mymsgdata=msgdata;
+end
+
+for i=1:length(mymsg)
+    fprintf(fid,mymsg{i},mymsgdata{i});
+    if printflag
+        fprintf(mymsg{i},mymsgdata{i});
+    end
+end

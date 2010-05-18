@@ -34,9 +34,9 @@ end
 %% jacobian
 nregions = length(mesh.mua);
 if frequency == 0
-    J = zeros(length(data.paa), length(nregions));
+    J = zeros(length(data.paa), nregions);
 else
-    J = zeros(2*length(data.paa), 2*length(nregions));
+    J = zeros(2*length(data.paa), 2*nregions);
 end
 mesh2 = mesh;
 
@@ -60,7 +60,6 @@ for reg = 1:nregions
     end
     
     J(:,reg) = (data_diff)./(delta_mua);
-    clear data2
 end
 
 if frequency ~= 0
@@ -73,12 +72,11 @@ if frequency ~= 0
         data2 = bemdata_stnd(mesh2,frequency);
         data2.paa(:,1) = log(data2.paa(:,1));
         data2.paa(:,2) = data2.paa(:,2).*pi/180.0;
-        data2.paa(find(data2.paa(:,2)<0),2) = data2.paa(find(data2.paa(:,2)<0),2) + (2*pi);
-        data2.paa(find(data2.paa(:,2)>(2*pi)),2) = data2.paa(find(data2.paa(:,2)>(2*pi)),2) - (2*pi);
+        data2.paa(data2.paa(:,2)<0,2) = data2.paa(data2.paa(:,2)<0,2) + (2*pi);
+        data2.paa(data2.paa(:,2)>(2*pi),2) = data2.paa(data2.paa(:,2)>(2*pi),2) - (2*pi);
         data_diff = data2.paa - data.paa;
         data_diff = reshape(data_diff',2*length(data_diff),1);
 
         J(:,reg+nregions) = (data_diff)./(delta_kappa);
-        clear data2
     end
 end
