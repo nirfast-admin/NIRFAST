@@ -55,8 +55,8 @@ end
 anom = anom.paa;
 anom(:,1) = log(anom(:,1)); %take log of amplitude
 anom(:,2) = anom(:,2)/180.0*pi; % phase is in radians and not degrees
-anom(find(anom(:,2)<0),2) = anom(find(anom(:,2)<0),2) + (2*pi);
-anom(find(anom(:,2)>(2*pi)),2) = anom(find(anom(:,2)>(2*pi)),2) - (2*pi);
+anom(anom(:,2)<0,2) = anom(anom(:,2)<0,2) + (2*pi);
+anom(anom(:,2)>(2*pi),2) = anom(anom(:,2)>(2*pi),2) - (2*pi);
 % find NaN in data
 ind = unique([find(isnan(anom(:,1))==1); find(isnan(anom(:,2))==1)]);
 % set mesh linkfile not to calculate NaN pairs:
@@ -71,7 +71,7 @@ clear ind;
 anom = reshape(anom',length(anom)*2,1); 
 
 % Initiate projection error
-pj_error = [];
+pj_error=zeros(1,iteration);
 
 % Initiate log file
 fid_log = fopen([output_fn '.log'],'w');
@@ -88,6 +88,7 @@ end
 fprintf(fid_log,'Filter         = %d\n',filter_n);
 fprintf(fid_log,'Output Files   = %s_mua.sol\n',output_fn);
 fprintf(fid_log,'               = %s_mus.sol\n',output_fn);
+
 
 % start non-linear itertaion image reconstruction part
 for it = 1 : iteration
@@ -107,21 +108,21 @@ for it = 1 : iteration
   data_diff = (anom-ref);
 
   % PJ error
-  pj_error = [pj_error sum(abs(data_diff.^2))];
+  pj_error(it) = sum(abs(data_diff.^2));
  
   disp('---------------------------------');
   disp(['Iteration Number          = ' num2str(it)]);
-  disp(['Projection error          = ' num2str(pj_error(end))]);
+  disp(['Projection error          = ' num2str(pj_error(it))]);
 
   fprintf(fid_log,'---------------------------------\n');
   fprintf(fid_log,'Iteration Number          = %d\n',it);
-  fprintf(fid_log,'Projection error          = %f\n',pj_error(end));
+  fprintf(fid_log,'Projection error          = %f\n',pj_error(it));
   
   if it ~= 1
-    p = (pj_error(end-1)-pj_error(end))*100/pj_error(end-1);
-    disp(['Projection error change   = ' num2str(p) '%']);
-    fprintf(fid_log,'Projection error change   = %f %%\n',p);
-    if p <= 2 % stopping criteria is currently set at 2% decrease change
+    p = (pj_error(it-1)-pj_error(it))*100/pj_error(it-1);
+    fprintf('Projection error change   = %f %%\n', p);
+    fprintf(fid_log,'Projection error change   = %.12g %%\n',p);
+    if p <= 2 || (pj_error(it) < (10^-18)) % stopping criteria is currently set at 2% decrease change
       disp('---------------------------------');
       disp('STOPPING CRITERIA REACHED');
       fprintf(fid_log,'---------------------------------\n');
@@ -139,13 +140,11 @@ for it = 1 : iteration
   end
   
   % build hessian
-  [nrow,ncol]=size(J);
-  Hess = zeros(ncol);
   Hess = (J'*J);
 
   reg = lambda*max(diag(Hess));
-  fprintf(fid_log,'Regularization         = %f\n',reg);
-  disp(['Regularization        = ' num2str(reg)]);
+  fprintf(fid_log,'Regularization            = %f\n',reg);
+  disp(['Regularization           = ' num2str(reg)]);
   Hess = Hess + reg*eye(length(Hess));
   data_diff = J'*data_diff;
  

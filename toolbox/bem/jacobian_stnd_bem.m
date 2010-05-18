@@ -27,8 +27,8 @@ data = bemdata_stnd(mesh,frequency);
 data.paa(:,1) = log(data.paa(:,1));
 if frequency ~=0
     data.paa(:,2) = data.paa(:,2).*pi/180.0;
-    data.paa(find(data.paa(:,2)<0),2) = data.paa(find(data.paa(:,2)<0),2) + (2*pi);
-    data.paa(find(data.paa(:,2)>(2*pi)),2) = data.paa(find(data.paa(:,2)>(2*pi)),2) - (2*pi);
+    data.paa(data.paa(:,2)<0,2) = data.paa(data.paa(:,2)<0,2) + (2*pi);
+    data.paa(data.paa(:,2)>(2*pi),2) = data.paa(data.paa(:,2)>(2*pi),2) - (2*pi);
 end
 
 %% jacobian
@@ -42,14 +42,15 @@ mesh2 = mesh;
 
 for reg = 1:nregions
     % mua
+    mesh2.mua = mesh.mua;
     delta_mua = 0.01*mesh.mua(reg);
     mesh2.mua(reg) = mesh.mua(reg) + delta_mua;
     data2 = bemdata_stnd(mesh2,frequency);
     data2.paa(:,1) = log(data2.paa(:,1));
     if frequency ~= 0
         data2.paa(:,2) = data2.paa(:,2).*pi/180.0;
-        data2.paa(find(data2.paa(:,2)<0),2) = data2.paa(find(data2.paa(:,2)<0),2) + (2*pi);
-        data2.paa(find(data2.paa(:,2)>(2*pi)),2) = data2.paa(find(data2.paa(:,2)>(2*pi)),2) - (2*pi);
+        data2.paa(data2.paa(:,2)<0,2) = data2.paa(data2.paa(:,2)<0,2) + (2*pi);
+        data2.paa(data2.paa(:,2)>(2*pi),2) = data2.paa(data2.paa(:,2)>(2*pi),2) - (2*pi);
     end
     data_diff = data2.paa - data.paa;
     if frequency ~= 0
@@ -63,8 +64,10 @@ for reg = 1:nregions
 end
 
 if frequency ~= 0
+    mesh2=mesh;
     for reg = 1:nregions
         % kappa
+        mesh2.kappa = mesh.kappa;
         delta_kappa = 0.01*mesh.kappa(reg);
         mesh2.kappa(reg) = mesh.kappa(reg) + delta_kappa;
         data2 = bemdata_stnd(mesh2,frequency);

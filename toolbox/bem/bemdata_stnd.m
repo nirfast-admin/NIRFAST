@@ -1,10 +1,11 @@
-function [data,u,mesh]= bemdata_stnd(mesh,frequency)
+function [data,u,mesh]= bemdata_stnd(mesh,frequency,myargs)
 % [data,u,mesh]= bemdata_stnd(mesh,frequency)
 %
 % Calculates data (phase and amplitude) for a given
 % mesh at a given frequency (MHz).
 % outputs phase and amplitude in structure data
 % and mesh information in mesh
+% myargs: used to pass additional information such --verbose flag
 % 'data.ppa' is the phase and amplitude values at source/detector locations
 % 'data.phi' is the field value for all nodes of the boundaries.
 % Written By:
@@ -21,7 +22,15 @@ if ischar(mesh)
     mesh = load_mesh(mesh);
 end
 if isfield(mesh,'region')==0
+    errordlg([mesh.name ' mesh needs to have a .region field!'],'NIRFAST Error');
     error([mesh.name ' mesh needs to have a .region field!']);        
+end
+
+verbose=0;
+if nargin==3
+    if isfield(myargs.verbose)
+        verbose=1;
+    end
 end
 
 c=(3e11./mesh.ri);
@@ -48,7 +57,7 @@ for scounter=1:num_sources
         % Construct the LHS matrix 'K' only once
         for region=1:size(mesh.relations,1);
             rid=relations(region,1);
-            fprintf('    Building components of BEM matrix for region %d... ',rid);
+            if verbose, fprintf('    Building components of BEM matrix for region %d... ',rid); end
             [region_elems region_nodes] = GetNodesAndElementsOfRegion(mesh,regionInfo(rid));
             region_coords = mesh.nodes(region_nodes,:);
             
@@ -85,7 +94,7 @@ for scounter=1:num_sources
             end
             bf=relations(region,:)~=0;
             visits(relations(region,bf)) = visits(relations(region,bf)) + 1;
-            fprintf('done!\n');
+            if verbose, fprintf('done!\n'); end
         end
         clear ar ai br bi A B
         % Store nodes and elements of region I
