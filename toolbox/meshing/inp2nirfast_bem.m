@@ -71,8 +71,8 @@ fprintf('\tWriting nirfast mesh files\n');
 
 nregions = size(unique(mesh.region),1)-1;
 mesh.dimension = 3;
-mesh.mua = ones(nregions,1);
-mesh.mus = ones(nregions,1);
+mesh.mua = ones(nregions,1)*0.006;
+mesh.mus = ones(nregions,1)*2;
 mesh.kappa = 1./(3.*(mesh.mua+mesh.mus));
 mesh.ri = ones(nregions,1)*1.33;
 mesh.type = type;

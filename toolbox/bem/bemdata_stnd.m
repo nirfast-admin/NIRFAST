@@ -37,6 +37,7 @@ for i=2:length(NoBdyNodes)
 end
 rhs_idx = false(totn,1);
 q_tot=zeros(totn,1);
+K=zeros(totn,totn);
 
 num_sources = size(mesh.source.coord,1);
 nnod = length(mesh.nodes);
@@ -50,9 +51,11 @@ for scounter=1:num_sources
             fprintf('    Building components of BEM matrix for region %d... ',rid);
             [region_elems region_nodes] = GetNodesAndElementsOfRegion(mesh,regionInfo(rid));
             region_coords = mesh.nodes(region_nodes,:);
-            int_angle = zeros(length(mesh.nodes),1);
-            [A,B] = main_build_matrix_K(mesh.nodes, region_elems, region_coords, region_nodes,...
-                omega(region), mesh.kappa(region), mesh.source.coord(scounter,:), region, int_angle);
+            
+            [ar ai br bi] = main_build_matrix_K2(mesh.nodes, region_elems, region_coords, region_nodes,...
+                omega(region), mesh.kappa(region), 2048);
+            A = complex(ar,ai); B = complex(br,bi);
+            
             % Take care of interior solid angle terms
             tmp=length(A);
             idx=1:tmp+1:tmp^2;
@@ -84,6 +87,7 @@ for scounter=1:num_sources
             visits(relations(region,bf)) = visits(relations(region,bf)) + 1;
             fprintf('done!\n');
         end
+        clear ar ai br bi A B
         % Store nodes and elements of region I
         [regionI_elems regionI_nodes] = GetNodesAndElementsOfRegion(mesh,regionInfo(relations(1,1))); 
     end
