@@ -29,17 +29,17 @@
 /* How to mex
 *	if your compiler supports OpenMP, use this:
 *   GCC:
-*   mex -v CXXFLAGS="\$CXXFLAGS -fopenmp" LDFLAGS="\$LDFLAGS -fopenmp" main_build_matrix_K2.cpp
+*   mex -v CXXFLAGS="\$CXXFLAGS -fopenmp" LDFLAGS="\$LDFLAGS -fopenmp" main_build_matrix_K.cpp
 *	Intel/{Mac,Linux}
-*   mex -v CXXFLAGS="\$CXXFLAGS -openmp" LDFLAGS="\$LDFLAGS -openmp" main_build_matrix_K2.cpp
+*   mex -v CXXFLAGS="\$CXXFLAGS -openmp" LDFLAGS="\$LDFLAGS -openmp" main_build_matrix_K.cpp
 *	Intel/{Windows}
-*	mex -v CXXFLAGS="\$CXXFLAGS -Qopenmp" LDFLAGS="\$LDFLAGS -Qopenmp" main_build_matrix_K2.cpp
+*	mex -v CXXFLAGS="\$CXXFLAGS -Qopenmp" LDFLAGS="\$LDFLAGS -Qopenmp" main_build_matrix_K.cpp
 *	If it doesn't support, then just use:
-*	mex -v main_build_matrix_K2.cpp
+*	mex -v main_build_matrix_K.cpp
 */
 
 /* How to call from Matlab:
-*  [ar ai br bi] = main_build_matrix_K2(nodes_glob, region_elems, region_coords, ...
+*  [ar ai br bi] = main_build_matrix_K(nodes_glob, region_elems, region_coords, ...
 *					region_node_IDs, omega(region), kappa(region), num_procs);
 *  A = complex(ar,ai); B = complex(br,bi);
 *  num_procs determines how many processes/cores you want to use on a single machine.
