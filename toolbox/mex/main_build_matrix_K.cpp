@@ -48,7 +48,6 @@
 *
 */
 #include "bem.h"
-#include "mex.h"
 
 #ifdef _OPENMP
 #include "omp.h"

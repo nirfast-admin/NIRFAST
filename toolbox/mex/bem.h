@@ -20,7 +20,8 @@
 #define BEM_H
 
 #include <math.h>
-
+#include <mex.h>
+#include <assert.h>
 #define PI 3.141592653589793115997963468544185161590576171875
 
 /* macros used for multiplying and dividing complex numbers.

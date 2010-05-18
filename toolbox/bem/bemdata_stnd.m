@@ -52,7 +52,7 @@ for scounter=1:num_sources
             [region_elems region_nodes] = GetNodesAndElementsOfRegion(mesh,regionInfo(rid));
             region_coords = mesh.nodes(region_nodes,:);
             
-            [ar ai br bi] = main_build_matrix_K2(mesh.nodes, region_elems, region_coords, region_nodes,...
+            [ar ai br bi] = main_build_matrix_K(mesh.nodes, region_elems, region_coords, region_nodes,...
                 omega(region), mesh.kappa(region), 2048);
             A = complex(ar,ai); B = complex(br,bi);
             
