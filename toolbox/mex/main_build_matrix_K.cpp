@@ -30,10 +30,16 @@
 *	if your compiler supports OpenMP, use this:
 *   GCC:
 *   mex -v CXXFLAGS="\$CXXFLAGS -fopenmp" LDFLAGS="\$LDFLAGS -fopenmp" main_build_matrix_K.cpp
+*
 *	Intel/{Mac,Linux}
 *   mex -v CXXFLAGS="\$CXXFLAGS -openmp" LDFLAGS="\$LDFLAGS -openmp" main_build_matrix_K.cpp
+*
+*   Microsoft Visual C++ 2008
+*   mex -v COMPFLAGS="$COMPFLAGS /openmp" LINKFLAGS="$LINKFLAGS /openmp" main_build_matrix_K.cpp
+*
 *	Intel/{Windows}
 *	mex -v CXXFLAGS="\$CXXFLAGS -Qopenmp" LDFLAGS="\$LDFLAGS -Qopenmp" main_build_matrix_K.cpp
+*
 *	If it doesn't support, then just use:
 *	mex -v main_build_matrix_K.cpp
 */
@@ -161,10 +167,11 @@ void main_build_matrix(double *nodes, double *elements, double *nodes_reg,
 	  shared(inreg,nnod,nodes_reg,nnod_reg,nelem,elements,nodes,b_real,b_img, \
 	         omegar,omegai,D,delG,eta1,eta2,w,ngp,normal_x,normal_y,normal_z,Ar,Ai,Br,Bi) 
 	{
-		
+
 #if defined(_OPENMP) & defined(_debug)
-        #pragma omp single
+        #pragma omp master
         mexPrintf("\n  Number of threads to be used: %d\n",omp_get_num_threads());
+		#pragma omp single
 		mexPrintf("  %d: thread entered the parallel regions.\n",omp_get_thread_num());
 #endif
 		int_val_real = new double[3];

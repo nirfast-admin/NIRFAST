@@ -28,8 +28,8 @@ end
 
 verbose=0;
 if nargin==3
-    if isfield(myargs.verbose)
-        verbose=1;
+    if isfield(myargs,'verbose')
+        verbose=myargs.verbose;
     end
 end
 
@@ -54,10 +54,10 @@ visits=ones(size(relations,1),1);
 %% Main loop (over all the sources)
 for scounter=1:num_sources
     if scounter==1
+        if verbose==1, fprintf('.'); elseif verbose==2, fprintf('    Building components of BEM matrix for region %d... ',rid); end
         % Construct the LHS matrix 'K' only once
         for region=1:size(mesh.relations,1);
             rid=relations(region,1);
-            if verbose, fprintf('    Building components of BEM matrix for region %d... ',rid); end
             [region_elems region_nodes] = GetNodesAndElementsOfRegion(mesh,regionInfo(rid));
             region_coords = mesh.nodes(region_nodes,:);
             
@@ -94,8 +94,8 @@ for scounter=1:num_sources
             end
             bf=relations(region,:)~=0;
             visits(relations(region,bf)) = visits(relations(region,bf)) + 1;
-            if verbose, fprintf('done!\n'); end
         end
+        if verbose==1, fprintf('.\n'); elseif verbose==2, fprintf('done!\n'); end
         clear ar ai br bi A B
         % Store nodes and elements of region I
         [regionI_elems regionI_nodes] = GetNodesAndElementsOfRegion(mesh,regionInfo(relations(1,1))); 
