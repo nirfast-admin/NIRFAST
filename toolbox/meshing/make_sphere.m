@@ -58,7 +58,7 @@ mesh.nodes(:,3) = z;
 if exist('surf','var') && surf == 1
     mesh.nodes = mesh.nodes(mesh.bndvtx==1,:);
     mesh.bndvtx = ones(size(mesh.nodes,1),1);
-    mesh.elements = myrobustcrust(mesh.nodes);
+    mesh.elements = MyRobustCrust(mesh.nodes);
     mesh.elements = FixPatchOrientation(mesh.nodes,mesh.elements);
 else
     mesh.elements = delaunayn(mesh.nodes);
