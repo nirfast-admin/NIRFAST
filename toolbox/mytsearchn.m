@@ -13,7 +13,7 @@ function [ind, int_func] = mytsearchn(mesh,coord)
 % ind are the indices for the elements containing the points
 % int_func are the barycentric coordinates
 
-if isfield(mesh,'type') && strcmp(mesh.type,'stnd_bem')
+if isfield(mesh,'type') && (strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'bem_fluor'))
     
     [ind, int_func] = mytsearchn_bem(mesh,coord);
     
