@@ -277,6 +277,11 @@ clear phi*
 [qvec] = gen_source_adjoint(mesh);
 qvec = [qvec;(-2/3)*qvec;(8/15)*qvec;(-16/35)*qvec];
 
+% Catch zero frequency (CW) here
+if frequency == 0
+    qvec = real(qvec);
+end
+
 [phi]=get_field(conj(MASS),mesh,conj(qvec));
 data.aphi1=phi(1:nvtx,:);
 data.aphi2=phi((nvtx+1):(2*nvtx),:);
@@ -373,14 +378,14 @@ elseif nargin == 2
 end
 for i = 1 : size(J.complex,1)
     if frequency == 0
-        J.complex(i,:) = J.complex(i,:).*(-3.*kappa.*kappa)'.*d_musp_d_mus';
+        %J.complex(i,:) = J.complex(i,:).*(-3.*kappa.*kappa)'.*d_musp_d_mus';
     else
         J.complex(i,1:end/2) = J.complex(i,1:end/2).*(-3.*kappa.*kappa)'.*d_musp_d_mus';
     end
 end
 for i = 1 : size(J.complete,1)
     if frequency == 0
-        J.complete(i,:) = J.complete(i,:).*(-3.*kappa.*kappa)'.*d_musp_d_mus';
+        %J.complete(i,:) = J.complete(i,:).*(-3.*kappa.*kappa)'.*d_musp_d_mus';
     else
         J.complete(i,1:end/2) = J.complete(i,1:end/2).*(-3.*kappa.*kappa)'.*d_musp_d_mus';
     end
