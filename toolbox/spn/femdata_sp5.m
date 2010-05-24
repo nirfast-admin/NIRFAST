@@ -176,6 +176,12 @@ clear junk nnodes nsource;
 
 MASS=[M1 -(C23-G1) (C8-H1);-(C23-G2) M2 -(C16+C2_49-H2);
      (C8-G3) -(C16+C2_49-H3) M3];
+ 
+ % Catch zero frequency (CW) here
+if frequency == 0
+  MASS = real(MASS);
+  qvec = real(qvec);
+end
 
 
 qvec=[qvec;-(2/3)*qvec;(8/15)*qvec];

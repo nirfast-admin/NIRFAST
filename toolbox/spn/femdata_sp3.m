@@ -135,13 +135,15 @@ clear junk i nnodes nsource;
 
 qvec=[qvec;-(2/3)*qvec];
 
+
+
+MASS=[M1 (G1-C23);(C23-G2) -M2];
+
 % Catch zero frequency (CW) here
 if frequency == 0
   MASS = real(MASS);
   qvec = real(qvec);
 end
-
-MASS=[M1 (G1-C23);(C23-G2) -M2];
  
 % ======================================
 % Optimise MASS matrix

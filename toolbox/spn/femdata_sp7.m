@@ -248,6 +248,12 @@ MASS=[M1 -(C23-G1) +(C8-H1) -(C16-I1);...
      -(C23-G2) M2 -(C16-C2_49-H2) (C32+C2_8-I2);...
      (C8-G3) -(C16+C2_49-H3) M3 -(C128+C2_32+C4_54-I3);...
      (-C16-G4) (C32+C2_8-H4) -(C128+C2_32+C4_54-I4) M4];
+ 
+ % Catch zero frequency (CW) here
+if frequency == 0
+  MASS = real(MASS);
+  qvec = real(qvec);
+end
 
 % ======================================
 % Optimise MASS matrix
