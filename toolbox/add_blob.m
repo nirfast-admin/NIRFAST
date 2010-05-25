@@ -35,6 +35,7 @@ function mesh = add_blob(mesh, blob)
 % blob.tau - lifetime of fluorophore
 % blob.ri - refractive index
 % blob.region - region number
+% blob.dist - distance between nodes for anomaly (BEM only)
 %
 % for a SPECTRAL mesh:
 % blob.x - x position
@@ -45,6 +46,7 @@ function mesh = add_blob(mesh, blob)
 % blob.sp - S-power
 % blob.ri - refractive index
 % blob.region - region number
+% blob.dist - distance between nodes for anomaly (BEM only)
 % blob.HbO, blob.deoxyHb, etc. for each chromophore
 
 
@@ -58,8 +60,8 @@ end
 % Select femdata program based on mesh.type
 if strcmp(mesh.type,'stnd') || strcmp(mesh.type,'stnd_spn') || strcmp(mesh.type,'stnd_bem')
   mesh = add_blob_stnd(mesh, blob);
-elseif strcmp(mesh.type,'fluor')
+elseif strcmp(mesh.type,'fluor') || strcmp(mesh.type,'fluor_bem')
   mesh = add_blob_fl(mesh, blob);
-elseif strcmp(mesh.type,'spec')
+elseif strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')
   mesh = add_blob_spectral(mesh, blob);
 end

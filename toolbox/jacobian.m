@@ -34,6 +34,10 @@ elseif strcmp(mesh.type,'fluor') == 1   % fluor
   [data,mesh] = femdata_fl(mesh,frequency);
   datax.phi = data.phix;
   [J,data] = jacobian_fl(mesh,frequency,datax);
+elseif strcmp(mesh.type,'fluor_bem') == 1   % fluor bem
+  [data,mesh] = bemdata_fl(mesh,frequency);
+  datax.phi = data.phix;
+  [J,data] = jacobian_fl_bem(mesh,frequency,datax);
 elseif strcmp(mesh.type,'spec') == 1    % spec
   if nargin == 2
       if frequency == 0
@@ -46,6 +50,20 @@ elseif strcmp(mesh.type,'spec') == 1    % spec
           [J,data] = jacobian_spectral_cw(mesh,wv);
       else
         [J,data] = jacobian_spectral(mesh,frequency,wv);
+      end
+  end
+elseif strcmp(mesh.type,'spec_bem') == 1    % spec bem
+  if nargin == 2
+      if frequency == 0
+          [J,data] = jacobian_spectral_cw_bem(mesh);
+      else
+        [J,data] = jacobian_spectral_bem(mesh,frequency);
+      end
+  elseif nargin == 3
+      if frequency == 0
+          [J,data] = jacobian_spectral_cw_bem(mesh,wv);
+      else
+        [J,data] = jacobian_spectral_bem(mesh,frequency,wv);
       end
   end
 end

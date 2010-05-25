@@ -40,7 +40,7 @@ if strcmp(mesh.type,'stnd') || strcmp(mesh.type,'stnd_spn') || strcmp(mesh.type,
   fclose(fid);
   mesh.kappa = 1./(3.*(mesh.mua+mesh.mus));
   plotmesh(mesh);
-elseif strcmp(mesh.type,'fluor') == 1   % Use stnd fluorfast, non-spectral mesh
+elseif strcmp(mesh.type,'fluor') || strcmp(mesh.type,'fluor_bem')  % fluor
   if nargin == 2
     it = 0;
     fid = fopen([sol_fn '_etamuaf.sol'],'r');
@@ -58,7 +58,7 @@ elseif strcmp(mesh.type,'fluor') == 1   % Use stnd fluorfast, non-spectral mesh
   fclose(fid);
   plotmesh(mesh);
   
-elseif strcmp(mesh.type,'spec') == 1    % Use spectral mesh
+elseif strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')   % spec
   [nc,junk]=size(mesh.chromscattlist);
   if nargin == 2
     t = char(mesh.chromscattlist(1,1));

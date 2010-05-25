@@ -11,6 +11,8 @@ function mesh = load_mesh(fn)
 %               Spectral 'spec'
 %               Standard SPN 'stnd_spn'
 %               Standard BEM 'stnd_bem'
+%               Fluorescence BEM 'fluor_bem'
+%               Spectral BEM 'spec_bem'
 % 
 % fn is the filename of the mesh (with no extension)
 
@@ -107,9 +109,29 @@ elseif exist([fn '.param']) == 2
       mesh.ri = param(:,3);
       mesh.mus = ((1./mesh.kappa)./3)-mesh.mua;
       
-    % Load spectral Mesh
-    elseif strcmp(param.textdata(1,1),'spec') == 1
-      mesh.type = 'spec';
+      % Load fluorescence BEM mesh
+    elseif strcmp(param.textdata(1,1),'fluor_bem') == 1
+      mesh.type = 'fluor_bem';
+      param = param.data;
+      mesh.muax = param(:,1);
+      mesh.kappax = param(:,2);
+      mesh.musx = ((1./mesh.kappax)./3)-mesh.muax;
+      mesh.ri = param(:,3);
+      mesh.muam = param(:,4);
+      mesh.kappam = param(:,5);
+      mesh.musm = ((1./mesh.kappam)./3)-mesh.muam;
+      mesh.muaf =  param(:,6);
+      mesh.eta =  param(:,7);
+      mesh.tau =  param(:,8);
+      clear param
+      
+    % Load spectral Mesh (or spectral BEM)
+    elseif strcmp(param.textdata(1,1),'spec') || strcmp(param.textdata(1,1),'spec_bem')
+      if strcmp(param.textdata(1,1),'spec')
+        mesh.type = 'spec';
+      elseif strcmp(param.textdata(1,1),'spec_bem')
+          mesh.type = 'spec_bem';
+      end
       mesh.chromscattlist = param.textdata(2:end,1);
       % Get Scatter Amplitude
       ind = find(strcmpi(mesh.chromscattlist,'S-Amplitude'));
@@ -175,7 +197,7 @@ if exist([fn '.elem']) == 0
 elseif exist([fn '.elem']) == 2
   mesh.elements = load(strcat(fn, '.elem'));
   [junk,dim]=size(mesh.elements);
-  if strcmp(mesh.type,'stnd_bem')
+  if strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'fluor_bem') || strcmp(mesh.type,'spec_bem')
     mesh.dimension = dim;
   else
     mesh.dimension = dim-1;
@@ -195,7 +217,7 @@ end
 
 
 %% fix surface orientation for bem meshes
-if strcmp(mesh.type,'stnd_bem')
+if strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'fluor_bem') || strcmp(mesh.type,'spec_bem')
     if ~isfield(mesh,'region')
         errordlg('.region file is not present, required for BEM','NIRFAST Error');
         error('.region file is not present, required for BEM');
@@ -228,9 +250,9 @@ elseif exist([fn '.source']) == 2
       mus_eff = mesh.mus;
     elseif strcmp(mesh.type,'stnd_bem') == 1
         mus_eff = mesh.mus(1);
-    elseif strcmp(mesh.type,'fluor') == 1
+    elseif strcmp(mesh.type,'fluor') || strcmp(mesh.type,'fluor_bem')
       mus_eff = mesh.musx;
-    elseif strcmp(mesh.type,'spec') == 1
+    elseif strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')
       [mua,mus] = calc_mua_mus(mesh,mesh.wv(1));
       mus_eff = mus;
       clear mua mus
@@ -340,7 +362,7 @@ end
 
 %% speed of light in medium
 % If a spectral mesh, assume Refractive index = 1.33
-if strcmp(mesh.type,'spec') == 1
+if strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')
   mesh.ri = ones(length(mesh.nodes),1).*1.33;
 end
 mesh.c=(3e11./mesh.ri);
@@ -357,7 +379,7 @@ end
 
 
 %% area of each element
-if ~strcmp(mesh.type,'stnd_bem')
+if ~strcmp(mesh.type,'stnd_bem') && ~strcmp(mesh.type,'fluor_bem') && ~strcmp(mesh.type,'spec_bem')
     if mesh.dimension == 2
       mesh.element_area = ele_area_c(mesh.nodes(:,1:2),...
                      mesh.elements);

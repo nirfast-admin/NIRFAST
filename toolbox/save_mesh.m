@@ -29,10 +29,10 @@ elseif strcmp(mesh.type,'stnd_spn') == 1
   data = [mesh.mua mesh.mus mesh.g mesh.ri];
 elseif strcmp(mesh.type,'stnd_bem') == 1
   data = [mesh.mua mesh.kappa mesh.ri];
-elseif strcmp(mesh.type,'fluor') == 1
+elseif strcmp(mesh.type,'fluor') || strcmp(mesh.type,'fluor_bem')
   data = [mesh.muax mesh.kappax mesh.ri mesh.muam ...
 	  mesh.kappam mesh.muaf mesh.eta mesh.tau];
-elseif strcmp(mesh.type,'spec') == 1
+elseif strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')
   data = [];
   for i = 1 : length(mesh.chromscattlist)
     if strcmpi(mesh.chromscattlist(i),'S-Amplitude') == 0 & ...
@@ -46,7 +46,7 @@ end
 [nrow,ncol]=size(data);
 fid = fopen([fn '.param'],'w');
 fprintf(fid,'%s\n',mesh.type);
-if strcmp(mesh.type,'spec') == 1
+if strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')
   for i = 1 : length(mesh.chromscattlist)
     fprintf(fid,'%s\n',char(mesh.chromscattlist(i)));
   end
@@ -61,7 +61,7 @@ fclose(fid);
 clear data
 
 % save extinction file for spec mesh type
-if strcmp(mesh.type,'spec') == 1
+if strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')
   data = [mesh.wv mesh.excoef];
   [nrow,ncol]=size(data);
   fid = fopen([fn '.excoef'],'w');

@@ -24,7 +24,7 @@ function mesh = set_mesh(mesh, region, values)
 %  values.g - anisotropic number
 %  values.ri - refractive index
 % 
-% for a FLUORESCENCE mesh:
+% for a FLUORESCENCE or FLUORESCENCE BEM mesh:
 %  values.muax - absorption coefficient at excitation
 %  values.musx - scatter coefficient at excitation
 %  values.muam - absorption coefficient at emission
@@ -34,7 +34,7 @@ function mesh = set_mesh(mesh, region, values)
 %  values.tau - lifetime of fluorophore
 %  values.ri - refractive index
 % 
-% for a SPECTRAL mesh:
+% for a SPECTRAL or SPECTRAL BEM mesh:
 %  values.sa - S-amplitude
 %  values.sp - S-power
 %  values.HbO, values.deoxyHb, etc. for each chromophore
@@ -99,6 +99,38 @@ elseif strcmp(mesh.type,'stnd_spn')
         mesh.c(ind)=(3e11/values.ri);
     end
     
+% FLUORESCENCE BEM
+elseif strcmp(mesh.type,'fluor_bem')
+    if isfield(values,'muax')
+        mesh.muax(region) = values.muax;
+        mesh.kappax(region) = 1./(3.*(mesh.muax(region)+mesh.musx(region)));
+    end
+    if isfield(values,'musx')
+        mesh.musx(region) = values.musx;
+        mesh.kappax(region) = 1./(3.*(mesh.muax(region)+mesh.musx(region)));
+    end
+    if isfield(values,'muam')
+        mesh.muam(region) = values.muam;
+        mesh.kappam(region) = 1./(3.*(mesh.muam(region)+mesh.musm(region)));
+    end
+    if isfield(values,'musm')
+        mesh.musm(region) = values.musm;
+        mesh.kappam(region) = 1./(3.*(mesh.muam(region)+mesh.musm(region)));
+    end
+    if isfield(values,'muaf')
+        mesh.muaf(region) = values.muaf;
+    end
+    if isfield(values,'eta')
+        mesh.eta(region) = values.eta;
+    end
+    if isfield(values,'tau')
+        mesh.tau(region) = values.tau;
+    end
+    if isfield(values,'ri')
+        mesh.ri(region) = values.ri;
+        mesh.c(region)=(3e11/values.ri);
+    end
+    
 % FLUORESCENCE
 elseif strcmp(mesh.type,'fluor')
     if isfield(values,'muax')
@@ -129,6 +161,28 @@ elseif strcmp(mesh.type,'fluor')
     if isfield(values,'ri')
         mesh.ri(ind) = values.ri;
         mesh.c(ind)=(3e11/values.ri);
+    end
+
+% SPECTRAL BEM
+elseif strcmp(mesh.type,'spec_bem')
+    if isfield(values,'sa')
+        mesh.sa(region) = values.sa;
+    end
+    if isfield(values,'sp')
+        mesh.sp(region) = values.sp;
+    end
+    if isfield(values,'ri')
+        mesh.ri(region) = values.ri;
+        mesh.c(region)=(3e11/values.ri);
+    end
+    for i=1:1:numel(mesh.chromscattlist)
+        if isfield(values,mesh.chromscattlist(i))
+            fld=mesh.chromscattlist(i);
+            comm = strcat('v=values.',fld,';');
+            eval(comm{1});
+            comm = strcat('mesh.',fld,'(region)=values.',fld,';');
+            eval(comm{1});
+        end
     end
     
 % SPECTRAL

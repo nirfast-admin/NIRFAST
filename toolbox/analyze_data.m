@@ -46,10 +46,12 @@ end
 
 % find data
 phasedata = 0;
-if (strcmp(mesh.type,'stnd') || strcmp(mesh.type,'spec')) && isfield(idata,'paa')
+if (strcmp(mesh.type,'stnd') || strcmp(mesh.type,'spec') || strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'spec_bem')) ...
+        && isfield(idata,'paa')
     data_big = idata.paa;
     phasedata = 1;
-elseif strcmp(mesh.type,'fluor') && (isfield(idata,'paafl') || isfield(idata,'amplitudefl'))
+elseif (strcmp(mesh.type,'fluor') || strcmp(mesh.type,'fluor_bem')) ...
+        && (isfield(idata,'paafl') || isfield(idata,'amplitudefl'))
     if isfield(idata,'paafl')
         data_big = idata.paafl;
         phasedata = 1;
@@ -188,15 +190,16 @@ for i=1:1+phasedata:size(data_big,2)
 end
     
 % set output data
-if strcmp(mesh.type,'stnd') || strcmp(mesh.type,'spec')
+if strcmp(mesh.type,'stnd') || strcmp(mesh.type,'spec') || ...
+        strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'spec_bem')
     odata.paa = data_big;
-    if strcmp(mesh.type,'stnd')
+    if strcmp(mesh.type,'stnd') || strcmp(mesh.type,'stnd_bem')
         odata.amplitude = odata.paa(:,1);
         if phasedata
             odata.phase = odata.paa(:,2);
         end
     end
-elseif strcmp(mesh.type,'fluor')
+elseif strcmp(mesh.type,'fluor') || strcmp(mesh.type,'fluor_bem')
     if phasedata
         odata.paafl = data_big;
         odata.amplitudefl = odata.paafl(:,1);
