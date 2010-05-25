@@ -11,13 +11,14 @@ function create_mesh(outputfn,shape,sizevar,type)
 
 
 %% error checking
-if (strcmp(shape,'circle') || strcmp(shape,'rectangle')) && strcmp(type,'stnd_bem')
+if (strcmp(shape,'circle') || strcmp(shape,'rectangle')) && ...
+        (strcmp(type,'stnd_bem') || strcmp(type,'fluor_bem') || strcmp(type,'spec_bem'))
     errordlg('BEM works for 3D shapes only','NIRFAST Error');
     error('BEM works for 3D shapes only');
 end
 
 %% node, elements, bndvtx
-if strcmp(type,'stnd_bem')
+if strcmp(type,'stnd_bem') || strcmp(type,'fluor_bem') || strcmp(type,'spec_bem')
     eval(['mesh = make_' lower(shape) '(sizevar,1);']);
 else
     eval(['mesh = make_' lower(shape) '(sizevar);']);
@@ -35,7 +36,7 @@ else
 end
 
 %% region
-if strcmp(type,'stnd_bem')
+if strcmp(type,'stnd_bem') || strcmp(type,'fluor_bem') || strcmp(type,'spec_bem')
     mesh.region = [ones(size(mesh.elements,1),1) zeros(size(mesh.elements,1),1)];
 else
     mesh.region = zeros(size(mesh.nodes,1),1);
@@ -75,6 +76,24 @@ elseif strcmp(type,'stnd_bem')
     mesh.mua = ones(1,1);
     mesh.mus = ones(1,1);
     mesh.kappa = 1./(3.*(mesh.mua+mesh.mus));
+    mesh.ri = ones(1,1);
+elseif strcmp(type,'fluor_bem')
+    mesh.muax = ones(1,1);
+    mesh.musx = ones(1,1);
+    mesh.kappax = 1./(3.*(mesh.muax+mesh.musx));
+    mesh.muam = ones(1,1);
+    mesh.musm = ones(1,1);
+    mesh.kappam = 1./(3.*(mesh.muam+mesh.musm));
+    mesh.muaf = ones(1,1);
+    mesh.eta = ones(1,1);
+    mesh.tau = ones(1,1);
+    mesh.ri = ones(1,1);
+elseif strcmp(type,'spec_bem')
+    mesh.sa = ones(1,1);
+    mesh.sp = ones(1,1);
+    mesh.chromscattlist = [{'S-Amplitude'};{'S-Power'}];
+    mesh.wv = [661];
+    mesh.excoef = [];
     mesh.ri = ones(1,1);
 else
     errordlg('Invalid mesh type','NIRFAST Error');

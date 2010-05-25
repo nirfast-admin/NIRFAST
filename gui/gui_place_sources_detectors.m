@@ -84,7 +84,8 @@ if isfield(handles,'meshloc')
         xlabel('x')
         ylabel('y')
         zlabel('z')
-        if ~strcmp(mesh.type,'stnd_bem')
+        if ~strcmp(mesh.type,'stnd_bem') && ...
+                ~strcmp(mesh.type,'fluor_bem') && ~strcmp(mesh.type,'spec_bem')
             [mesh.elements,mesh.nodes] = boundfaces(mesh.nodes,mesh.elements);
         end
         trisurf(mesh.elements,mesh.nodes(:,1),mesh.nodes(:,2),mesh.nodes(:,3));

@@ -22,7 +22,7 @@ function varargout = nirfast(varargin)
 
 % Edit the above text to modify the response to help_main nirfast
 
-% Last Modified by GUIDE v2.5 05-May-2010 08:15:11
+% Last Modified by GUIDE v2.5 25-May-2010 14:08:32
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -790,4 +790,69 @@ function reconstruct_stnd_bem_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 gui_reconstruct('type','stnd_bem');
+
+
+% --------------------------------------------------------------------
+function set_values_fluor_bem_Callback(hObject, eventdata, handles)
+% hObject    handle to set_values_fluor_bem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_set_values('type','fluor_bem');
+
+
+% --------------------------------------------------------------------
+function set_values_spec_bem_Callback(hObject, eventdata, handles)
+% hObject    handle to set_values_spec_bem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_set_values('type','spec_bem');
+
+
+% --------------------------------------------------------------------
+function add_anomaly_fluor_bem_Callback(hObject, eventdata, handles)
+% hObject    handle to add_anomaly_fluor_bem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_add_anomaly('type','fluor_bem');
+
+
+% --------------------------------------------------------------------
+function add_anomaly_spec_bem_Callback(hObject, eventdata, handles)
+% hObject    handle to add_anomaly_spec_bem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_add_anomaly('type','spec_bem');
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_fluor_bem_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_fluor_bem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_convert_inptonirfast('type','fluor_bem');
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_spec_bem_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_spec_bem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_convert_inptonirfast('type','spec_bem');
+
+
+% --------------------------------------------------------------------
+function create_mesh_fluor_bem_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_fluor_bem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh('type','fluor_bem');
+
+
+% --------------------------------------------------------------------
+function create_mesh_spec_bem_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_spec_bem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh('type','spec_bem');
+
 

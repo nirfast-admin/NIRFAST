@@ -66,7 +66,7 @@ if(nargin > 3)
 end
 
 % Modify GUI based on type
-if strcmp(handles.type,'fluor') == 0
+if ~strcmp(handles.type,'fluor') && ~strcmp(handles.type,'fluor_bem')
     set(handles.muax,'Enable','off');
     set(handles.musx,'Enable','off');
     set(handles.muam,'Enable','off');
@@ -75,7 +75,7 @@ if strcmp(handles.type,'fluor') == 0
     set(handles.eta,'Enable','off');
     set(handles.tau,'Enable','off');
 end
-if strcmp(handles.type,'spec') == 0
+if ~strcmp(handles.type,'spec') && ~strcmp(handles.type,'spec_bem')
     set(handles.sa,'Enable','off');
     set(handles.sp,'Enable','off');
     set(handles.chromophores,'Enable','off');
@@ -90,7 +90,8 @@ end
 if strcmp(handles.type,'stnd_spn') == 0
     set(handles.g,'Enable','off');
 end
-if strcmp(handles.type,'stnd_bem')
+if strcmp(handles.type,'stnd_bem') || ...
+        strcmp(handles.type,'fluor_bem') || strcmp(handles.type,'spec_bem')
     set(handles.region_text,'String','Region Containing Anomaly :');
 else
     set(handles.dist,'Enable','off');
@@ -686,7 +687,7 @@ if strcmp(handles.type,'stnd') || strcmp(handles.type,'stnd_spn') || strcmp(hand
     end
     
 % FLUORESCENCE
-elseif strcmp(handles.type,'fluor')
+elseif strcmp(handles.type,'fluor') || strcmp(handles.type,'fluor_bem')
     content{end+1} = strcat('blob.x=',get(handles.xPosition,'String'),';');
     if ~batch
         evalin('base',content{end});
@@ -759,9 +760,15 @@ elseif strcmp(handles.type,'fluor')
             evalin('base',content{end});
         end
     end
+    if get(handles.dist,'String')
+        content{end+1} = strcat('blob.dist=',get(handles.dist,'String'),';');
+        if ~batch
+            evalin('base',content{end});
+        end
+    end
     
 % SPECTRAL
-elseif strcmp(handles.type,'spec')
+elseif strcmp(handles.type,'spec') || strcmp(handles.type,'spec_bem')
     content{end+1} = strcat('blob.x=',get(handles.xPosition,'String'),';');
     if ~batch
         evalin('base',content{end});
@@ -794,6 +801,12 @@ elseif strcmp(handles.type,'spec')
     end
     if get(handles.sp,'String')
         content{end+1} = strcat('blob.sp=',get(handles.sp,'String'),';');
+        if ~batch
+            evalin('base',content{end});
+        end
+    end
+    if get(handles.dist,'String')
+        content{end+1} = strcat('blob.dist=',get(handles.dist,'String'),';');
         if ~batch
             evalin('base',content{end});
         end

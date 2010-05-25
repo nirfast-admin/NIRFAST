@@ -66,7 +66,7 @@ if(nargin > 3)
 end
 
 % Modify GUI based on type
-if strcmp(handles.type,'fluor') == 0
+if ~strcmp(handles.type,'fluor') && ~strcmp(handles.type,'fluor_bem')
     set(handles.muax,'Enable','off');
     set(handles.musx,'Enable','off');
     set(handles.muam,'Enable','off');
@@ -75,7 +75,7 @@ if strcmp(handles.type,'fluor') == 0
     set(handles.eta,'Enable','off');
     set(handles.tau,'Enable','off');
 end
-if strcmp(handles.type,'spec') == 0
+if ~strcmp(handles.type,'spec') && ~strcmp(handles.type,'spec_bem')
     set(handles.sa,'Enable','off');
     set(handles.sp,'Enable','off');
     set(handles.chromophores,'Enable','off');

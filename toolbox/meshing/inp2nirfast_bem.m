@@ -71,11 +71,33 @@ fprintf('\tWriting nirfast mesh files\n');
 
 nregions = size(unique(mesh.region),1)-1;
 mesh.dimension = 3;
-mesh.mua = ones(nregions,1)*0.006;
-mesh.mus = ones(nregions,1)*2;
-mesh.kappa = 1./(3.*(mesh.mua+mesh.mus));
 mesh.ri = ones(nregions,1)*1.33;
 mesh.type = type;
+
+if strcmp(mesh.type,'stnd_bem')
+    mesh.mua = ones(nregions,1)*0.006;
+    mesh.mus = ones(nregions,1)*2;
+    mesh.kappa = 1./(3.*(mesh.mua+mesh.mus));
+elseif strcmp(mesh.type,'fluor_bem')
+    mesh.muax = ones(nregions,1)*0.006;
+    mesh.musx = ones(nregions,1)*2;
+    mesh.kappax = 1./(3.*(mesh.muax+mesh.musx));
+    mesh.muam = ones(nregions,1)*0.006;
+    mesh.musm = ones(nregions,1)*2;
+    mesh.kappam = 1./(3.*(mesh.muam+mesh.musm));
+    mesh.eta = ones(nregions,1);
+    mesh.tau = ones(nregions,1);
+    mesh.muaf = ones(nregions,1);
+elseif strcmp(mesh.type,'spec_bem')
+    mesh.sa = ones(nregions,1);
+    mesh.sp = ones(nregions,1);
+    mesh.chromscattlist = [{'S-Amplitude'};{'S-Power'}];
+    mesh.wv = [661];
+    mesh.excoef = [];
+else
+    errordlg('Invalid BEM mesh type','NIRFAST Error');
+    error('Invalid BEM mesh type');
+end
 
 save_mesh(mesh,saveloc);
 

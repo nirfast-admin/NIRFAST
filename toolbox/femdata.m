@@ -32,6 +32,18 @@ elseif strcmp(mesh.type,'spec') == 1    % Use spectral mesh
   elseif nargin == 3
     data = femdata_spectral(mesh,frequency,wv);
   end
+elseif strcmp(mesh.type,'stnd_spn') == 1        % stnd spn (assume n=5 if this was called)
+  data = femdata_sp5(mesh,frequency);
+elseif strcmp(mesh.type,'stnd_bem') == 1        % stnd bem
+  data = bemdata_stnd(mesh,frequency);
+elseif strcmp(mesh.type,'fluor_bem') == 1   % fluor bem
+  data = bemdata_fl(mesh,frequency);
+elseif strcmp(mesh.type,'spec_bem') == 1    % spec bem
+  if nargin == 2
+    data = bemdata_spectral(mesh,frequency);
+  elseif nargin == 3
+    data = bemdata_spectral(mesh,frequency,wv);
+  end
 else
     errordlg('The mesh type was not found; you may need to call a specific forward solver','NIRFAST Error');
     error('The mesh type was not found; you may need to call a specific forward solver');

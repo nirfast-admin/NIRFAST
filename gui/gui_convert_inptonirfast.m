@@ -141,7 +141,8 @@ batch = get(mainGUIdata.batch_mode,'Value');
 
 inploc = get_pathloc(get(handles.inp,'String'));
 
-if strcmp(handles.type,'stnd_bem')
+if strcmp(handles.type,'stnd_bem') || ...
+        strcmp(handles.type,'fluor_bem') || strcmp(handles.type,'spec_bem')
     content{end+1} = strcat('inp2nirfast_bem(',inploc,',''',get(handles.savemeshto,'String'),...
         ''',''',handles.type,''');');
     if ~batch

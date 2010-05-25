@@ -342,10 +342,10 @@ mesh = handles.meshvar;
 
 % find data
 phasedata = 0;
-if strcmp(mesh.type,'stnd') || strcmp(mesh.type,'spec')
+if isfield(idata,'paa')
     data_big = idata.paa;
     phasedata = 1;
-elseif strcmp(mesh.type,'fluor')
+else
     if isfield(idata,'paafl')
         data_big = idata.paafl;
         phasedata = 1;
