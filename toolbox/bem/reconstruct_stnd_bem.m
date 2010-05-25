@@ -120,7 +120,7 @@ for it = 1 : iteration
   if it ~= 1
     p = (pj_error(it-1)-pj_error(it))*100/pj_error(it-1);
     write_log(fid_log,'Projection error change   = %f %%\n',p,1);
-    if p <= 2 || (pj_error(it) < (10^-18)) % stopping criteria is currently set at 2% decrease change
+    if p <= 0.5 || (pj_error(it) < (10^-18)) % stopping criteria is currently set at 2% decrease change
       write_log(fid_log,{'---------------------------------\n';...
                          'STOPPING CRITERIA REACHED\n'},{[];[]},1);
      break
