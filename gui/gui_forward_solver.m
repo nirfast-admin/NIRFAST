@@ -66,8 +66,7 @@ if(nargin > 3)
 end
 
 % Modify GUI based on type of forward solver
-if strcmp(handles.type,'stnd') || strcmp(handles.type,'fluor')...
-        || strcmp(handles.type,'stnd_spn') || strcmp(handles.type,'stnd_bem')
+if ~strcmp(handles.type,'spec') && ~strcmp(handles.type,'spec_bem')
     set(handles.wv_array,'Enable','off');
 end
 if strcmp(handles.type,'stnd')==0
@@ -324,11 +323,26 @@ if strcmp(handles.type,'stnd_spn')
         end
     end
 elseif strcmp(handles.type,'stnd_bem')
-    % bem
+    % bem stnd
     content{end+1} = strcat(varname,' = bemdata_stnd(',meshloc,',',...
         get(handles.frequency,'String'),');');
     if ~batch
         evalin('base',content{end});
+    end
+elseif strcmp(handles.type,'spec_bem')
+    % bem spec
+    if wv_array
+        content{end+1} = strcat(varname,' = bemdata_spectral(',meshloc,',',...
+            get(handles.frequency,'String'),',',wv_array,');');
+        if ~batch
+            evalin('base',content{end});
+        end
+    else
+        content{end+1} = strcat(varname,' = bemdata_spectral(',meshloc,',',...
+            get(handles.frequency,'String'),');');
+        if ~batch
+            evalin('base',content{end});
+        end
     end
 else
     % not spn or bem

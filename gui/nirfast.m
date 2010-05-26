@@ -22,7 +22,7 @@ function varargout = nirfast(varargin)
 
 % Edit the above text to modify the response to help_main nirfast
 
-% Last Modified by GUIDE v2.5 25-May-2010 14:08:32
+% Last Modified by GUIDE v2.5 26-May-2010 09:48:12
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -57,20 +57,9 @@ handles.output = hObject;
 set(hObject,'Name','NIRFAST');
 
 % Make sure mex files exist
-if (exist('create_L_fast_final','file') ~= 3 ||...
-        exist('distance','file') ~= 3 ||...
-        exist('ele_area_c','file') ~= 3 ||...
-        exist('gen_matrices_2d','file') ~= 3 ||...
-        exist('gen_matrices_3d','file') ~= 3 ||...
-        exist('gen_source','file') ~= 3 ||...
-        exist('gen_source_fl','file') ~= 3 ||...
-        exist('IntFG','file') ~= 3 ||...
-        exist('IntFG_tet4','file') ~= 3 ||...
-        exist('IntgradFgradG','file') ~= 3 ||...
-        exist('IntgradFgradG_tet4','file') ~= 3 ||...
-        exist('mesh_support','file') ~= 3)
-    errordlg('The mex files in toolbox/mex need to be compiled','NIRFAST Error');
-    error('The mex files in toolbox/mex need to be compiled');
+if exist('IntFG','file') ~= 3
+    errordlg('The mex files in toolbox/mex need to be compiled, or the MATLAB path needs to be properly set','NIRFAST Error');
+    error('The mex files in toolbox/mex need to be compiled, or the MATLAB path needs to be properly set');
 end
 
 % Update handles structure
@@ -856,3 +845,9 @@ function create_mesh_spec_bem_Callback(hObject, eventdata, handles)
 gui_create_mesh('type','spec_bem');
 
 
+% --------------------------------------------------------------------
+function forward_solver_spec_bem_Callback(hObject, eventdata, handles)
+% hObject    handle to forward_solver_spec_bem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_forward_solver('type','spec_bem');

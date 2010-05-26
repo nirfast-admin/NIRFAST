@@ -362,8 +362,10 @@ end
 
 %% speed of light in medium
 % If a spectral mesh, assume Refractive index = 1.33
-if strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')
+if strcmp(mesh.type,'spec')
   mesh.ri = ones(length(mesh.nodes),1).*1.33;
+elseif strcmp(mesh.type,'spec_bem')
+    mesh.ri = ones(size(mesh.sa,1),1).*1.33;
 end
 mesh.c=(3e11./mesh.ri);
 
