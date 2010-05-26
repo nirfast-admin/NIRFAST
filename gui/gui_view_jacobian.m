@@ -64,7 +64,7 @@ if(nargin > 3)
         end
     end
 end
-if strcmp(handles.type,'spec')==0
+if ~strcmp(handles.type,'spec') && ~strcmp(handles.type,'spec_bem')
     set(handles.wv_array,'Enable','off');
 end
 set(handles.spn,'Value',3.0);

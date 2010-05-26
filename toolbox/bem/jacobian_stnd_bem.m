@@ -21,9 +21,8 @@ if ischar(mesh)== 1
   mesh = load_mesh(mesh);
 end
 
-myargs.verbose=1;
 %% calulate data
-data = bemdata_stnd(mesh,frequency,myargs);
+data = bemdata_stnd(mesh,frequency);
 
 data.paa(:,1) = log(data.paa(:,1));
 if frequency ~=0
