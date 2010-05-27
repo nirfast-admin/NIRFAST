@@ -175,12 +175,10 @@ elseif strcmp(mesh.type,'spec_bem')
         mesh.ri(region) = values.ri;
         mesh.c(region)=(3e11/values.ri);
     end
-    for i=1:1:numel(mesh.chromscattlist)
+    for i=1:1:numel(mesh.chromscattlist)-2
         if isfield(values,mesh.chromscattlist(i))
             fld=mesh.chromscattlist(i);
-            comm = strcat('v=values.',fld,';');
-            eval(comm{1});
-            comm = strcat('mesh.',fld,'(region)=values.',fld,';');
+            comm = strcat('mesh.conc(region,i)=values.',fld,';');
             eval(comm{1});
         end
     end
@@ -197,12 +195,10 @@ elseif strcmp(mesh.type,'spec')
         mesh.ri(ind) = values.ri;
         mesh.c(ind)=(3e11/values.ri);
     end
-    for i=1:1:numel(mesh.chromscattlist)
+    for i=1:1:numel(mesh.chromscattlist)-2
         if isfield(values,mesh.chromscattlist(i))
             fld=mesh.chromscattlist(i);
-            comm = strcat('v=values.',fld,';');
-            eval(comm{1});
-            comm = strcat('mesh.',fld,'(ind)=values.',fld,';');
+            comm = strcat('mesh.conc(ind,i)=values.',fld,';');
             eval(comm{1});
         end
     end

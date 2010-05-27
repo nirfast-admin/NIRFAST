@@ -22,7 +22,7 @@ function varargout = nirfast(varargin)
 
 % Edit the above text to modify the response to help_main nirfast
 
-% Last Modified by GUIDE v2.5 26-May-2010 15:28:21
+% Last Modified by GUIDE v2.5 27-May-2010 11:11:48
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -859,3 +859,12 @@ function view_jacobian_spec_bem_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 gui_view_jacobian('type','spec_bem');
+
+
+% --------------------------------------------------------------------
+function reconstruct_spec_bem_Callback(hObject, eventdata, handles)
+% hObject    handle to reconstruct_spec_bem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_reconstruct('type','spec_bem');
+
