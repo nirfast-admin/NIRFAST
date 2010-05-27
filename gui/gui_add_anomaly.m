@@ -22,7 +22,7 @@ function varargout = gui_add_anomaly(varargin)
 
 % Edit the above text to modify the response to help gui_add_anomaly
 
-% Last Modified by GUIDE v2.5 17-Mar-2010 10:22:40
+% Last Modified by GUIDE v2.5 27-May-2010 09:22:56
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -916,5 +916,3 @@ function dist_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-

@@ -81,11 +81,14 @@ if strcmp(mesh.type,'spec_bem')
     end
     
     [nc,junk]=size(mesh.chromscattlist);
+    mesh.conc(end+1,:) = 0;
     for i = 1 : nc
        if strcmpi(mesh.chromscattlist(i),'S-Amplitude') == 0 & ...
                 strcmpi(mesh.chromscattlist(i),'S-Power') == 0
             if isfield(blob,char(mesh.chromscattlist(i,1)))
-                mesh.conc(end+1,i) = getfield(blob,char(mesh.chromscattlist(i,1)));
+                mesh.conc(end,i) = getfield(blob,char(mesh.chromscattlist(i,1)));
+            else
+                mesh.conc(end,i) = mesh.conc(end-1,i);
             end
        end
     end

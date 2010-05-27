@@ -319,6 +319,7 @@ elseif strcmp(mesh.type,'spec_bem') == 1
     plotim(mesh,val);
   title('Scatter Amplitude','FontSize',10);
   colorbar;
+  subplot(n,2,k+2);
   val = zeros(size(mesh.nodes,1),1);
       for i=1:size(mesh.sp,1)
           if i==1
