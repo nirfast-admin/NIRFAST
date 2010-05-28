@@ -22,7 +22,7 @@ function varargout = nirfast(varargin)
 
 % Edit the above text to modify the response to help_main nirfast
 
-% Last Modified by GUIDE v2.5 27-May-2010 11:11:48
+% Last Modified by GUIDE v2.5 28-May-2010 10:13:31
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -750,6 +750,7 @@ function create_mesh_2D_stnd_Callback(hObject, eventdata, handles)
 % hObject    handle to create_mesh_2D_stnd (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_2D('type','stnd');
 
 
 % --------------------------------------------------------------------
@@ -757,6 +758,7 @@ function create_mesh_2D_fluor_Callback(hObject, eventdata, handles)
 % hObject    handle to create_mesh_2D_fluor (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_2D('type','fluor');
 
 
 % --------------------------------------------------------------------
@@ -764,6 +766,7 @@ function create_mesh_2D_spec_Callback(hObject, eventdata, handles)
 % hObject    handle to create_mesh_2D_spec (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_2D('type','spec');
 
 
 % --------------------------------------------------------------------
@@ -771,6 +774,7 @@ function create_mesh_2D_stnd_spn_Callback(hObject, eventdata, handles)
 % hObject    handle to create_mesh_2D_stnd_spn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_2D('type','stnd_spn');
 
 
 % --------------------------------------------------------------------
@@ -867,4 +871,106 @@ function reconstruct_spec_bem_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 gui_reconstruct('type','spec_bem');
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_mask_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_mask (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_surface_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_surface (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_surface_stnd_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_surface_stnd (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_3D_surface('type','stnd');
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_surface_fluor_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_surface_fluor (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_3D_surface('type','fluor');
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_surface_spec_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_surface_spec (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_3D_surface('type','spec');
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_surface_spn_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_surface_spn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_3D_surface('type','stnd_spn');
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_mask_stnd_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_mask_stnd (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_3D_mask('type','stnd');
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_mask_fluor_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_mask_fluor (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_3D_mask('type','fluor');
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_mask_spec_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_mask_spec (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_3D_mask('type','spec');
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_mask_spn_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_mask_spn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_3D_mask('type','stnd_spn');
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_mask_stnd_bem_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_mask_stnd_bem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_3D_mask('type','stnd_bem');
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_mask_fluor_bem_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_mask_fluor_bem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_3D_mask('type','fluor_bem');
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_mask_spec_bem_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_mask_spec_bem (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_3D_mask('type','spec_bem');
 

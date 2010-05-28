@@ -69,7 +69,7 @@ handles.sourceflag = 0;
 handles.detectorflag = 0;
 
 % draw mesh if exists
-if isfield(handles,'meshloc')
+if isfield(handles,'meshloc') && exist([handles.meshloc '.node'],'file')
     axes(handles.mesh)
     hold on
     mesh = load_mesh(handles.meshloc);
