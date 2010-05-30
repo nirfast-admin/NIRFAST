@@ -60,6 +60,8 @@ if(nargin > 3)
         switch lower(varargin{index})
          case 'type'
          handles.type = varargin{index+1};
+         case 'structure'
+         handles.structure = varargin{index+1};
         end
     end
 end
@@ -149,10 +151,18 @@ if strcmp(handles.type,'stnd_bem') || ...
         evalin('base',content{end});
     end
 else
-    content{end+1} = strcat('inp2nirfast_fem(',inploc,',''',get(handles.savemeshto,'String'),...
-        ''',''',handles.type,''');');
-    if ~batch
-        evalin('base',content{end});
+    if isfield(handles,'structure') && strcmp(handles.structure,'surface')
+        content{end+1} = strcat('checkerboard3dmm_wrapper(',inploc,',''',get(handles.savemeshto,'String'),...
+            ''',''',handles.type,''');');
+        if ~batch
+            evalin('base',content{end});
+        end
+    else
+        content{end+1} = strcat('inp2nirfast_fem(',inploc,',''',get(handles.savemeshto,'String'),...
+            ''',''',handles.type,''');');
+        if ~batch
+            evalin('base',content{end});
+        end
     end
 end
 

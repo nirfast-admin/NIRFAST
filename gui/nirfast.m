@@ -22,7 +22,7 @@ function varargout = nirfast(varargin)
 
 % Edit the above text to modify the response to help_main nirfast
 
-% Last Modified by GUIDE v2.5 28-May-2010 10:13:31
+% Last Modified by GUIDE v2.5 30-May-2010 13:59:12
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -892,7 +892,7 @@ function create_mesh_3D_surface_stnd_Callback(hObject, eventdata, handles)
 % hObject    handle to create_mesh_3D_surface_stnd (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-gui_create_mesh_3D_surface('type','stnd');
+gui_convert_inptonirfast('type','stnd','structure','surface');
 
 
 % --------------------------------------------------------------------
@@ -900,7 +900,7 @@ function create_mesh_3D_surface_fluor_Callback(hObject, eventdata, handles)
 % hObject    handle to create_mesh_3D_surface_fluor (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-gui_create_mesh_3D_surface('type','fluor');
+gui_convert_inptonirfast('type','fluor','structure','surface');
 
 
 % --------------------------------------------------------------------
@@ -908,7 +908,7 @@ function create_mesh_3D_surface_spec_Callback(hObject, eventdata, handles)
 % hObject    handle to create_mesh_3D_surface_spec (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-gui_create_mesh_3D_surface('type','spec');
+gui_convert_inptonirfast('type','spec','structure','surface');
 
 
 % --------------------------------------------------------------------
@@ -916,7 +916,7 @@ function create_mesh_3D_surface_spn_Callback(hObject, eventdata, handles)
 % hObject    handle to create_mesh_3D_surface_spn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-gui_create_mesh_3D_surface('type','stnd_spn');
+gui_convert_inptonirfast('type','stnd_spn','structure','surface');
 
 
 % --------------------------------------------------------------------
@@ -973,4 +973,3 @@ function create_mesh_3D_mask_spec_bem_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 gui_create_mesh_3D_mask('type','spec_bem');
-
