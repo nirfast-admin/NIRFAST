@@ -279,6 +279,9 @@ elseif exist([fn '.source']) == 2
       errordlg('Source(s) outside the mesh; either move them manually or remove ''fixed'' from the source file','NIRFAST Warning');
     end
   end
+  if size(mesh.source.coord,2) == 2
+    mesh.source.coord(:,end+1) = 0;
+  end
   clear source mus_eff
 end
 
@@ -317,6 +320,9 @@ elseif exist([fn '.meas']) == 2
     else
       mesh.meas.int_func = [ind int_func];
     end
+  end
+  if size(mesh.meas.coord,2) == 2
+    mesh.meas.coord(:,end+1) = 0;
   end
   clear meas
 end
