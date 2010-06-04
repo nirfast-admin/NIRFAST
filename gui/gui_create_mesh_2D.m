@@ -185,7 +185,7 @@ mainGUIdata  = guidata(mainGUIhandle);
 content = get(mainGUIdata.script,'String');
 batch = get(mainGUIdata.batch_mode,'Value');
 
-bmploc = get_pathloc(get(handles.bmp,'String'));
+bmploc = strcat('''',get(handles.bmp,'String'),'''');
 
 content{end+1} = strcat('mask2mesh_2D(',bmploc,...
     ',',get(handles.pixel,'String'),...

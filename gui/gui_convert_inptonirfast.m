@@ -60,8 +60,6 @@ if(nargin > 3)
         switch lower(varargin{index})
          case 'type'
          handles.type = varargin{index+1};
-         case 'structure'
-         handles.structure = varargin{index+1};
         end
     end
 end
@@ -141,7 +139,7 @@ mainGUIdata  = guidata(mainGUIhandle);
 content = get(mainGUIdata.script,'String');
 batch = get(mainGUIdata.batch_mode,'Value');
 
-inploc = get_pathloc(get(handles.inp,'String'));
+inploc = strcat('''',get(handles.inp,'String'),'''');
 
 if strcmp(handles.type,'stnd_bem') || ...
         strcmp(handles.type,'fluor_bem') || strcmp(handles.type,'spec_bem')
@@ -151,18 +149,10 @@ if strcmp(handles.type,'stnd_bem') || ...
         evalin('base',content{end});
     end
 else
-    if isfield(handles,'structure') && strcmp(handles.structure,'surface')
-        content{end+1} = strcat('checkerboard3dmm_wrapper(',inploc,',''',get(handles.savemeshto,'String'),...
-            ''',''',handles.type,''');');
-        if ~batch
-            evalin('base',content{end});
-        end
-    else
-        content{end+1} = strcat('inp2nirfast_fem(',inploc,',''',get(handles.savemeshto,'String'),...
-            ''',''',handles.type,''');');
-        if ~batch
-            evalin('base',content{end});
-        end
+    content{end+1} = strcat('checkerboard3dmm_wrapper(',inploc,',''',get(handles.savemeshto,'String'),...
+        ''',''',handles.type,''');');
+    if ~batch
+        evalin('base',content{end});
     end
 end
 
