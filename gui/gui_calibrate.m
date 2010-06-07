@@ -22,7 +22,7 @@ function varargout = gui_calibrate(varargin)
 
 % Edit the above text to modify the response to help gui_calibrate
 
-% Last Modified by GUIDE v2.5 11-Aug-2009 13:31:41
+% Last Modified by GUIDE v2.5 07-Jun-2010 09:03:24
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -626,5 +626,3 @@ function variables_amesh_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-

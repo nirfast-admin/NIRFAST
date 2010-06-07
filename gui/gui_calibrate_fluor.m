@@ -22,7 +22,7 @@ function varargout = gui_calibrate_fluor(varargin)
 
 % Edit the above text to modify the response to help gui_calibrate_fluor
 
-% Last Modified by GUIDE v2.5 31-Aug-2009 09:12:57
+% Last Modified by GUIDE v2.5 07-Jun-2010 09:03:51
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -388,5 +388,3 @@ function iterations_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-

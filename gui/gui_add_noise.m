@@ -22,7 +22,7 @@ function varargout = gui_add_noise(varargin)
 
 % Edit the above text to modify the response to help gui_add_noise
 
-% Last Modified by GUIDE v2.5 11-Aug-2009 13:07:54
+% Last Modified by GUIDE v2.5 07-Jun-2010 09:02:39
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -269,5 +269,3 @@ function variables_data_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
