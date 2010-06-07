@@ -75,31 +75,16 @@ mua = 0.01; mus = 1; kappa = 1/(3*(mua+mus));
 for i = 1 : 25
   f1 = ((mua^2 + (omega/c)^2) / (kappa^2))^0.25;
   alpha = -f1*cos(0.5*atan2(omega/c,mua));
-  phi = f1*sin(0.5*atan2(omega/c,mua))*180/pi;
   
   mua = mua + 0.0001; 
   kappa = 1/(3*(mua+mus));
   f1 = ((mua^2 + (omega/c)^2) / (kappa^2))^0.25;
   alpha1 = -f1*cos(0.5*atan2(omega/c,mua));
-  phi1 = f1*sin(0.5*atan2(omega/c,mua))*180/pi;
   mua = mua - 0.0001;   
-  da = (alpha-alpha1)/0.0001;
-  ds = (phi-phi1)/0.0001;
-  mua = mua - (m1-alpha)/da;
-  kappa = 1/(3*(mua+mus));
-  f1 = ((mua^2 + (omega/c)^2) / (kappa^2))^0.25;
-  alpha = -f1*cos(0.5*atan2(omega/c,mua));
-  phi = f1*sin(0.5*atan2(omega/c,mua))*180/pi;
   
-  mus = mus + 0.001; 
-  kappa = 1/(3*(mua+mus));
-  f1 = ((mua^2 + (omega/c)^2) / (kappa^2))^0.25;
-  alpha2 = -f1*cos(0.5*atan2(omega/c,mua));
-  phi2 = f1*sin(0.5*atan2(omega/c,mua))*180/pi;
-  mus = mus - 0.001; 
-  da = (alpha-alpha2)/0.001;
-  ds = (phi-phi2)/0.001;
-  mua = mua - (m1-alpha)/da*0.01;
+  da = (alpha-alpha1)/0.0001;
+  mua = mua - (m1-alpha)/da;
+  mua = abs(mua);
   kappa = 1/(3*(mua+mus));
 end
 
@@ -141,33 +126,6 @@ while jj ~= iteration
   mesh.mua(:) = mesh.mua(:) - (m1-alpha0)/da;
   mesh.kappa = 1./(3*(mesh.mua+mesh.mus));
   
- 
- [fem_data]=femdata(mesh,frequency);
-  fem_data = fem_data.paa;
-  
-  femlnrI = log(fem_data(:,1).*dist);
-
-  alpha0 = polyfit(dist,femlnrI,1); alpha0 = alpha0(1);
-  
-  mesh.mus(:) = mesh.mus(:)+0.001;
-  mesh.kappa = 1./(3*(mesh.mua+mesh.mus));
-  
-  [fem_data]=femdata(mesh,frequency);
-  fem_data = fem_data.paa;
-  
-  femlnrI = log(fem_data(:,1).*dist);
-  
-  alpha2 = polyfit(dist,femlnrI,1); alpha2 = alpha2(1);
-  
-  mesh.mus(:) = mesh.mus(:)-0.001;
-  mesh.kappa = 1./(3*(mesh.mua+mesh.mus));
-  
-  da = (alpha0-alpha2)/0.001;
-  
-  mesh.mua(:) = mesh.mua(:) - abs((m1-alpha0)/da*0.002);
-  mesh.mua(find(mesh.mua(:)<0)) = mesh.mua(find(mesh.mua(:)<0)) + da;
-  mesh.kappa = 1./(3*(mesh.mua+mesh.mus));
-  
   err_a = abs(mean(mesh.mua)-mua)./mua;
   
   if ((err_a < 0.001))
@@ -178,6 +136,10 @@ while jj ~= iteration
   
   mua = mean(mesh.mua);
   mus = mean(mesh.mus);
+  if mua < 0 || mus < 0
+    errordlg('Negative mua or mus was calculated. This may be caused by bad/noisy data.','NIRFAST Error');
+    error('Negative mua or mus was calculated. This may be caused by bad/noisy data.');
+  end
   disp('Global values calculated from Numerical fit');
   disp(['Iteration ' num2str(jj) ' of ' num2str(iteration)]);
   disp(['Absorption = ' num2str(mua) ' mm-1 with error of ' num2str(err_a)]);
