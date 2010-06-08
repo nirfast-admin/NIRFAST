@@ -62,10 +62,19 @@ elseif strcmp(type,'fluor')
 elseif strcmp(type,'spec')
     mesh.sa = ones(length(mesh.nodes),1);
     mesh.sp = ones(length(mesh.nodes),1);
-    mesh.chromscattlist = [{'S-Amplitude'};{'S-Power'}];
-    mesh.wv = [661];
-    mesh.excoef = [];
-    mesh.ri = ones(length(mesh.nodes),1);
+    c1 = ones(length(mesh.nodes),1).*0.01;
+    c2 = ones(length(mesh.nodes),1).*0.01;
+    c3 = ones(length(mesh.nodes),1).*0.4;
+    mesh.conc = [c1 c2 c3];
+    mesh.chromscattlist = [{'HbO'};{'deoxyHb'};{'Water'};{'S-Amplitude'};{'S-Power'}];
+    mesh.wv = [661;735;761;785;808;826;849];
+    mesh.excoef = [0.0741    0.8500    0.0015;
+                    0.0989    0.2400    0.0038;
+                    0.1185    0.3292    0.0043;
+                    0.1500    0.2056    0.0038;
+                    0.1741    0.1611    0.0033;
+                    0.2278    0.1611    0.0040;
+                    0.2370    0.1556    0.0058];
 elseif strcmp(type,'stnd_spn')
     mesh.mua = ones(length(mesh.nodes),1);
     mesh.mus = ones(length(mesh.nodes),1);
@@ -91,10 +100,19 @@ elseif strcmp(type,'fluor_bem')
 elseif strcmp(type,'spec_bem')
     mesh.sa = ones(1,1);
     mesh.sp = ones(1,1);
-    mesh.chromscattlist = [{'S-Amplitude'};{'S-Power'}];
-    mesh.wv = [661];
-    mesh.excoef = [];
-    mesh.ri = ones(1,1);
+    c1 = ones(1,1).*0.01;
+    c2 = ones(1,1).*0.01;
+    c3 = ones(1,1).*0.4;
+    mesh.conc = [c1 c2 c3];
+    mesh.chromscattlist = [{'HbO'};{'deoxyHb'};{'Water'};{'S-Amplitude'};{'S-Power'}];
+    mesh.wv = [661;735;761;785;808;826;849];
+    mesh.excoef = [0.0741    0.8500    0.0015;
+                    0.0989    0.2400    0.0038;
+                    0.1185    0.3292    0.0043;
+                    0.1500    0.2056    0.0038;
+                    0.1741    0.1611    0.0033;
+                    0.2278    0.1611    0.0040;
+                    0.2370    0.1556    0.0058];
 else
     errordlg('Invalid mesh type','NIRFAST Error');
     error('Invalid mesh type');
