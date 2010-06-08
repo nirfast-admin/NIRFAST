@@ -185,6 +185,9 @@ elseif exist([fn '.param']) == 2
 	  end
 	end
       end
+      if ~isfield(mesh,'excoef')
+          mesh.excoef = [];
+      end
     end
   end
 end
