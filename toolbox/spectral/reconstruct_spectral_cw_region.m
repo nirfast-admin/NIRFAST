@@ -57,6 +57,17 @@ if isempty(anom) || ~isfield(anom,'paa')
     error('Data not found or not properly formatted');
 end
 
+datanum = 0;
+[ns,junk]=size(fwd_mesh.source.coord);
+for i = 1 : ns
+  for j = 1 : length(fwd_mesh.link(i,:))
+      datanum = datanum + 1;
+      if fwd_mesh.link(i,j) == 0
+          anom.paa(datanum,:) = NaN;
+      end
+  end
+end
+
 % we need log amplitude and phase in radians
 [nr,nc]=size(anom.paa);
 k = 1;
