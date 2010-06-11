@@ -95,7 +95,7 @@ elseif exist([fn '.param']) == 2
       param = param.data;
       mesh.mua = param(:,1);
       mesh.mus = param(:,2);
-      mesh.kappa = 1/(3*(mesh.mua+mesh.mus));
+      mesh.kappa = 1./(3*(mesh.mua+mesh.mus));
       mesh.kappa = mesh.kappa';
       mesh.g=param(:,3);
       mesh.ri = param(:,4);
