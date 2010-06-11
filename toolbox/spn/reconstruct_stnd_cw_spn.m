@@ -83,6 +83,18 @@ end
 anom = anom.paa;
 anom = log(anom(:,1)); %take log of amplitude
 % find NaN in data
+
+datanum = 0;
+[ns,junk]=size(fwd_mesh.source.coord);
+for i = 1 : ns
+  for j = 1 : length(fwd_mesh.link(i,:))
+      datanum = datanum + 1;
+      if fwd_mesh.link(i,j) == 0
+          anom(datanum,:) = NaN;
+      end
+  end
+end
+
 ind = find(isnan(anom(:,1))==1);
 % set mesh linkfile not to calculate NaN pairs:
 link = fwd_mesh.link';

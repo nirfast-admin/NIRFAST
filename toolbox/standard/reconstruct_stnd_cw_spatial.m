@@ -82,6 +82,18 @@ anom = log(anom(:,1)); %take log of amplitude
 % anom(find(anom(:,2)<0),2) = anom(find(anom(:,2)<0),2) + (2*pi);
 % anom(find(anom(:,2)>(2*pi)),2) = anom(find(anom(:,2)>(2*pi)),2) - (2*pi);
 % find NaN in data
+
+datanum = 0;
+[ns,junk]=size(fwd_mesh.source.coord);
+for i = 1 : ns
+  for j = 1 : length(fwd_mesh.link(i,:))
+      datanum = datanum + 1;
+      if fwd_mesh.link(i,j) == 0
+          anom(datanum,:) = NaN;
+      end
+  end
+end
+
 ind = find(isnan(anom(:,1))==1);
 % set mesh linkfile not to calculate NaN pairs:
 link = fwd_mesh.link';
