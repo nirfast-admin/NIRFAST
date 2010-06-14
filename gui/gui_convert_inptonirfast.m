@@ -22,7 +22,7 @@ function varargout = gui_convert_inptonirfast(varargin)
 
 % Edit the above text to modify the response to help gui_convert_inptonirfast
 
-% Last Modified by GUIDE v2.5 18-Mar-2010 13:25:16
+% Last Modified by GUIDE v2.5 14-Jun-2010 13:07:32
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -172,7 +172,7 @@ if fn == 0
     return;
 end
 temp = [pn fn];
-set(handles.inp,'String',temp(1:end-5));
+set(handles.inp,'String',temp);
 
 guidata(hObject, handles);
 
@@ -189,4 +189,3 @@ end
 set(handles.savemeshto,'String',[pn fn]);
 
 guidata(hObject, handles);
-

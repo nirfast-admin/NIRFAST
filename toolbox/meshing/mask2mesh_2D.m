@@ -12,7 +12,7 @@ function mask2mesh_2D(bmpfile,pixeldim,edgesize,triarea,saveloc,type)
 
 
 %% nodes, elements, bndvtx
-[mesh.nodes,mesh.elements,mesh.bndvtx,mesh.region] = checkerboard2D(bmpfile,pixeldim,edgesize,triarea);
+[mesh.nodes,mesh.elements,mesh.bndvtx,mesh.region] = mask2mesh(bmpfile,pixeldim,edgesize,triarea);
 
 %% dimension, name, type
 mesh.dimension = 2;

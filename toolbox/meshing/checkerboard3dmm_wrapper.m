@@ -4,7 +4,7 @@ function checkerboard3dmm_wrapper(fnprefix,saveloc,type)
 %
 % Converts inp files (surface mesh) to a fem nirfast mesh
 %
-% fnprefix is the prefix location of the inp files
+% fnprefix is the location of one of the inp files, or the ele file location
 % saveloc is the location to save the mesh to
 % type is the mesh type ('stnd', 'fluor', etc)
 

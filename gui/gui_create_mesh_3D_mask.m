@@ -22,7 +22,7 @@ function varargout = gui_create_mesh_3D_mask(varargin)
 
 % Edit the above text to modify the response to help gui_create_mesh_3D_mask
 
-% Last Modified by GUIDE v2.5 02-Jun-2010 11:56:42
+% Last Modified by GUIDE v2.5 14-Jun-2010 13:12:31
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -195,18 +195,18 @@ end
 
 
 
-function edgez_Callback(hObject, eventdata, handles)
-% hObject    handle to edgez (see GCBO)
+function pixelxy_Callback(hObject, eventdata, handles)
+% hObject    handle to pixelxy (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edgez as text
-%        str2double(get(hObject,'String')) returns contents of edgez as a double
+% Hints: get(hObject,'String') returns contents of pixelxy as text
+%        str2double(get(hObject,'String')) returns contents of pixelxy as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function edgez_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edgez (see GCBO)
+function pixelxy_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pixelxy (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -228,28 +228,31 @@ content = get(mainGUIdata.script,'String');
 batch = get(mainGUIdata.batch_mode,'Value');
 
 maskloc = get_pathloc(get(handles.mask,'String'));
-inploc = '''temp_inp''';
+saveloc = '''temp_node_ele''';
 
 % mask to inp
 content{end+1} = strcat('MMC(',maskloc,...
+    ',',get(handles.pixelxy,'String'),...
+    ',',get(handles.pixelz,'String'),...
     ',',get(handles.edgexy,'String'),...
-    ',',get(handles.edgez,'String'),...
-    ',',inploc,...
+    ',',saveloc,...
     ');');
 if ~batch
     evalin('base',content{end});
 end
 
+saveloc = '''temp_node_ele.ele''';
+
 % inp to mesh
 if strcmp(handles.type,'stnd_bem') || ...
         strcmp(handles.type,'fluor_bem') || strcmp(handles.type,'spec_bem')
-    content{end+1} = strcat('inp2nirfast_bem(',inploc,',''',get(handles.savemeshto,'String'),...
+    content{end+1} = strcat('inp2nirfast_bem(',saveloc,',''',get(handles.savemeshto,'String'),...
         ''',''',handles.type,''');');
     if ~batch
         evalin('base',content{end});
     end
 else
-    content{end+1} = strcat('checkerboard3dmm_wrapper(',inploc,',''',get(handles.savemeshto,'String'),...
+    content{end+1} = strcat('checkerboard3dmm_wrapper(',saveloc,',''',get(handles.savemeshto,'String'),...
         ''',''',handles.type,''');');
     if ~batch
         evalin('base',content{end});
@@ -272,12 +275,6 @@ if fn == 0
     return;
 end
 temp = [pn fn];
-nums = regexp(temp,'[0-9]+.bmp');
-if isempty(nums)
-    temp = temp(1:end-4);
-else
-    temp = temp(1:nums(1)-1);
-end
 set(handles.mask,'String',temp);
 
 guidata(hObject, handles);
@@ -295,3 +292,26 @@ end
 set(handles.savemeshto,'String',[pn fn]);
 
 guidata(hObject, handles);
+
+
+
+function pixelz_Callback(hObject, eventdata, handles)
+% hObject    handle to pixelz (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of pixelz as text
+%        str2double(get(hObject,'String')) returns contents of pixelz as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function pixelz_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pixelz (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
