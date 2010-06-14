@@ -1,27 +1,42 @@
-function inp2nirfast_bem(fnprefix,saveloc,type)
+function inp2nirfast_bem(filename,saveloc,type)
 
-% inp2nirfast_bem(fnprefix,saveloc,type)
+% inp2nirfast_bem(filename,saveloc,type)
 %
 % Converts inp files to a nirfast bem mesh
 %
-% fnprefix is the prefix  of the inp files ('fnprefix1.inp or
-% fnprefix_2.inp or ...)
+% filename is the file name of one of the inp files (ex: filename2.inp)
 % saveloc is the location to save the mesh to
 % type is the mesh type ('stnd', 'fluor', etc)
 
 
 %% find inp files
-no_regions = length(dir([fnprefix '*.inp']));
+[path fnprefix num_flag myext] = GetFilenameNumbering(filename);
+fnprefix=fullfile(path,fnprefix);
+
+no_regions = length(dir([fnprefix '*' myext]));
 if no_regions==0
     errordlg(['Cannot find file .inp files whose prefix is ' fnprefix],'NIRFAST Error');
     error(['Cannot find file .inp files whose prefix is ' fnprefix]);
 end
 
 fprintf('\n\tConverting inp files and re-orienting\n');
-for i=1:no_regions
-    fn = [fnprefix num2str(i) '.inp'];
-    abaqus2nodele_surface(fn);
+
+fcounter = num_flag;
+if fcounter==0 % just one inp file
+    fn = [fnprefix myext];
+else % Multiple inp files
+    fn = [fnprefix num2str(fcounter) myext];
 end
+
+while true
+    fid = fopen(fn,'rt');
+    if fid < 0, break; end
+    fclose(fid);
+    abaqus2nodele_surface(fn);
+    fcounter = fcounter + 1;
+    fn = [fnprefix num2str(fcounter) myext];
+end
+
 
 %% Compute surface relations
 mesh = ExtractSurfaceRelations(fnprefix, no_regions);
