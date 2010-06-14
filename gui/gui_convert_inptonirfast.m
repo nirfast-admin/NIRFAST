@@ -167,7 +167,7 @@ function browse_inp_Callback(hObject, eventdata, handles)
 % hObject    handle to browse_inp (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-[fn,pn] = myuigetfile('*.inp','Input Mesh');
+[fn,pn] = myuigetfile({'*.inp';'*.ele'},'Input inp or ele File');
 if fn == 0
     return;
 end
