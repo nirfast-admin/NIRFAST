@@ -13,6 +13,8 @@ function mask2mesh_2D(bmpfile,pixeldim,edgesize,triarea,saveloc,type)
 
 %% nodes, elements, bndvtx
 [mesh.nodes,mesh.elements,mesh.bndvtx,mesh.region] = mask2mesh(bmpfile,pixeldim,edgesize,triarea);
+nodes=unique(mesh.elements(:));
+mesh.bndvtx = ismember(nodes,mesh.bndvtx);
 
 %% dimension, name, type
 mesh.dimension = 2;
