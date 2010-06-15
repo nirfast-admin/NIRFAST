@@ -78,7 +78,8 @@ if isfield(handles,'meshloc') && exist([handles.meshloc '.node'],'file')
     if mesh.dimension == 2
         xlabel('x')
         ylabel('y')
-        plot(mesh.nodes(ind,1),mesh.nodes(ind,2),'c.');
+        %plot(mesh.nodes(ind,1),mesh.nodes(ind,2),'c.');
+        trimesh(mesh.elements,mesh.nodes(:,1),mesh.nodes(:,2),mesh.nodes(:,3),'edgecolor','black');
         axis equal;
     elseif mesh.dimension == 3
         xlabel('x')
