@@ -66,7 +66,7 @@ if isfield(mesh,'sp')
 end
 if isfield(mesh,'etamuaf')
     listsolfnames{end+1} = 'etamuaf';
-    soldata(:,end+1) = mesh.mua;
+    soldata(:,end+1) = mesh.etamuaf;
 end
 if isfield(mesh,'conc') && isfield (mesh,'chromscattlist')
     [nc,junk]=size(mesh.chromscattlist);
