@@ -104,7 +104,7 @@ fprintf(fid,'%d\n', ones(numelems,1)*10);
 fprintf(fid,'%s\n',['POINT_DATA ',num2str(numnodes)]); %specify the data that follows is defined on the nodes
 
 for i = 1:size(soldata,2)
-    fprintf(fid,'%s\n',['SCALARS ', listsolfnames{i}, ' double 1']);
+    fprintf(fid,'%s\n',['SCALARS ', listsolfnames{i}, ' float 1']);
     fprintf(fid,'%s\n','LOOKUP_TABLE default');
     fprintf(fid,'%f\n', soldata(:,i));
 end;
