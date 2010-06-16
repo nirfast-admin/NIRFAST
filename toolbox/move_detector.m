@@ -16,8 +16,10 @@ if ~isfield(mesh,'meas') || ~isfield(mesh.meas,'coord')
     error('No detectors present');
 end
 
+remove_last = 0;
 if size(mesh.meas.coord,2) == 2
     mesh.meas.coord(:,end+1) = 0;
+    remove_last = 1;
 end
 
 %% get list of boundary faces
@@ -91,4 +93,8 @@ for i=1:size(mesh.meas.coord,1)
     
     end
         
+end
+
+if remove_last
+    mesh.meas.coord(:,end) = [];
 end

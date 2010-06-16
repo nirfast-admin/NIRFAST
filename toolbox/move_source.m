@@ -17,8 +17,10 @@ if ~isfield(mesh,'source') || ~isfield(mesh.source,'coord')
     error('No sources present');
 end
 
+remove_last = 0;
 if size(mesh.source.coord,2) == 2
     mesh.source.coord(:,end+1) = 0;
+    remove_last = 1;
 end
 
 %% check if mus_eff is unrealistic for the mesh size
@@ -145,4 +147,8 @@ for i=1:size(mesh.source.coord,1)
     
     end
         
+end
+
+if remove_last
+    mesh.source.coord(:,end) = [];
 end
