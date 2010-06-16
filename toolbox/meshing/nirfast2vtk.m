@@ -64,6 +64,10 @@ if isfield(mesh,'sp')
     listsolfnames{end+1} = 'sp';
     soldata(:,end+1) = mesh.sp;
 end
+if isfield(mesh,'phi')
+    listsolfnames{end+1} = 'phi';
+    soldata(:,end+1) = mesh.phi;
+end
 if isfield(mesh,'etamuaf')
     listsolfnames{end+1} = 'etamuaf';
     soldata(:,end+1) = mesh.etamuaf;
