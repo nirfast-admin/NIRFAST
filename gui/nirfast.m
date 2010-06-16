@@ -22,7 +22,7 @@ function varargout = nirfast(varargin)
 
 % Edit the above text to modify the response to help_main nirfast
 
-% Last Modified by GUIDE v2.5 30-May-2010 13:59:12
+% Last Modified by GUIDE v2.5 16-Jun-2010 15:20:39
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -973,3 +973,11 @@ function create_mesh_3D_mask_spec_bem_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 gui_create_mesh_3D_mask('type','spec_bem');
+
+
+% --------------------------------------------------------------------
+function set_mesh_type_Callback(hObject, eventdata, handles)
+% hObject    handle to set_mesh_type (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_set_mesh_type();
