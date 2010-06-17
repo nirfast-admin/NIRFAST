@@ -22,7 +22,7 @@ function varargout = nirfast(varargin)
 
 % Edit the above text to modify the response to help_main nirfast
 
-% Last Modified by GUIDE v2.5 16-Jun-2010 15:20:39
+% Last Modified by GUIDE v2.5 17-Jun-2010 14:42:59
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -680,13 +680,6 @@ function reconstruct_stnd_spn_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 gui_reconstruct('type','stnd_spn');
 
-
-% --------------------------------------------------------------------
-function tutorials_Callback(hObject, eventdata, handles)
-% hObject    handle to tutorials (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-web('http://www.nirfast.org/tutorials.php');
 
 
 % --------------------------------------------------------------------
