@@ -304,7 +304,7 @@ function help_Callback(hObject, eventdata, handles)
 % hObject    handle to help (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-web('http://code.google.com/p/nirfast/');
+web 'http://code.google.com/p/nirfast/' -browser
 
 
 % --------------------------------------------------------------------
