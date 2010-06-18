@@ -192,12 +192,12 @@ if meshloc(1)==''''
         evalin('base',content{end});
     end
     if get(handles.last_iteration,'Value')
-        content{end+1} = strcat('read_solution(mesh,',solutionloc,');');
+        content{end+1} = strcat('mesh = read_solution(mesh,',solutionloc,');');
         if ~batch
             evalin('base',content{end});
         end
     else
-        content{end+1} = strcat('read_solution(mesh,',solutionloc,...
+        content{end+1} = strcat('mesh = read_solution(mesh,',solutionloc,...
             ',',get(handles.iteration,'String'),');');
         if ~batch
             evalin('base',content{end});
@@ -205,12 +205,12 @@ if meshloc(1)==''''
     end
 else
     if get(handles.last_iteration,'Value')
-        content{end+1} = strcat('read_solution(',meshloc,',',solutionloc,');');
+        content{end+1} = strcat('mesh = read_solution(',meshloc,',',solutionloc,');');
         if ~batch
             evalin('base',content{end});
         end
     else
-        content{end+1} = strcat('read_solution(',meshloc,',',solutionloc,...
+        content{end+1} = strcat('mesh = read_solution(',meshloc,',',solutionloc,...
             ',',get(handles.iteration,'String'),');');
         if ~batch
             evalin('base',content{end});
