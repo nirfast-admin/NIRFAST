@@ -70,7 +70,7 @@ m1 = polyfit(dist,lnrI,1); m1 = m1(1);
 omega = 2*pi*frequency*1e6;
 c=(3e11./mean(mesh.ri));
 
-mua = 0.01; mus = 1; kappa = 1/(3*(mua+mus));
+mua = 0.01; mus = mean(mesh.mus); kappa = 1/(3*(mua+mus));
 
 for i = 1 : 25
   f1 = ((mua^2 + (omega/c)^2) / (kappa^2))^0.25;
@@ -94,8 +94,7 @@ disp('============================================');
 
 % Set the global values onto mesh.
 mesh.mua(:) = mua;
-mesh.mus(:) = mus;
-mesh.kappa(:) = kappa;
+mesh.kappa = 1./(3*(mesh.mua+mesh.mus));
 
 % Fit for mua and mus using FEM
 dist = dist_orig;
