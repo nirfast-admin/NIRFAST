@@ -82,13 +82,16 @@ if isfield(mesh,'conc') && isfield (mesh,'chromscattlist')
         if strcmp(mesh.chromscattlist{i},'HbO')
             mesh.conc(:,i) = 1000*mesh.conc(:,i);
             hbo_loc = i;
+            disp('HbO converted to millimolar');
         end
         if strcmp(mesh.chromscattlist{i},'deoxyHb')
             mesh.conc(:,i) = 1000*mesh.conc(:,i);
             deoxyhb_loc = i;
+            disp('deoxyHb converted to millimolar');
         end
         if strcmp(mesh.chromscattlist{i},'Water')
             mesh.conc(:,i) = 100*mesh.conc(:,i);
+            disp('Water converted to %');
         end
         listsolfnames{end+1} = mesh.chromscattlist{i};
         soldata(:,end+1) = mesh.conc(:,i);
@@ -100,6 +103,8 @@ if hbo_loc ~= -1 && deoxyhb_loc ~= -1
     soldata(:,end+1) = mesh.conc(:,hbo_loc)+mesh.conc(:,deoxyhb_loc);
     listsolfnames{end+1} = 'StO2';
     soldata(:,end+1) = 100*mesh.conc(:,hbo_loc)./soldata(:,end);
+    disp('HbT is in millimolar');
+    disp('StO2 is in %');
 end
 
 %% write to vtk
