@@ -72,13 +72,35 @@ if isfield(mesh,'etamuaf')
     listsolfnames{end+1} = 'etamuaf';
     soldata(:,end+1) = mesh.etamuaf;
 end
+
+% hbo_loc = -1;
+% deoxyhb_loc = -1;
+
 if isfield(mesh,'conc') && isfield (mesh,'chromscattlist')
     [nc,junk]=size(mesh.chromscattlist);
     for i = 1 : nc-2
+%         if strcmp(mesh.chromscattlist{i},'HbO')
+%             mesh.conc(:,i) = 1000*mesh.conc(:,i);
+%             hbo_loc = i;
+%         end
+%         if strcmp(mesh.chromscattlist{i},'deoxyHb')
+%             mesh.conc(:,i) = 1000*mesh.conc(:,i);
+%             deoxyhb_loc = i;
+%         end
+%         if strcmp(mesh.chromscattlist{i},'Water')
+%             mesh.conc(:,i) = 100*mesh.conc(:,i);
+%         end
         listsolfnames{end+1} = mesh.chromscattlist{i};
         soldata(:,end+1) = mesh.conc(:,i);
     end
 end
+
+% if hbo_loc ~= -1 && deoxyhb_loc ~= -1
+%     listsolfnames{end+1} = 'HbT';
+%     soldata(:,end+1) = mesh.conc(:,hbo_loc)+mesh.conc(:,deoxyhb_loc);
+%     listsolfnames{end+1} = 'StO2';
+%     soldata(:,end+1) = 100*mesh.conc(:,hbo_loc)./soldata(:,end);
+% end
 
 %% write to vtk
 nodes = mesh.nodes;
