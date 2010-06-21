@@ -22,7 +22,7 @@ function varargout = nirfast(varargin)
 
 % Edit the above text to modify the response to help_main nirfast
 
-% Last Modified by GUIDE v2.5 21-Jun-2010 11:59:47
+% Last Modified by GUIDE v2.5 21-Jun-2010 14:13:38
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -981,3 +981,11 @@ function reconstruct_menu_Callback(hObject, eventdata, handles)
 % hObject    handle to reconstruct_menu (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function optimize_mesh_Callback(hObject, eventdata, handles)
+% hObject    handle to optimize_mesh (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_optimize_mesh();

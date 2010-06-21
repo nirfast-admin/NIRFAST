@@ -1,9 +1,13 @@
-function [mesh]=minband_opt(mesh)
-%takes an element list and node list and
-%sorts nodes to give mimimum BW.
-%h dehghani 19. april 02
+function mesh = minband_opt(mesh)
 
-if strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'fluor_bem') || strcmp(mesh.type,'spec_bem')
+% mesh = minband_opt(mesh)
+%
+% takes an element list and node list and
+% sorts nodes to give mimimum BW.
+%
+% mesh is the mesh variable or filename
+
+if ~(strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'fluor_bem') || strcmp(mesh.type,'spec_bem'))
     gr=sparse(length(mesh.nodes),length(mesh.nodes));
     for i = 1 : length(mesh.elements)
         for j = 1 : 3
