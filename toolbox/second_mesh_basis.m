@@ -67,7 +67,7 @@ if mesh1.dimension == 2 & mesh2.dimension == 2
   coarse2fine = [ind int_func];
 elseif mesh1.dimension == 3 & mesh2.dimension == 3
   % find interpolation functions
-  [ind,int_func] = mytsearchn(mesh1.nodes,...
+  [ind,int_func] = mytsearchn(mesh1,...
 			    mesh2.nodes);
   % make sure that all nodes do fall onto the other mesh
   if any(isnan(ind)) == 1
@@ -75,7 +75,7 @@ elseif mesh1.dimension == 3 & mesh2.dimension == 3
       ind_out = find(isnan(ind)==1);
       mesh2.nodes(ind_out,:) = mesh2.nodes(ind_out,:).*j;
       [ind(ind_out),int_func(ind_out,:)] = ...
-	  mytsearchn(mesh1.nodes,...
+	  mytsearchn(mesh1,...
 		   mesh2.nodes(ind_out,:));
       if any(isnan(ind)) == 0
 	break
@@ -85,7 +85,7 @@ elseif mesh1.dimension == 3 & mesh2.dimension == 3
   fine2coarse = [ind int_func];
   
   % find interpolation functions
-  [ind,int_func] = mytsearchn(mesh2.nodes,...
+  [ind,int_func] = mytsearchn(mesh2,...
 			    mesh1.nodes);
   % make sure that all nodes do fall onto the other mesh
   if any(isnan(ind)) == 1
@@ -93,7 +93,7 @@ elseif mesh1.dimension == 3 & mesh2.dimension == 3
       ind_out = find(isnan(ind)==1);
       mesh1.nodes(ind_out,:) = mesh1.nodes(ind_out,:).*j;
       [ind(ind_out),int_func(ind_out,:)] = ...
-	  mytsearchn(mesh2.nodes,...
+	  mytsearchn(mesh2,...
 		   mesh1.nodes(ind_out,:));
       if any(isnan(ind)) == 0
 	break
