@@ -45,3 +45,4 @@ else % PC
     mex -v -DCPU86 -DWIN32 -I./meshlib PointInPolyhedron_mex.cpp meshlib/polyhedron2BSP.cpp meshlib/CPoint.cpp meshlib/CVector.cpp meshlib/Plane3D.cpp meshlib/BSPNode.cpp meshlib/MeshIO.cpp meshlib/FileOperation.cpp meshlib/CPolygon.cpp meshlib/predicates.cpp meshlib/CStopWatch.cpp
     mex -v -DWIN32 -DCPU86 -I./meshlib GetListOfConnTri2Tri_mex.cpp meshlib/vector.cpp
 end
+
