@@ -24,13 +24,13 @@ if isunix
         mex -v -I./meshlib GetListOfConnTri2Tri_mex.cpp meshlib/vector.cpp
     elseif ~isempty(strfind(os,'GLNX')) % Linux
         mex -v -Dlinux -I./meshlib tag_checkerboard3d_mex.cpp meshlib/CStopWatch.cpp
-        mex -v -DCPU86 -DLinux -I./meshlib ssurface_relations_mex.cpp meshlib/polyhedron2BSP.cpp meshlib/CPoint.cpp meshlib/CVector.cpp meshlib/Plane3D.cpp meshlib/BSPNode.cpp meshlib/MeshIO.cpp meshlib/FileOperation.cpp meshlib/CPolygon.cpp meshlib/predicates.cpp meshlib/CStopWatch.cpp
+        mex -v -DLINUX -I./meshlib surface_relations_mex.cpp meshlib/polyhedron2BSP.cpp meshlib/CPoint.cpp meshlib/CVector.cpp meshlib/Plane3D.cpp meshlib/BSPNode.cpp meshlib/MeshIO.cpp meshlib/FileOperation.cpp meshlib/CPolygon.cpp meshlib/predicates.cpp meshlib/CStopWatch.cpp
         mex -v pnpoly_mex.cpp
-        mex -v -DCPU86 -I./meshlib orient_surface_mex.cpp meshlib/vector.cpp meshlib/geomath.cpp isinvolume_randRay.cpp
+        mex -v -DLINUX -I./meshlib orient_surface_mex.cpp meshlib/vector.cpp meshlib/geomath.cpp isinvolume_randRay.cpp
         mex -v -I./meshlib involume_mex.cpp isinvolume_randRay.cpp meshlib/geomath.cpp meshlib/vector.cpp
-        mex -v -DCPU86 -I./meshlib intersect_ray_shell_mex.cpp ./meshlib/vector.cpp ./meshlib/geomath.cpp
+        mex -v -DLINUX -I./meshlib intersect_ray_shell_mex.cpp ./meshlib/vector.cpp ./meshlib/geomath.cpp
         mex -v extract_ind_regions_mex.cpp
-        mex -v -I./meshlib -DLINUX PointInPolyhedron_mex.cpp meshlib/polyhedron2BSP.cpp meshlib/CPoint.cpp meshlib/CVector.cpp meshlib/Plane3D.cpp meshlib/BSPNode.cpp meshlib/MeshIO.cpp meshlib/FileOperation.cpp meshlib/CPolygon.cpp meshlib/predicates.cpp meshlib/CStopWatch.cpp
+        mex -v -DLINUX -I./meshlib PointInPolyhedron_mex.cpp meshlib/polyhedron2BSP.cpp meshlib/CPoint.cpp meshlib/CVector.cpp meshlib/Plane3D.cpp meshlib/BSPNode.cpp meshlib/MeshIO.cpp meshlib/FileOperation.cpp meshlib/CPolygon.cpp meshlib/predicates.cpp meshlib/CStopWatch.cpp
         mex -v -I./meshlib GetListOfConnTri2Tri_mex.cpp meshlib/vector.cpp
     end
     
@@ -38,10 +38,10 @@ else % PC
     mex -v -DWIN32 -I./meshlib tag_checkerboard3d_mex.cpp meshlib/CStopWatch.cpp
     mex -v -DCPU86 -DWIN32 -I./meshlib surface_relations_mex.cpp meshlib/polyhedron2BSP.cpp meshlib/CPoint.cpp meshlib/CVector.cpp meshlib/Plane3D.cpp meshlib/BSPNode.cpp meshlib/MeshIO.cpp meshlib/FileOperation.cpp meshlib/CPolygon.cpp meshlib/predicates.cpp meshlib/CStopWatch.cpp
     mex -v pnpoly_mex.cpp
-    mex -v -DWIN32 -I./meshlib orient_surface_mex.cpp meshlib/vector.cpp meshlib/geomath.cpp isinvolume_randRay.cpp
-    mex -v -DWIN32 -I./meshlib involume_mex.cpp isinvolume_randRay.cpp meshlib/geomath.cpp meshlib/vector.cpp
-    mex -v -DWIN32 -I./meshlib intersect_ray_shell_mex.cpp ./meshlib/vector.cpp ./meshlib/geomath.cpp
+    mex -v -DWIN32 -DCPU86 -I./meshlib orient_surface_mex.cpp meshlib/vector.cpp meshlib/geomath.cpp isinvolume_randRay.cpp
+    mex -v -DWIN32 -DCPU86 -I./meshlib involume_mex.cpp isinvolume_randRay.cpp meshlib/geomath.cpp meshlib/vector.cpp
+    mex -v -DWIN32 -DCPU86 -I./meshlib intersect_ray_shell_mex.cpp ./meshlib/vector.cpp ./meshlib/geomath.cpp
     mex -v extract_ind_regions_mex.cpp
-    mex -v -I./meshlib -DCPU86 -DWIN32 PointInPolyhedron_mex.cpp meshlib/polyhedron2BSP.cpp meshlib/CPoint.cpp meshlib/CVector.cpp meshlib/Plane3D.cpp meshlib/BSPNode.cpp meshlib/MeshIO.cpp meshlib/FileOperation.cpp meshlib/CPolygon.cpp meshlib/predicates.cpp meshlib/CStopWatch.cpp
-    mex -v -DWIN32 -I./meshlib GetListOfConnTri2Tri_mex.cpp meshlib/vector.cpp
+    mex -v -DCPU86 -DWIN32 -I./meshlib PointInPolyhedron_mex.cpp meshlib/polyhedron2BSP.cpp meshlib/CPoint.cpp meshlib/CVector.cpp meshlib/Plane3D.cpp meshlib/BSPNode.cpp meshlib/MeshIO.cpp meshlib/FileOperation.cpp meshlib/CPolygon.cpp meshlib/predicates.cpp meshlib/CStopWatch.cpp
+    mex -v -DWIN32 -DCPU86 -I./meshlib GetListOfConnTri2Tri_mex.cpp meshlib/vector.cpp
 end
