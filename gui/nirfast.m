@@ -54,7 +54,7 @@ function nirfast_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for nirfast
 handles.output = hObject;
-set(hObject,'Name','NIRFAST');
+set(hObject,'Name','nirfast');
 
 % Make sure mex files exist
 if exist('IntFG','file') ~= 3
