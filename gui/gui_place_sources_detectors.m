@@ -240,6 +240,10 @@ content{end+1} = strcat('mesh_tmp.meas.fixed = 0;');
 if ~batch
     evalin('base',content{end});
 end
+content{end+1} = strcat('mesh_tmp = minband_opt(mesh_tmp);');
+if ~batch
+    evalin('base',content{end});
+end
 content{end+1} = strcat('save_mesh(mesh_tmp,''',handles.meshloc,''');');
 if ~batch
     evalin('base',content{end});

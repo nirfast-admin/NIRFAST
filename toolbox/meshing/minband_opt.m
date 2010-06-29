@@ -7,6 +7,8 @@ function mesh = minband_opt(mesh)
 %
 % mesh is the mesh variable or filename
 
+disp('Optimizing Mesh...');
+
 if ~(strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'fluor_bem') || strcmp(mesh.type,'spec_bem'))
     gr=sparse(length(mesh.nodes),length(mesh.nodes));
     for i = 1 : length(mesh.elements)
@@ -86,4 +88,6 @@ if ~(strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'fluor_bem') || strcmp(mes
     figure
     spy(gr)
 end
+
+disp('Mesh Optimization Complete');
 
