@@ -163,32 +163,8 @@ for it = 1 : iteration
     %*************************
     clear data_recon
 
-    if numel(fwd_mesh.gamma) < 30000
-        Jm = Jm*diag([fwd_mesh.gamma]);
-        clear Jwholem
-    else
-        nb = 16;
-        Jm = [];
-        gamma_temp = fwd_mesh.gamma;
-        intnb = round(length(fwd_mesh.gamma)/nb);
-        for j = 1:nb-1
-            if j == nb-1
-                Jm1 = Jm(:,1:end);
-                Jm(:,1:end) = [];
-                gamma = gamma_temp(1:end);
-                Jm = [Jm Jm1*diag(gamma)]; clear Jm1 gamma gamma_temp
-            else
-                Jm1 = Jm(:,1:intnb);
-                Jm(:,1:intnb) = [];
-                gamma = gamma_temp(1:intnb);
-                gamma_temp(1:intnb) = [];
-                Jm = [Jm Jm1*diag(gamma)]; clear Jm1 gamma
-            end
-        end
-        clear Jwholem
-    end
-
-
+    Jm = Jm*diag([fwd_mesh.gamma]);
+    clear Jwholem
 
     % reduce J into regions!
     Jm = Jm*K;
