@@ -353,21 +353,15 @@ for it = 1:iteration
       Hess = (J'*J);
 
       % Add regularisation
-      nn = length(recon_mesh.nodes);
-      nc = length(Hess)/nn;
-      reg = [];
-      reg_temp = eye(nn);
-      for i = 1 : nc
-        reg(i) = lambda.value.*max(diag(Hess((i-1)*nn+1:i*nn,(i-1)*nn+1:i*nn)));
-        Hess((i-1)*nn+1:i*nn,(i-1)*nn+1:i*nn) = Hess((i-1)*nn+1:i*nn,(i-1)*nn+1:i*nn)+(reg(i).*reg_temp);
-        disp([all_sol(i,:) ' Regularization        = ' num2str(reg(i))]);
-        fprintf(fid_log,[all_sol(i,:) ' Regularization        = %f\n'],reg(i));
-      end
-      clear reg_temp
+      reg = lambda.value*max(diag(Hess));
+      disp(['Regularization        = ' num2str(reg)]);
+      fprintf(fid_log,'Regularization        = %f\n',reg);
+      reg = reg*diag(ones(length(Hess),1));
+      Hess = Hess+reg;
  
       disp('Inverting Hessian');
       foo = (Hess\J'*data_diff);
-      %foo = J'*minres(Hess,data_diff,1e-5,2000);
+
   end
   clear J reg Hess;
   
@@ -515,7 +509,7 @@ for  i = 1:length(mesh1.nodes)
 end
 
 
-function [conc,sa,sp] = constrain_val(mesh2,conc,sa,sp,list);
+function [conc,sa,sp] = constrain_val(mesh2,conc,sa,sp,list)
 % Constrain water
 list = char(list);
 list = list(:,1:5);
@@ -526,11 +520,11 @@ for i = 1 : nr-2
     conc(index,i) = 1.0;
     clear index;
     index = find(conc(:,i) < 0.0);
-    conc(index,i) = 0.001;
+    conc(index,i) = 0.0001;
     clear index;
   else
     index = find(conc(:,i) < 0.0);
-    conc(index,i) = 0.001;
+    conc(index,i) = 0.0001;
     clear index;
   end
 end
@@ -540,7 +534,7 @@ index = find(sa > 3.0);
 sa(index) = 3.0;
 clear index;   
 index = find(sa < 0.0);
-sa(index) = 0.1;
+sa(index) = 0.0001;
 clear index;  
 
 %%constraining scatt power
@@ -548,5 +542,5 @@ index = find(sp > 3.0);
 sp(index) = 3.0;
 clear index;     
 index = find(sp < 0.0);
-sp(index) = 0.1;
+sp(index) = 0.0001;
 clear index;   

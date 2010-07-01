@@ -343,17 +343,11 @@ for it = 1:iteration
       Hess = (J'*J);
 
       % Add regularisation
-      nn = length(recon_mesh.nodes);
-      nc = length(Hess)/nn;
-      reg = [];
-      reg_temp = eye(nn);
-      for i = 1 : nc
-        reg(i) = lambda.value.*max(diag(Hess((i-1)*nn+1:i*nn,(i-1)*nn+1:i*nn)));
-        Hess((i-1)*nn+1:i*nn,(i-1)*nn+1:i*nn) = Hess((i-1)*nn+1:i*nn,(i-1)*nn+1:i*nn)+(reg(i).*reg_temp);
-        disp([all_sol(i,:) ' Regularization        = ' num2str(reg(i))]);
-        fprintf(fid_log,[all_sol(i,:) ' Regularization        = %f\n'],reg(i));
-      end
-      clear reg_temp
+      reg = lambda.value*max(diag(Hess));
+      disp(['Regularization        = ' num2str(reg)]);
+      fprintf(fid_log,'Regularization        = %f\n',reg);
+      reg = reg*diag(ones(length(Hess),1));
+      Hess = Hess+reg;
  
       disp('Inverting Hessian');
       foo = (Hess\J'*data_diff);
