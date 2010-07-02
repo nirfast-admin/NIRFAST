@@ -69,5 +69,8 @@ if exist('surf','var') && surf == 1
     mesh.elements = MyRobustCrust(mesh.nodes);
     mesh.elements = FixPatchOrientation(mesh.nodes,mesh.elements);
 else
-    mesh.elements = delaunayn(mesh.nodes);
+    mesh.nodes = mesh.nodes(mesh.bndvtx==1,:);
+    mesh.elements = MyRobustCrust(mesh.nodes);
+    writenodelm_nod_elm('test_node_ele',mesh.elements,mesh.nodes);
+    mesh = checkerboard3d_mm('test_node_ele.ele','stnd');
 end
