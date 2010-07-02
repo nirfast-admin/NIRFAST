@@ -518,7 +518,12 @@ function variables_mesh_Callback(hObject, eventdata, handles)
 % Hints: contents = get(hObject,'String') returns variables_mesh contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from variables_mesh
 contents = get(hObject,'String');
-set(handles.mesh,'String',contents{get(hObject,'Value')});
+meshname = contents{get(hObject,'Value')};
+set(handles.mesh,'String',meshname);
+mesh = evalin('base',meshname);
+if isfield(mesh,'wv')
+    set(handles.wv_array_emiss,'TooltipString',mat2str(mesh.wv'));
+end
 
 
 % --- Executes during object creation, after setting all properties.
