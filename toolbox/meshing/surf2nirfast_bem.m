@@ -1,6 +1,6 @@
-function mesh = inp2nirfast_bem(filename,saveloc,type)
+function mesh = surf2nirfast_bem(filename,saveloc,type)
 
-% inp2nirfast_bem(filename,saveloc,type)
+% surf2nirfast_bem(filename,saveloc,type)
 %
 % Converts inp files to a nirfast bem mesh
 %
@@ -19,7 +19,7 @@ if no_regions==0
     error(['Cannot find file .inp files whose prefix is ' fnprefix]);
 end
 
-fprintf('\n\tConverting inp files and re-orienting\n');
+fprintf('\n\tConverting inp files and re-orienting. Please wait...\n');
 
 fcounter = num_flag;
 if fcounter==0 % just one inp file
@@ -36,7 +36,14 @@ while true
     fid = fopen(fn,'rt');
     if fid < 0, break; end
     fclose(fid);
-    [celem,cnode] = abaqus2nodele_surface(fn);
+    if strcmpi(myext,'.inp')
+        [celem,cnode] = abaqus2nodele_surface(fn);
+    elseif strcmpi(myext,'.ele')
+        [celem,cnode] = read_nod_elm(fn);
+    else
+        errordlg([myext ' type for input surface is not supported!']);
+        error([myext ' type for input surface is not supported!']);
+    end
     output = SeparateSubVolumes(celem,cnode);
     for i=1:length(output.all_regions)
         newfn = sprintf('%s%s%d',fnprefix,newfn_suffix,newmatc);
