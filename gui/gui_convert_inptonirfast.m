@@ -63,7 +63,7 @@ if(nargin > 3)
         end
     end
 end
-set(hObject,'Name','Convert inp');
+set(hObject,'Name','Convert surface mesh');
 
 % Update handles structure
 guidata(hObject, handles);
