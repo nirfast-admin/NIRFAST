@@ -23,6 +23,7 @@ if isunix
         mex -v -I./meshlib         PointInPolyhedron_mex.cpp meshlib/polyhedron2BSP.cpp meshlib/CPoint.cpp meshlib/CVector.cpp meshlib/Plane3D.cpp meshlib/BSPNode.cpp meshlib/MeshIO.cpp meshlib/FileOperation.cpp meshlib/CPolygon.cpp meshlib/predicates.cpp meshlib/CStopWatch.cpp
         mex -v -I./meshlib GetListOfConnTri2Tri_mex.cpp meshlib/vector.cpp
         mex -v -I./meshlib get_ray_shell_intersections.cpp isinvolume_randRay.cpp meshlib/geomath.cpp meshlib/vector.cpp
+        mex -v -I./meshlib expand_bdybuffer_mex.cpp isinvolume_randRay.cpp meshlib/geomath.cpp meshlib/vector.cpp
     elseif ~isempty(strfind(os,'GLNX')) % Linux
         mex -v -Dlinux -I./meshlib tag_checkerboard3d_mex.cpp meshlib/CStopWatch.cpp
         mex -v -DLINUX -I./meshlib surface_relations_mex.cpp isinvolume_randRay.cpp meshlib/geomath.cpp meshlib/vector.cpp meshlib/polyhedron2BSP.cpp meshlib/CPoint.cpp meshlib/CVector.cpp meshlib/Plane3D.cpp meshlib/BSPNode.cpp meshlib/MeshIO.cpp meshlib/FileOperation.cpp meshlib/CPolygon.cpp meshlib/predicates.cpp meshlib/CStopWatch.cpp
@@ -34,6 +35,7 @@ if isunix
         mex -v -DLINUX -I./meshlib PointInPolyhedron_mex.cpp meshlib/polyhedron2BSP.cpp meshlib/CPoint.cpp meshlib/CVector.cpp meshlib/Plane3D.cpp meshlib/BSPNode.cpp meshlib/MeshIO.cpp meshlib/FileOperation.cpp meshlib/CPolygon.cpp meshlib/predicates.cpp meshlib/CStopWatch.cpp
         mex -v -I./meshlib GetListOfConnTri2Tri_mex.cpp meshlib/vector.cpp
         mex -v -I./meshlib get_ray_shell_intersections.cpp isinvolume_randRay.cpp meshlib/geomath.cpp meshlib/vector.cpp
+        mex -v -I./meshlib expand_bdybuffer_mex.cpp isinvolume_randRay.cpp meshlib/geomath.cpp meshlib/vector.cpp
     end
     
 else % PC
@@ -47,5 +49,6 @@ else % PC
     mex -v -DCPU86 -DWIN32 -I./meshlib PointInPolyhedron_mex.cpp meshlib/polyhedron2BSP.cpp meshlib/CPoint.cpp meshlib/CVector.cpp meshlib/Plane3D.cpp meshlib/BSPNode.cpp meshlib/MeshIO.cpp meshlib/FileOperation.cpp meshlib/CPolygon.cpp meshlib/predicates.cpp meshlib/CStopWatch.cpp
     mex -v -DWIN32 -DCPU86 -I./meshlib GetListOfConnTri2Tri_mex.cpp meshlib/vector.cpp
     mex -v -DWIN32 -I./meshlib get_ray_shell_intersections.cpp isinvolume_randRay.cpp meshlib/geomath.cpp meshlib/vector.cpp
+    mex -v -DWIN32 -I./meshlib expand_bdybuffer_mex.cpp isinvolume_randRay.cpp meshlib/geomath.cpp meshlib/vector.cpp
 end
 
