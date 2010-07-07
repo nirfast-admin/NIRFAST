@@ -60,10 +60,10 @@ while true
 end
 
 if fcounter ~= newmatc % We have separated disjoint regions within the same material ID
-    cprintf([1 0.4 0.2],'\n\n\t ****  ATTENTION ****\n\n');
-    cprintf([1 0.4 0.2],'  Please note that some of sub-surfaces present in your input files are now separated,\n');
-    cprintf([1 0.4 0.2],'  and thus have their own ''region'' ID. Following is the mapping between new regions and\n');
-    cprintf([1 0.4 0.2],'  the old ones (based on the .inp numberings)\n Maps:\n');
+    fprintf('\n\n\t ****  ATTENTION ****\n\n');
+    fprintf('  Please note that some of sub-surfaces present in your input files are now separated,\n');
+    fprintf('  and thus have their own ''region'' ID. Following is the mapping between new regions and\n');
+    fprintf('  the old ones (based on the .inp numberings)\n Maps:\n');
     disp([(1:size(region_map,2))' region_map']);
     warndlg({'Please note that some of sub-surfaces present in your input files',...
         'are now separated, and thus have their own ''region'' ID. Following is the mapping between new regions and',...
