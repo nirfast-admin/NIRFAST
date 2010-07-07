@@ -71,7 +71,7 @@ if ~(strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'fluor_bem') || strcmp(mes
         mesh.g == mesh.g(NodeSort);
     end
     
-    
+    elm_new = zeros(size(mesh.elements,1),size(mesh.elements,2));
     for i = 1 : length(mesh.elements);
         elm_new(i,:) = invsort(mesh.elements(i,:));
     end

@@ -68,29 +68,42 @@ end
 handles.sourceflag = 0;
 handles.detectorflag = 0;
 
-% draw mesh if exists
-if isfield(handles,'meshloc') && exist([handles.meshloc '.node'],'file')
-    axes(handles.mesh)
-    hold on
-    mesh = load_mesh(handles.meshloc);
-    handles.dimension = mesh.dimension;
-    ind = find(mesh.bndvtx==1);
-    if mesh.dimension == 2
-        xlabel('x')
-        ylabel('y')
-        %plot(mesh.nodes(ind,1),mesh.nodes(ind,2),'c.');
-        trimesh(mesh.elements,mesh.nodes(:,1),mesh.nodes(:,2),mesh.nodes(:,3),'edgecolor','black');
-        axis equal;
-    elseif mesh.dimension == 3
-        xlabel('x')
-        ylabel('y')
-        zlabel('z')
-        if ~strcmp(mesh.type,'stnd_bem') && ...
-                ~strcmp(mesh.type,'fluor_bem') && ~strcmp(mesh.type,'spec_bem')
-            [mesh.elements,mesh.nodes] = boundfaces(mesh.nodes,mesh.elements);
+if ~isfield(handles,'dimension')
+    % remove source/meas/link files if they exist
+    if exist([handles.meshloc '.source'],'file')
+        delete([handles.meshloc '.source']);
+    end
+    if exist([handles.meshloc '.meas'],'file')
+        delete([handles.meshloc '.meas']);
+    end
+    if exist([handles.meshloc '.link'],'file')
+        delete([handles.meshloc '.link']);
+    end
+
+    % draw mesh if exists
+    if isfield(handles,'meshloc') && exist([handles.meshloc '.node'],'file')
+        axes(handles.mesh)
+        hold on
+        mesh = load_mesh(handles.meshloc);
+        handles.dimension = mesh.dimension;
+        ind = find(mesh.bndvtx==1);
+        if mesh.dimension == 2
+            xlabel('x')
+            ylabel('y')
+            %plot(mesh.nodes(ind,1),mesh.nodes(ind,2),'c.');
+            trimesh(mesh.elements,mesh.nodes(:,1),mesh.nodes(:,2),mesh.nodes(:,3),'edgecolor','black');
+            axis equal;
+        elseif mesh.dimension == 3
+            xlabel('x')
+            ylabel('y')
+            zlabel('z')
+            if ~strcmp(mesh.type,'stnd_bem') && ...
+                    ~strcmp(mesh.type,'fluor_bem') && ~strcmp(mesh.type,'spec_bem')
+                [mesh.elements,mesh.nodes] = boundfaces(mesh.nodes,mesh.elements);
+            end
+            trisurf(mesh.elements,mesh.nodes(:,1),mesh.nodes(:,2),mesh.nodes(:,3));
+            axis equal;
         end
-        trisurf(mesh.elements,mesh.nodes(:,1),mesh.nodes(:,2),mesh.nodes(:,3));
-        axis equal;
     end
 end
 
@@ -248,6 +261,10 @@ content{end+1} = strcat('save_mesh(mesh_tmp,''',handles.meshloc,''');');
 if ~batch
     evalin('base',content{end});
 end
+content{end+1} = 'clear mesh_tmp';
+if ~batch
+    evalin('base',content{end});
+end
         
 set(mainGUIdata.script, 'String', content);
 guidata(nirfast, mainGUIdata);
@@ -317,7 +334,7 @@ function figure1_WindowButtonDownFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 if handles.dimension == 3
-    p = select3d
+    p = select3d;
     if ~isempty(p)
         if handles.sourceflag == 1
             sources = get(handles.sources,'String');

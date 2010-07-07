@@ -478,6 +478,11 @@ if ~batch
     evalin('base',content{end});
 end
 
+content{end+1} = 'clear sizevar';
+if ~batch
+    evalin('base',content{end});
+end
+
 set(mainGUIdata.script, 'String', content);
 guidata(nirfast, mainGUIdata);
 gui_place_sources_detectors('mesh',get(handles.savemeshto,'String'));

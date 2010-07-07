@@ -248,6 +248,9 @@ elseif exist([fn '.source']) == 2
     elseif nc == mesh.dimension+1
         mesh.source.fwhm = source(:,mesh.dimension+1);
         mesh.source.coord = source(:,1:mesh.dimension);
+    else
+        mesh.source.fwhm = [];
+        mesh.source.coord = [];
     end
     if strcmp(mesh.type,'stnd') == 1 || strcmp(mesh.type,'stnd_spn')
       mus_eff = mesh.mus;
@@ -271,6 +274,9 @@ elseif exist([fn '.source']) == 2
     elseif nc == mesh.dimension+1
         mesh.source.fwhm = source.data(:,mesh.dimension+1);
         mesh.source.coord = source.data(:,1:mesh.dimension);
+    else
+        mesh.source.fwhm = [];
+        mesh.source.coord = [];
     end
     disp('Fixed Sources');
     if mesh.dimension == 2
@@ -346,13 +352,17 @@ elseif exist([fn '.link']) == 2
   
   % create a sparse, so if only some detectors are used for any
   % given source, we are memory efficient!
-  mesh.link = sparse(k,max_length);
-  fid = fopen([fn '.link']);
-  for i = 1 : k
-    junk = str2num(fgetl(fid));
-    mesh.link(i,1:length(junk)) = junk;
+  if k~=0
+      mesh.link = sparse(k,max_length);
+      fid = fopen([fn '.link']);
+      for i = 1 : k
+        junk = str2num(fgetl(fid));
+        mesh.link(i,1:length(junk)) = junk;
+      end
+      fclose(fid);
+  else
+      mesh.link = [];
   end
-  fclose(fid);
   clear junk i k max_length
 end
 
