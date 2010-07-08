@@ -5,7 +5,7 @@ function domex_nirfast()
 % A normal use is unlikely to run this script!
 % Written by Hamid Ghadyani June, 2010
 
-
+mypwd = pwd;
 % Find the folder where meshing mex files reside
 meshing_mex = fileparts(which('nirfast'));
 cd(meshing_mex);
@@ -51,4 +51,6 @@ else % PC
     mex -v -DWIN32 -I./meshlib get_ray_shell_intersections.cpp isinvolume_randRay.cpp meshlib/geomath.cpp meshlib/vector.cpp
     mex -v -DWIN32 -I./meshlib expand_bdybuffer_mex.cpp isinvolume_randRay.cpp meshlib/geomath.cpp meshlib/vector.cpp
 end
+
+cd(mypwd)
 
