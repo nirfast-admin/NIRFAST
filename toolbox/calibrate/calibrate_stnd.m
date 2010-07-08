@@ -107,8 +107,8 @@ data_h_fem(:,1) = log(data_h_fem(:,1));
 data_a_fem(:,1) = log(data_a_fem(:,1));
 paa_anom(:,1) = log(paa_anom(:,1));
 paa_homog(:,1) = log(paa_homog(:,1));
-paa_anomtmp = paa_anom;
-paa_homogtmp = paa_homog;
+% paa_anomtmp = paa_anom;
+% paa_homogtmp = paa_homog;
 
 
 paa_cal = paa_anom - ((paa_homog - data_h_fem));
