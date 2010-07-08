@@ -50,13 +50,11 @@ if ischar(fn) ~= 0
     % FLUORESCENCE
     if (strcmp(test(1),'x') == 1 || strcmp(test(1),'f') == 1 || strcmp(test(1),'m') == 1)
         
+        % find labels
         S = char(text);
-        S=regexp(S,' ','split');
-        j = length(S);
-        
-        % get each column
-        for i=1:1:j
-            T = strtrim(S(i));
+        i = 1;
+        while ~isempty(S)
+            [T,S] = strtok(S);
             if strcmp(T,'xphase')
                 data.phasex = datatemp(:,i);
             elseif strcmp(T,'xamplitude')
@@ -70,6 +68,7 @@ if ischar(fn) ~= 0
             elseif strcmp(T,'flamplitude')
                 data.amplitudefl = datatemp(:,i);
             end
+            i = i + 1;
         end
         
         % construct paa*
