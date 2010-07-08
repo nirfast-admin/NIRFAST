@@ -22,7 +22,7 @@ function varargout = nirfast(varargin)
 
 % Edit the above text to modify the response to help_main nirfast
 
-% Last Modified by GUIDE v2.5 21-Jun-2010 14:13:38
+% Last Modified by GUIDE v2.5 08-Jul-2010 13:58:59
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -989,3 +989,42 @@ function optimize_mesh_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 gui_optimize_mesh();
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_volume_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_volume (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_volume_stnd_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_volume_stnd (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_3D_volume('type','stnd');
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_volume_fluor_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_volume_fluor (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_3D_volume('type','fluor');
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_volume_spec_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_volume_spec (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_3D_volume('type','spec');
+
+
+% --------------------------------------------------------------------
+function create_mesh_3D_volume_spn_Callback(hObject, eventdata, handles)
+% hObject    handle to create_mesh_3D_volume_spn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+gui_create_mesh_3D_volume('type','stnd_spn');
