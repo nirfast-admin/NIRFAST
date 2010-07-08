@@ -10,14 +10,20 @@ function mesh = minband_opt(mesh)
 disp('Optimizing Mesh...');
 
 if ~(strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'fluor_bem') || strcmp(mesh.type,'spec_bem'))
-    gr=sparse(length(mesh.nodes),length(mesh.nodes));
+
+    ni = zeros(9*size(mesh.elements,1),1);
+    nj = zeros(9*size(mesh.elements,1),1);
+    nk = 1;
     for i = 1 : length(mesh.elements)
-        for j = 1 : 3
-            for k = 1 : 3
-                gr(mesh.elements(i,k),mesh.elements(i,j))=1;
+        for j = 1:3
+            for k = 1:3
+                ni(nk) = mesh.elements(i,k);
+                nj(nk) = mesh.elements(i,j);
+                nk = nk + 1;
             end
         end
     end
+    gr = sparse(ni,nj,ones(size(ni,1),1),size(mesh.nodes,1),size(mesh.nodes,1));
     figure
     spy(gr)
     
@@ -77,14 +83,19 @@ if ~(strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'fluor_bem') || strcmp(mes
     end
     mesh.elements = elm_new;
     
-    gr=sparse(length(mesh.nodes),length(mesh.nodes));
+    ni = zeros(9*size(mesh.elements,1),1);
+    nj = zeros(9*size(mesh.elements,1),1);
+    nk = 1;
     for i = 1 : length(mesh.elements)
-        for j = 1 : 3
-            for k = 1 : 3
-                gr(mesh.elements(i,k),mesh.elements(i,j))=1;
+        for j = 1:3
+            for k = 1:3
+                ni(nk) = mesh.elements(i,k);
+                nj(nk) = mesh.elements(i,j);
+                nk = nk + 1;
             end
         end
     end
+    gr = sparse(ni,nj,ones(size(ni,1),1),size(mesh.nodes,1),size(mesh.nodes,1));
     figure
     spy(gr)
 end
