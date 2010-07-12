@@ -160,29 +160,12 @@ lnI = log(data(:,1));
 % Set offset based on particular source / detector
 % we do this because data is not symmetrical!
 [n,m]=size(mesh.link);
-lnI_offset_tmp = spalloc(n,m,n*m);
-k = 1;
-for i = 1 : n
-  for j = 1 : m
-    if mesh.link(i,j) ~= 0
-      jj = mesh.link(i,j);
-      lnI_offset_tmp(i,jj) = lnI(k)-femlnI(k);
-      k = k + 1;
-    end
-  end
-end
-
-lnI_offset = zeros(size(femlnI));
-k = 1;
-for i = 1 : n
-  for j = 1 : m
-    if mesh.link(i,j) ~= 0
-      temp = lnI_offset_tmp(i,:);
-      temp(isnan(temp)) = [];
-      lnI_offset(k) = mean(temp);
-      k = k + 1;
-    end
-  end
+spot = 1;
+lnI_offset = zeros(size(lnI,1),1);
+for i=1:n
+    num_non = sum(mesh.link(i,:)~=0);
+    lnI_offset(spot:spot+num_non-1) = mean(lnI(spot:spot+num_non-1)-femlnI(spot:spot+num_non-1));
+    spot = spot + num_non;
 end
 
 subplot(1,2,2);

@@ -15,8 +15,6 @@ function [mua,mus,lnI_offset,phase_offset,fem_data] = fit_data(mesh,...
 % iteration is the number of iterations for fitting
 % outputs are the intial guesses
 
-
-
 % calculate the source / detector distance for each measurement
 k = 1;
 datanum = 0;
@@ -24,6 +22,7 @@ datanum = 0;
 for i = 1 : ns
   for j = 1 : length(mesh.link(i,:))
       datanum = datanum + 1;
+      % original fit data loop
       if isnan(data(datanum,1)) || isnan(data(datanum,2))
           mesh.link(i,j) = 0;
       end
@@ -226,37 +225,14 @@ phase = data(:,2);
 % Set offset based on particular source / detector
 % we do this because data is not symmetrical!
 [n,m]=size(mesh.link);
-lnI_offset_tmp = spalloc(n,m,n*m);
-phase_offset_tmp = spalloc(n,m,n*m);
-k = 1;
-for i = 1 : n
-  for j = 1 : m
-    if mesh.link(i,j) ~= 0
-      jj = mesh.link(i,j);
-      lnI_offset_tmp(i,jj) = lnI(k)-femlnI(k);
-      phase_offset_tmp(i,jj) = phase(k)-femphase(k);
-      k = k + 1;
-    end
-  end
-end
-
-%lnI_offset = repmat(mean(lnI_offset')',1,m);
-%phase_offset = repmat(mean(phase_offset')',1,m);
-lnI_offset = zeros(size(femlnI));
-phase_offset = zeros(size(femphase));
-k = 1;
-for i = 1 : n
-  for j = 1 : m
-    if mesh.link(i,j) ~= 0
-      temp = lnI_offset_tmp(i,:);
-      temp(isnan(temp)) = [];
-      lnI_offset(k) = mean(temp);
-      temp = phase_offset_tmp(i,:);
-      temp(isnan(temp)) = [];
-      phase_offset(k) = mean(temp);
-      k = k + 1;
-    end
-  end
+spot = 1;
+lnI_offset = zeros(size(lnI,1),1);
+phase_offset = zeros(size(phase,1),1);
+for i=1:n
+    num_non = sum(mesh.link(i,:)~=0);
+    lnI_offset(spot:spot+num_non-1) = mean(lnI(spot:spot+num_non-1)-femlnI(spot:spot+num_non-1));
+    phase_offset(spot:spot+num_non-1) = mean(phase(spot:spot+num_non-1)-femphase(spot:spot+num_non-1));
+    spot = spot + num_non;
 end
 
 subplot(2,2,3);
