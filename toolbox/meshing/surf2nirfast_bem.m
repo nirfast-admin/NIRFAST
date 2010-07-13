@@ -59,7 +59,7 @@ while true
     fn = [fnprefix num2str(fcounter) myext];
 end
 
-if fcounter ~= newmatc % We have separated disjoint regions within the same material ID
+if (fcounter-num_flag)~=newmatc-1% We have separated disjoint regions within the same material ID
     fprintf('\n\n\t ****  ATTENTION ****\n\n');
     fprintf('  Please note that some of sub-surfaces present in your input files are now separated,\n');
     fprintf('  and thus have their own ''region'' ID. Following is the mapping between new regions and\n');
