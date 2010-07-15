@@ -8,17 +8,7 @@ function data_noise = add_noise(data,amp,ph,fn)
 % amp is the percentage noise in amplitude
 % ph is the percentage noise in phase
 % and fn is the name of the new file to be saved
-
-
-% error checking
-if amp < 0
-    errordlg('Amplitude noise amount must be nonnegative','NIRFAST Error');
-    error('Amplitude noise amount must be nonnegative');
-end
-if ph < 0
-    errordlg('Phase noise amount must be nonnegative','NIRFAST Error');
-    error('Phase noise amount must be nonnegative');
-end
+ 
 
 
 % Initialize RANDN to a different state each time.
@@ -40,13 +30,13 @@ elseif isfield(data,'paax')
 elseif isfield(data,'paamm')
     [nr,nc]=size(data.paamm);
 else
-    errordlg('There is no data or it is not properly formatted','NIRFAST Error');
-    error('There is no data or it is not properly formatted');
+    disp('No appropriate data found.');
+    return
 end
 
 % amplitude
 n = randn(nr,nc/2);
-n = n./max(max(abs(n))); % make sure we go from -1 : 1
+%n = n./max(max(abs(n))); % make sure we go from -1 : 1
 if (isfield(data,'paa'))
     data.paa(:,1:2:end) = data.paa(:,1:2:end) + ...
         amp.*(data.paa(:,1:2:end)./100).*n;
@@ -81,7 +71,7 @@ end
 
 %Phase
 n = randn(nr,nc/2);
-n = n./max(max(abs(n))); % make sure we go from -1 : 1
+%n = n./max(max(abs(n))); % make sure we go from -1 : 1
 if (isfield(data,'paa'))
     data.paa(:,2:2:end) = data.paa(:,2:2:end) + ph.*n;
 else
