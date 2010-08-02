@@ -378,11 +378,13 @@ for i = 1 : ns
       dist(k,1) = sqrt(sum((mesh.source.coord(i,:) - ...
                 mesh.meas.coord(jj,:)).^2));
         k = k+1;
+        dist_full(truek,1) = sqrt(sum((mesh.source.coord(i,:) - ...
+                mesh.meas.coord(jj,:)).^2));
     else
         linkind = [linkind; truek];
+        dist_full(truek,1) = NaN;
+        data(truek,1) = NaN;
     end
-    dist_full(truek,1) = sqrt(sum((mesh.source.coord(i,:) - ...
-                mesh.meas.coord(jj,:)).^2));
     truek = truek + 1;
   end
 end
