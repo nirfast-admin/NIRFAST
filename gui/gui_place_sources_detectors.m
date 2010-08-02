@@ -283,6 +283,7 @@ if isfield(handles,'dimension')
         sources = get(handles.sources,'String');
         sources{end+1} = [num2str(x) ' ' num2str(y)];
         set(handles.sources,'String',sources);
+        plot(x,y,'ro');
     elseif handles.dimension == 3
         axes(handles.mesh)
         fig = gcf;
@@ -312,6 +313,7 @@ if isfield(handles,'dimension')
         detectors = get(handles.detectors,'String');
         detectors{end+1} = [num2str(x) ' ' num2str(y)];
         set(handles.detectors,'String',detectors);
+        plot(x,y,'bx');
     elseif handles.dimension == 3
         axes(handles.mesh)
         fig = gcf;
@@ -341,10 +343,12 @@ if handles.dimension == 3
             sources{end+1} = [num2str(p(1)) ' ' num2str(p(2)) ' ' num2str(p(3))];
             set(handles.sources,'String',sources);
             axes(handles.mesh)
+            plot3(p(1),p(2),p(3),'ro');
         elseif handles.detectorflag == 1
             detectors = get(handles.detectors,'String');
             detectors{end+1} = [num2str(p(1)) ' ' num2str(p(2)) ' ' num2str(p(3))];
             set(handles.detectors,'String',detectors);
+            plot3(p(1),p(2),p(3),'bx');
         end
     end
 end
