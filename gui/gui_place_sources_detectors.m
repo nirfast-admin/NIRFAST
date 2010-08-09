@@ -22,7 +22,7 @@ function varargout = gui_place_sources_detectors(varargin)
 
 % Edit the above text to modify the response to help gui_place_sources_detectors
 
-% Last Modified by GUIDE v2.5 29-Apr-2010 14:32:20
+% Last Modified by GUIDE v2.5 03-Aug-2010 10:20:49
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -135,6 +135,8 @@ function sources_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of sources as text
 %        str2double(get(hObject,'String')) returns contents of sources as a double
+temp = get(hObject,'String');
+set(handles.sources,'String',cellstr(temp));
 
 
 % --- Executes during object creation, after setting all properties.
@@ -353,3 +355,148 @@ if handles.dimension == 3
     end
 end
 
+
+% --- Executes on selection change in row_type.
+function row_type_Callback(hObject, eventdata, handles)
+% hObject    handle to row_type (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns row_type contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from row_type
+
+
+% --- Executes during object creation, after setting all properties.
+function row_type_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to row_type (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function row_number_Callback(hObject, eventdata, handles)
+% hObject    handle to row_number (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of row_number as text
+%        str2double(get(hObject,'String')) returns contents of row_number as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function row_number_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to row_number (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function row_position1_Callback(hObject, eventdata, handles)
+% hObject    handle to row_position1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of row_position1 as text
+%        str2double(get(hObject,'String')) returns contents of row_position1 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function row_position1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to row_position1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function row_position2_Callback(hObject, eventdata, handles)
+% hObject    handle to row_position2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of row_position2 as text
+%        str2double(get(hObject,'String')) returns contents of row_position2 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function row_position2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to row_position2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in row_create.
+function row_create_Callback(hObject, eventdata, handles)
+% hObject    handle to row_create (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if get(handles.row_type,'Value')==1
+    p1 = get(handles.row_position1,'String');
+    p2 = get(handles.row_position2,'String');
+    sources = get(handles.sources,'String');
+    data1 = textscan(p1,'%.54f');
+    data2 = textscan(p2,'%.54f');
+    numpoints = str2num(get(handles.row_number,'String'));
+    point1 = data1{1};
+    point2 = data2{1};
+    vec = (point2 - point1)/(numpoints-1);
+    newpoint = point1;
+    axes(handles.mesh)
+    for i=1:numpoints
+        temppoint = mat2str(newpoint');
+        sources{end+1} = temppoint(2:end-1);
+        if handles.dimension == 2
+            plot(newpoint(1),newpoint(2),'ro');
+        else
+            plot3(newpoint(1),newpoint(2),newpoint(3),'ro');
+        end
+        newpoint = newpoint + vec;
+    end
+    set(handles.sources,'String',sources);
+else
+    p1 = get(handles.row_position1,'String');
+    p2 = get(handles.row_position2,'String');
+    detectors = get(handles.detectors,'String');
+    data1 = textscan(p1,'%.54f');
+    data2 = textscan(p2,'%.54f');
+    numpoints = str2num(get(handles.row_number,'String'));
+    point1 = data1{1};
+    point2 = data2{1};
+    vec = (point2 - point1)/(numpoints-1);
+    newpoint = point1;
+    axes(handles.mesh)
+    for i=1:numpoints
+        temppoint = mat2str(newpoint');
+        detectors{end+1} = temppoint(2:end-1);
+        if handles.dimension == 2
+            plot(newpoint(1),newpoint(2),'bx');
+        else
+            plot3(newpoint(1),newpoint(2),newpoint(3),'bx');
+        end
+        newpoint = newpoint + vec;
+    end
+    set(handles.detectors,'String',detectors);
+end
