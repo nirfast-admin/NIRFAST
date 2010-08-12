@@ -24,12 +24,16 @@ mysave([fn '.elem'],mesh.elements);
 
 % saving fn.param file
 if strcmp(mesh.type,'stnd') == 1
+    mesh.kappa = 1./(3.*(mesh.mua+mesh.mus));
   data = [mesh.mua mesh.kappa mesh.ri];
 elseif strcmp(mesh.type,'stnd_spn') == 1
   data = [mesh.mua mesh.mus mesh.g mesh.ri];
 elseif strcmp(mesh.type,'stnd_bem') == 1
+    mesh.kappa = 1./(3.*(mesh.mua+mesh.mus));
   data = [mesh.mua mesh.kappa mesh.ri];
 elseif strcmp(mesh.type,'fluor') || strcmp(mesh.type,'fluor_bem')
+    mesh.kappax = 1./(3.*(mesh.muax+mesh.musx));
+    mesh.kappam = 1./(3.*(mesh.muam+mesh.musm));
   data = [mesh.muax mesh.kappax mesh.ri mesh.muam ...
 	  mesh.kappam mesh.muaf mesh.eta mesh.tau];
 elseif strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')
