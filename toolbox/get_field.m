@@ -18,9 +18,15 @@ if isempty(findstr(env,'pardiso'))
 else
     pardiso = 1;
 end
-eval('pardisolist')
-hostname = getComputerName();
-hostname = cellstr(repmat(hostname,length(pardisohost),1));
+if exist('pardisolist')
+    eval('pardisolist')
+    hostname = getComputerName();
+    hostname = cellstr(repmat(hostname,length(pardisohost),1));
+else
+    hostname = 'a';
+    pardisohost = 'b';
+end
+
 
 
 [nnodes,nsource]=size(qvec);
