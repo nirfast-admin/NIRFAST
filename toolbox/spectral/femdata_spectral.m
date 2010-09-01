@@ -11,7 +11,7 @@ function data = femdata_spectral(mesh,frequency,wv)
 % frequency is the modulation frequency (MHz)
 % wv is optional wavelength array
 
-
+parallel = parallel_init();
 
 % error checking
 if frequency < 0
@@ -51,13 +51,12 @@ nwv = length(wv_array);
 % Run femdata for each wavelength and save data as .paa
 
 data.paa = []; data.wv=[];
-for i = 1 : nwv
-  disp(sprintf('Calculating data for: %g nm',(wv_array(i))))
+  disp(sprintf('Calculating data for: %g nm',(wv_array(1))))
   
   %****************************************************************
   % calculate absorption and scattering coefficients from concetrations and
   % scattering parameters a and b
-  [mesh.mua, mesh.mus, mesh.kappa] = calc_mua_mus(mesh,wv_array(i));
+  [mesh.mua, mesh.mus, mesh.kappa] = calc_mua_mus(mesh,wv_array(1));
   
   % if sources are not fixed, move sources depending on mus
   if mesh.source.fixed == 0
@@ -68,8 +67,68 @@ for i = 1 : nwv
   
   [data_single_wv,mesh] = femdata_stnd(mesh,frequency);
   data.paa = [data.paa, data_single_wv.paa];
-  data.wv = [data.wv wv_array(i)];
+  data.wv = [data.wv wv_array(1)];
   clear data_single_wv
+  
+  % PARALLEL
+  if parallel
+    parfor i = 2 : nwv
+      data_single_wv=[];
+      mus_eff=[];
+      disp(sprintf('Calculating data for: %g nm',(wv_array(i))))
+
+      %****************************************************************
+      % calculate absorption and scattering coefficients from concetrations and
+      % scattering parameters a and b
+      mesh_temp=mesh;
+
+      [mesh_temp.mua, mesh_temp.mus, mesh_temp.kappa] = calc_mua_mus(mesh_temp,wv_array(i));
+
+      % if sources are not fixed, move sources depending on mus
+      if mesh_temp.source.fixed == 0
+        mus_eff = mesh_temp.mus;
+        [mesh_temp]=move_source(mesh_temp,mus_eff,3);
+       % clear mus_eff
+      end
+
+      [data_single_wv,mesh_temp] = femdata_stnd(mesh_temp,frequency);
+      data_amp(:,i) = data_single_wv.paa(:,1);
+      data_phase(:,i)= data_single_wv.paa(:,2);
+      data_wv(i) = wv_array(i);
+      % clear data_single_wv
+    end
+  else
+  % SERIAL
+    for i = 2 : nwv
+      data_single_wv=[];
+      mus_eff=[];
+      disp(sprintf('Calculating data for: %g nm',(wv_array(i))))
+
+      %****************************************************************
+      % calculate absorption and scattering coefficients from concetrations and
+      % scattering parameters a and b
+      mesh_temp=mesh;
+
+      [mesh_temp.mua, mesh_temp.mus, mesh_temp.kappa] = calc_mua_mus(mesh_temp,wv_array(i));
+
+      % if sources are not fixed, move sources depending on mus
+      if mesh_temp.source.fixed == 0
+        mus_eff = mesh_temp.mus;
+        [mesh_temp]=move_source(mesh_temp,mus_eff,3);
+       % clear mus_eff
+      end
+
+      [data_single_wv,mesh_temp] = femdata_stnd(mesh_temp,frequency);
+      data_amp(:,i) = data_single_wv.paa(:,1);
+      data_phase(:,i)= data_single_wv.paa(:,2);
+      data_wv(i) = wv_array(i);
+      % clear data_single_wv
+    end
+  end
+
+for i=2:nwv
+    data.paa=[data.paa,data_amp(:,i), data_phase(:,i)];
+    data.wv(i)=data_wv(i);
 end
 
 if isfield(mesh,'R')
