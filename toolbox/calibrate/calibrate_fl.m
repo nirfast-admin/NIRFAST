@@ -54,7 +54,7 @@ end
 
 
 % Load data and set constant values
-
+datanum = 0;
 for m = 1 : size(fmesh.source.coord)
   for j = 1 : length(fmesh.link(m,:))
       datanum = datanum + 1;
