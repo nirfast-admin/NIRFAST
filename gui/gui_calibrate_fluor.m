@@ -22,7 +22,7 @@ function varargout = gui_calibrate_fluor(varargin)
 
 % Edit the above text to modify the response to help gui_calibrate_fluor
 
-% Last Modified by GUIDE v2.5 07-Jun-2010 09:03:51
+% Last Modified by GUIDE v2.5 09-Sep-2010 09:55:28
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -237,7 +237,7 @@ meshloc = get_pathloc(get(handles.mesh,'String'));
 
 content{end+1} = strcat('[data_cal,mesh_cal]=calibrate_fl(', meshloc,...
         ',', dataloc, ',', get(handles.frequency,'String'),',',...
-        get(handles.iterations,'String'),');');
+        get(handles.iterations,'String'),',',get(handles.tolerance,'String'),');');
 
 if ~batch
     evalin('base',content{end});
@@ -380,6 +380,29 @@ function iterations_Callback(hObject, eventdata, handles)
 % --- Executes during object creation, after setting all properties.
 function iterations_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to iterations (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function tolerance_Callback(hObject, eventdata, handles)
+% hObject    handle to tolerance (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of tolerance as text
+%        str2double(get(hObject,'String')) returns contents of tolerance as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function tolerance_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to tolerance (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 

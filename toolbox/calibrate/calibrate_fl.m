@@ -1,6 +1,8 @@
-function [data,mesh] = calibrate_fl(fmesh, data_meas, frequency, iteration)
+function [data,mesh] = calibrate_fl(fmesh, data_meas, ...
+    frequency, iteration, tolerance)
 
-% [data,mesh] = calibrate_fl(fmesh, data_meas, frequency)
+% [data,mesh] = calibrate_fl(fmesh, data_meas, ...
+%    frequency, iteration, tolerance)
 %
 % Calibrates fluor data and generates initial guess. Will skip
 % the calibrate part if only fluorescence data is available.
@@ -10,6 +12,7 @@ function [data,mesh] = calibrate_fl(fmesh, data_meas, frequency, iteration)
 %       contains data_meas.amplitudex and data_meas.amplitudefl
 % frequency is the modulation frequency (MHz)
 % iteration is the number of iterations for fitting
+% tolerance is the fitting tolerance to stop at
 % data is the resulting calibrated data
 % mesh is the resulting calibrated mesh with initial guess
 
@@ -18,6 +21,10 @@ function [data,mesh] = calibrate_fl(fmesh, data_meas, frequency, iteration)
 if frequency < 0
     errordlg('Frequency must be nonnegative','NIRFAST Error');
     error('Frequency must be nonnegative');
+end
+
+if ~exist('tolerance','var')
+    tolerance = 10e-5;
 end
 
 % If not a workspace variable, load mesh
@@ -136,7 +143,7 @@ for i = 1:iteration
     
     err = [err Err_c1];
     
-    if i>1 & abs(err(end)-err(end-1))<10^-5
+    if i>1 & abs(err(end)-err(end-1))<tolerance
         disp(['Stopping Criteria Reached at iteration ' num2str(i)]);
         disp('Global values calculated from Numerical fit');
         disp(['muaf = ' num2str(muafc) ' mm-1 with error of ' num2str(err(end))]);
