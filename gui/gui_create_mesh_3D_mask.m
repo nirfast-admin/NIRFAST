@@ -253,7 +253,7 @@ if strcmp(handles.type,'stnd_bem') || ...
     end
 else
     content{end+1} = strcat('checkerboard3dmm_wrapper(',saveloc,',''',get(handles.savemeshto,'String'),...
-        ''',''',handles.type,''');');
+        ''',''',handles.type,''',',get(handles.edgexy,'String'),');');
     if ~batch
         evalin('base',content{end});
     end
