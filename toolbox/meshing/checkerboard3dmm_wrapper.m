@@ -11,6 +11,9 @@ function checkerboard3dmm_wrapper(fnprefix,saveloc,type,edgesize)
 
 
 %% elements, nodes, region, bndvtx, dimension, type, name
+if nargin < 4 || isempty(edgesize)
+    edgesize=[];
+end
 mesh = checkerboard3d_mm(fnprefix,type,edgesize);
 
 %% optical properties
