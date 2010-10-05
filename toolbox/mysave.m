@@ -11,7 +11,7 @@ function mysave(fn,data)
 dlim = '\t';
 data = data';
 [nrow,ncol]=size(data);
-fid = fopen(fn,'w');
+fid = OpenFile(fn,'w');
 
 str = ['fprintf(fid, ', '''', '%g'];
 if nrow>1
