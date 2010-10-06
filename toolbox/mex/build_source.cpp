@@ -30,7 +30,7 @@ double D, double *source, long reg, mxArray *q) {
 	Gns = mxCreateDoubleMatrix(1,1,mxCOMPLEX);
 	temp_result = mxCreateDoubleMatrix(1,1,mxCOMPLEX);
 	
-q_real = mxGetPr(q);
+	q_real = mxGetPr(q);
 	q_img = mxGetPi(q);
 
 	for(i=0; i<nnod; i++)
