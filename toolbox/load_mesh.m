@@ -335,34 +335,57 @@ if exist([fn '.link']) == 0
     disp([fn '.link file is not present']);
 elseif exist([fn '.link']) == 2
     
-    % find max length of detectors for any given source
+    % determine if link file is legacy format
     fid = fopen([fn '.link']);
-    max_length = [];
-    k = 1;
     junk = fgetl(fid);
-    while junk ~= -1
-        junk = length(str2num(junk));
-        max_length = max([max_length; junk]);
-        k = k + 1;
-        junk = fgetl(fid);
-    end
     fclose(fid);
-    k = k-1;
+    if ~strcmp(junk(1),'s')
+        legacy = 1;
+    else
+        legacy = 0;
+    end
     
-    % create a sparse, so if only some detectors are used for any
-    % given source, we are memory efficient!
-    if k~=0
-        mesh.link = sparse(k,max_length);
+    if legacy
+        
+        % find max length of detectors for any given source
         fid = fopen([fn '.link']);
-        for i = 1 : k
-            junk = str2num(fgetl(fid));
-            mesh.link(i,1:length(junk)) = junk;
+        max_length = [];
+        k = 1;
+        junk = fgetl(fid);
+        while junk ~= -1
+            junk = length(str2num(junk));
+            max_length = max([max_length; junk]);
+            k = k + 1;
+            junk = fgetl(fid);
         end
         fclose(fid);
+        k = k-1;
+
+        % create a sparse, so if only some detectors are used for any
+        % given source, we are memory efficient!
+        if k~=0
+            mesh.link = sparse(k,max_length);
+            fid = fopen([fn '.link']);
+            for i = 1 : k
+                junk = str2num(fgetl(fid));
+                mesh.link(i,1:length(junk)) = junk;
+            end
+            fclose(fid);
+        else
+            mesh.link = [];
+        end
+        clear junk i k max_length
+        
     else
-        mesh.link = [];
+        
+        link = importdata([fn '.link']);
+        mesh.link = sparse(max(link.data(:,1)),max(link.data(:,1)));
+        for i=1:size(mesh.link,1)
+            si = link.data(link.data(:,1)==i,2);
+            mesh.link(i,1:length(si)) = si';
+        end
+        
     end
-    clear junk i k max_length
 end
 
 
