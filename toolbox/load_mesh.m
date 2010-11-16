@@ -379,9 +379,12 @@ elseif exist([fn '.link']) == 2
     else
         
         link = importdata([fn '.link']);
-        mesh.link = sparse(max(link.data(:,1)),max(link.data(:,1)));
-        for i=1:size(mesh.link,1)
+        linkr = length(unique(link.data(:,1)));
+        linkc = sum(link.data(:,1)==link.data(1,1));
+        mesh.link = sparse(linkr,linkc);
+        for i=1:linkr
             si = link.data(link.data(:,1)==i,2);
+            si(link.data(link.data(:,1)==i,3)==0) = 0;
             mesh.link(i,1:length(si)) = si';
         end
         
