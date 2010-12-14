@@ -24,8 +24,8 @@ if ~(strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'fluor_bem') || strcmp(mes
         end
     end
     gr = sparse(ni,nj,ones(size(ni,1),1),size(mesh.nodes,1),size(mesh.nodes,1));
-    figure
-    spy(gr)
+%     figure
+%     spy(gr)
     
     NodeSort = symrcm(gr);
     for i = 1 : length(mesh.nodes)
@@ -96,8 +96,8 @@ if ~(strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'fluor_bem') || strcmp(mes
         end
     end
     gr = sparse(ni,nj,ones(size(ni,1),1),size(mesh.nodes,1),size(mesh.nodes,1));
-    figure
-    spy(gr)
+%     figure
+%     spy(gr)
 end
 
 disp('Mesh Optimization Complete');
