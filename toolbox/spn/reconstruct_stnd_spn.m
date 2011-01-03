@@ -157,6 +157,8 @@ end
 fprintf(fid_log,'Filter         = %d\n',filter_n);
 fprintf(fid_log,'Output Files   = %s_mua.sol\n',output_fn);
 fprintf(fid_log,'               = %s_mus.sol\n',output_fn);
+fprintf(fid_log,'Initial Guess mua = %d\n',fwd_mesh.mua(1));
+fprintf(fid_log,'Initial Guess mus = %d\n',fwd_mesh.mus(1));
 
 % start non-linear itertaion image reconstruction part
 for it = 1 : iteration

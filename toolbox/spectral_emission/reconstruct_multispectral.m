@@ -55,6 +55,7 @@ else
 end
 fprintf(fid_log,'Filtering        = %d\n',filter_n);
 fprintf(fid_log,'Output Files   = %s',etamuaf_sol);
+fprintf(fid_log,'Initial Guess muaf = %d\n',mesh.muaf(1));
 fprintf(fid_log,'\n');
 
 %% load recon_mesh

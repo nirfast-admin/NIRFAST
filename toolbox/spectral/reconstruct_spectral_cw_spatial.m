@@ -202,6 +202,20 @@ for i = 1:n_allsol
   clear tmp_string
 end
 
+% log initial guesses
+for i = 1:n_allsol
+    if strcmp(all_sol(i,1:3),'S-A')
+        %fprintf(fid_log,['Initial Guess ' all_sol(i,:) ' = %d\n'],...
+        %    fwd_mesh.sa(1));
+    elseif strcmp(all_sol(i,1:3),'S-P')
+       % fprintf(fid_log,['Initial Guess ' all_sol(i,:) ' = %d\n'],...
+        %    fwd_mesh.sp(1));
+    else
+        fprintf(fid_log,['Initial Guess ' all_sol(i,:) ' = %d\n'],...
+            fwd_mesh.conc(1,i));
+    end
+end
+
 
 % start non-linear itertaion image reconstruction part
 

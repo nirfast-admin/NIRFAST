@@ -91,6 +91,7 @@ end
 write_log(fid_log,'Filter         = %d\n',filter_n);
 write_log(fid_log,'Output Files   = %s_mua.sol\n',output_fn);
 write_log(fid_log,'               = %s_mus.sol\n',output_fn);
+fprintf(fid_log,'Initial Guess mua = %d\n',fwd_mesh.mua(1));
 
 
 % start non-linear itertaion image reconstruction part

@@ -61,6 +61,7 @@ etamuaf_sol=[output_fn '_etamuaf.sol'];
     fprintf(fid_log,'Initial Regularization  = %d\n',lambda);
     fprintf(fid_log,'Filtering        = %d\n',filter_n);
     fprintf(fid_log,'Output Files   = %s',etamuaf_sol);
+    fprintf(fid_log,'Initial Guess muaf = %d\n',fwd_mesh.muaf(1));
     % fprintf(fid_log,'Output Files   = %s',tau_sol);
     fprintf(fid_log,'\n');
 
