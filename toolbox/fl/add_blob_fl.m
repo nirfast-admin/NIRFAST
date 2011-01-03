@@ -90,6 +90,10 @@ if strcmp(mesh.type,'fluor_bem')
     end
     if isfield(blob, 'muaf')
         mesh.muaf(end+1,1) = blob.muaf;
+        % update excitation absorption if it isn't specified
+        if ~isfield(blob, 'muax')
+            mesh.muax(end,1) = mesh.muax(blob.region) + (blob.muaf - mesh.muaf(blob.region));
+        end
     else
         mesh.muaf(end+1,1) = mesh.muaf(blob.region);
     end
@@ -139,6 +143,13 @@ else
         mesh.musm(find(dist<=blob.r)) = blob.musm;
     end
     if isfield(blob, 'muaf')
+        % update excitation absorption if it isn't specified
+        if ~isfield(blob, 'muax')
+            old_muaf = mesh.muaf(find(dist<=blob.r));
+            old_muax = mesh.muax(find(dist<=blob.r));
+            mesh.muax(find(dist<=blob.r)) = old_muax(1) + (blob.muaf - old_muaf(1));
+        end
+        
         mesh.muaf(find(dist<=blob.r)) = blob.muaf;
     end
     if isfield(blob, 'tau')
