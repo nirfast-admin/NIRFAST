@@ -1,10 +1,11 @@
 function [mua,mus,lnI_offset,phase_offset,fem_data] = fit_data(mesh,...
                                                                data,...
                                                                frequency,...
-                                                               iteration)
+                                                               iteration,...
+                                                               nographs)
                                                            
 % [mua,mus,lnI_offset,phase_offset,fem_data] = fit_data(mesh,...
-%                                   data,frequency,iteration)
+%                                   data,frequency,iteration,nographs)
 %
 % fits data to a given model to give initial guesses for
 % reconstruction as well as data offsets
@@ -14,6 +15,12 @@ function [mua,mus,lnI_offset,phase_offset,fem_data] = fit_data(mesh,...
 % frequency is the modulation frequency (MHz)
 % iteration is the number of iterations for fitting
 % outputs are the intial guesses
+% nographs is a flag for if the graphs are displayed
+
+
+if ~exist('nographs','var')
+    nographs = 0;
+end
 
 % calculate the source / detector distance for each measurement
 k = 1;
@@ -54,17 +61,19 @@ lnrI = log(data(:,1).*dist);
 lnI = log(data(:,1));
 phase = data(:,2);
 
-figure;
-subplot(2,2,1);
-plot(dist,lnrI,'.')
-ylabel('lnrI');
-xlabel('Source / Detector distance');
-subplot(2,2,2);
-plot(dist,phase,'.')
-ylabel('Phase');
-xlabel('Source / Detector distance');
-drawnow
-pause(0.001)
+if nographs == 0
+    figure;
+    subplot(2,2,1);
+    plot(dist,lnrI,'.')
+    ylabel('lnrI');
+    xlabel('Source / Detector distance');
+    subplot(2,2,2);
+    plot(dist,phase,'.')
+    ylabel('Phase');
+    xlabel('Source / Detector distance');
+    drawnow
+    pause(0.001)
+end
 
 % Calculate the coeff of a polynomial fit of distance vs. Phase or lnrI
 m0 = polyfit(dist,phase,1); m0 = m0(1);
@@ -235,20 +244,22 @@ for i=1:n
     spot = spot + num_non;
 end
 
-subplot(2,2,3);
-plot(lnI,'k');
-hold on
-plot(femlnI+lnI_offset,'r--');
-axis tight;
-xlabel('log Amplitude');
-legend('original','Calibrated');
-subplot(2,2,4);
-plot(phase,'k');
-hold on
-plot(femphase+phase_offset,'r--');
-axis tight;
-xlabel('Phase');
-legend('original','Calibrated');
+if nographs == 0
+    subplot(2,2,3);
+    plot(lnI,'k');
+    hold on
+    plot(femlnI+lnI_offset,'r--');
+    axis tight;
+    xlabel('log Amplitude');
+    legend('original','Calibrated');
+    subplot(2,2,4);
+    plot(phase,'k');
+    hold on
+    plot(femphase+phase_offset,'r--');
+    axis tight;
+    xlabel('Phase');
+    legend('original','Calibrated');
+end
 
 % restore NaNs to data
 fem_datatmp = fem_data;

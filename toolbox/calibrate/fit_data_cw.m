@@ -1,4 +1,4 @@
-function [mua,mus,lnI_offset,fem_data] = fit_data_cw(mesh,data,iteration)
+function [mua,mus,lnI_offset,fem_data] = fit_data_cw(mesh,data,iteration,nographs)
                                                            
 % [mua,mus,lnI_offset,fem_data] = fit_data(mesh,...
 %                                   data,iteration)
@@ -10,7 +10,12 @@ function [mua,mus,lnI_offset,fem_data] = fit_data_cw(mesh,data,iteration)
 % data is the boundary data (variable)
 % iteration is the number of iterations for fitting
 % outputs are the intial guesses
+% nographs is a flag for displaying graphs
 
+
+if ~exist('nographs','var')
+    nographs = 0;
+end
 
 frequency = 0;
 if size(data,2) > 1
@@ -54,13 +59,15 @@ data = data(ind,:);
 lnrI = log(data(:,1).*dist);
 lnI = log(data(:,1));
 
-figure;
-subplot(1,2,1);
-plot(dist,lnrI,'.')
-ylabel('lnrI');
-xlabel('Source / Detector distance');
-drawnow
-pause(0.001)
+if nographs == 0
+    figure;
+    subplot(1,2,1);
+    plot(dist,lnrI,'.')
+    ylabel('lnrI');
+    xlabel('Source / Detector distance');
+    drawnow
+    pause(0.001)
+end
 
 % Calculate the coeff of a polynomial fit of distance vs. lnrI
 m1 = polyfit(dist,lnrI,1); m1 = m1(1);
@@ -168,13 +175,15 @@ for i=1:n
     spot = spot + num_non;
 end
 
-subplot(1,2,2);
-plot(lnI,'k');
-hold on
-plot(femlnI+lnI_offset,'r--');
-axis tight;
-xlabel('log Amplitude');
-legend('original','Calibrated');
+if nographs == 0
+    subplot(1,2,2);
+    plot(lnI,'k');
+    hold on
+    plot(femlnI+lnI_offset,'r--');
+    axis tight;
+    xlabel('log Amplitude');
+    legend('original','Calibrated');
+end
 
 % restore NaNs to data
 fem_datatmp = fem_data;

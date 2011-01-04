@@ -22,7 +22,7 @@ function varargout = gui_calibrate(varargin)
 
 % Edit the above text to modify the response to help gui_calibrate
 
-% Last Modified by GUIDE v2.5 07-Jun-2010 09:03:24
+% Last Modified by GUIDE v2.5 04-Jan-2011 09:13:37
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -313,86 +313,24 @@ adataloc = get_pathloc(get(handles.adata,'String'));
 hmeshloc = get_pathloc(get(handles.hmesh,'String'));
 ameshloc = get_pathloc(get(handles.amesh,'String'));
 
-
-% if spectral, check if the hdata is spread in multiple paa files
-if strcmp(handles.type,'spec') && strcmp(hdataloc(1),'''')
-    str = hdataloc(2:end-1); % remove quotes
-    k1 = findstr(str,'/');
-    k2 = findstr(str,'\');
-    path = str(1:max([k1 k2 [0]]));
-    if (~isempty(k1) || ~isempty(k2)) && numel(str)>=14
-        files = dir([str(1:end-14) '*nm_rep' str(end-4) '*']); % find extra wavelength files
-        if numel(files)>1
-            % collect data into one variable
-            hdataloc = 'htmpdata';
-            files2 = '';
-            wv = '';
-            for i=1:1:numel(files)
-                files2 = strcat(files2,' htmpdata',num2str(i),'.paa');
-                wv = [wv ' ' files(i).name(end-13:end-11) ' ' files(i).name(end-13:end-11)];
-                content{end+1} = strcat('htmpdata',num2str(i),...
-                    ' = load_data(''', path, files(i).name,''');');
-                if ~batch
-                    evalin('base',content{end});
-                end
-            end
-            content{end+1} = strcat(hdataloc,'.paa = [', files2,'];');
-            if ~batch
-                evalin('base',content{end});
-            end
-            content{end+1} = strcat(hdataloc,'.wv = [', wv,'];');
-            if ~batch
-                evalin('base',content{end});
-            end
-        end
-    end
+if get(handles.viewdata,'Value') == 1
+    nographs = '0';
+else
+    nographs = '1';
 end
-
-% if spectral, check if the adata is spread in multiple paa files
-if strcmp(handles.type,'spec') && strcmp(adataloc(1),'''')
-    str = adataloc(2:end-1); % remove quotes
-    k1 = findstr(str,'/');
-    k2 = findstr(str,'\');
-    path = str(1:max([k1 k2 [0]]));
-    if (~isempty(k1) || ~isempty(k2)) && numel(str)>=14
-        files = dir([str(1:end-14) '*nm_rep' str(end-4) '*']); % find extra wavelength files
-        if numel(files)>1
-            % collect data into one variable
-            adataloc = 'atmpdata';
-            files2 = '';
-            wv = '';
-            for i=1:1:numel(files)
-                files2 = strcat(files2,' atmpdata',num2str(i),'.paa');
-                wv = [wv ' ' files(i).name(end-13:end-11) ' ' files(i).name(end-13:end-11)];
-                content{end+1} = strcat('atmpdata',num2str(i),...
-                    ' = load_data(''', path, files(i).name,''');');
-                if ~batch
-                    evalin('base',content{end});
-                end
-            end
-            content{end+1} = strcat(adataloc,'.paa = [', files2,'];');
-            if ~batch
-                evalin('base',content{end});
-            end
-            content{end+1} = strcat(adataloc,'.wv = [', wv,'];');
-            if ~batch
-                evalin('base',content{end});
-            end
-        end
-    end
-end
-
 
 if strcmp(handles.type,'stnd')
     content{end+1} = strcat('[data_cal,mesh_cal]=calibrate_stnd(', hdataloc,...
             ',', adataloc,',', hmeshloc,',', ameshloc,...
             ',', get(handles.frequency,'String'),...
-            ',', get(handles.iterations,'String'), ');');
+            ',', get(handles.iterations,'String'),...
+            ',', nographs,');');
 else
     content{end+1} = strcat('[data_cal,mesh_cal]=calibrate_spectral(', hdataloc,...
             ',', adataloc,',', hmeshloc,',', ameshloc,...
             ',', get(handles.frequency,'String'),...
-            ',', get(handles.iterations,'String'), ');');
+            ',', get(handles.iterations,'String'),...
+            ',', nographs,');');
 end
 if ~batch
     evalin('base',content{end});
@@ -626,3 +564,12 @@ function variables_amesh_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in viewdata.
+function viewdata_Callback(hObject, eventdata, handles)
+% hObject    handle to viewdata (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of viewdata
