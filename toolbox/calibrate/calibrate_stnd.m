@@ -59,12 +59,12 @@ paa_anom = paa_anom.paa;
 
 % set phase in radians
 [j,k] = size(paa_anom);
-% for i=1:2:k
-% paa_anom(find(paa_anom(:,i+1)<0),i+1) = ...
-%     paa_anom(find(paa_anom(:,i+1)<0),i+1) + (360);
-% paa_anom(find(paa_anom(:,i+1)>(360)),i+1) = ...
-%     paa_anom(find(paa_anom(:,i+1)>(360)),i+1) - (360);
-% end
+for i=1:2:k
+paa_anom(find(paa_anom(:,i+1)<0),i+1) = ...
+    paa_anom(find(paa_anom(:,i+1)<0),i+1) + (360);
+paa_anom(find(paa_anom(:,i+1)>(360)),i+1) = ...
+    paa_anom(find(paa_anom(:,i+1)>(360)),i+1) - (360);
+end
 
 % load homogeneous data
 paa_homog = load_data(homog_data);
@@ -72,12 +72,12 @@ paa_homog = paa_homog.paa;
 
 % set phase in radians
 [j,k] = size(paa_homog);
-% for i=1:2:k
-% paa_homog(find(paa_homog(:,i+1)<0),i+1) = ...
-%     paa_homog(find(paa_homog(:,i+1)<0),i+1) + (360);
-% paa_homog(find(paa_homog(:,i+1)>(360)),i+1) = ...
-%     paa_homog(find(paa_homog(:,i+1)>(360)),i+1) - (360);
-% end
+for i=1:2:k
+paa_homog(find(paa_homog(:,i+1)<0),i+1) = ...
+    paa_homog(find(paa_homog(:,i+1)<0),i+1) + (360);
+paa_homog(find(paa_homog(:,i+1)>(360)),i+1) = ...
+    paa_homog(find(paa_homog(:,i+1)>(360)),i+1) - (360);
+end
 
 
     
@@ -122,11 +122,8 @@ paa_homog(:,1) = log(paa_homog(:,1));
 
 
 paa_cal = paa_anom - ((paa_homog - data_h_fem));
-%
-% paa_cal(:,1) = paa_cal(:,1) - (lnI_a-lnI_h);
-% paa_cal(:,2) = paa_cal(:,2) - (phase_a-phase_h);
-% paa_cal(:,1) = paa_cal(:,1) + lnI_h;
-% paa_cal(:,2) = paa_cal(:,2) + phase_h;
+paa_cal(:,1) = paa_cal(:,1) - (lnI_a-lnI_h);
+paa_cal(:,2) = paa_cal(:,2) - (phase_a-phase_h);
 paa_cal(:,1) = exp(paa_cal(:,1));
 
 % calibrated data out

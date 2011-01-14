@@ -171,7 +171,7 @@ for it = 1 : iteration
   % Add regularization
   % drastically reduced regularisation!
   if it ~= 1
-%    lambda = lambda./10;
+    lambda = lambda./10;
   end
   
   % Regularisation is now tricky, as we want to keep it quantitative. So
@@ -225,6 +225,7 @@ for it = 1 : iteration
   elseif filter_n < 0
     fwd_mesh = median_filter(fwd_mesh,abs(filter_n));
   end
+
   if it == 1
     fid = fopen([output_fn '_mua.sol'],'w');
   else
