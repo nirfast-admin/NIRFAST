@@ -82,7 +82,7 @@ if (mxIsComplex(prhs[3]))
 	dphii=mxGetPi(prhs[3]);          
   else							/*  if there is no complex part, make a new array with zeros */
   {
-	dphii=(double*) malloc( mxGetM(prhs[3])*sizeof(double) );
+	dphii=(double*) mxMalloc( mxGetM(prhs[3])*sizeof(double) );
 	for (i=0;i<mxGetM(prhs[3]);i=i+1)
 		dphii[i] = 0;
   }
@@ -93,7 +93,7 @@ if (mxIsComplex(prhs[4]))
 	aphii=mxGetPi(prhs[4]);          
   else							/*  if there is no complex part, make a new array with zeros */
   {
-	aphii=(double*) malloc( mxGetM(prhs[4])*sizeof(double) );
+	aphii=(double*) mxMalloc( mxGetM(prhs[4])*sizeof(double) );
 	for (i=0;i<mxGetM(prhs[4]);i=i+1)
 		aphii[i] = 0;
   }
