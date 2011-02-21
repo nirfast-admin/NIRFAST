@@ -271,7 +271,7 @@ void mexFunction(int nlhs,
 	vali=mxGetPi(prhs[3]);           /*  imaginary source value */
   else							/*  if there is no complex part, make a new array with zeros */
   {
-	vali=(double*) malloc( mxGetM(prhs[3])*sizeof(double) );
+	vali=(double*) mxMalloc( mxGetM(prhs[3])*sizeof(double) );
 	for (i=0;i<mxGetM(prhs[3]);i=i+1)
 		vali[i] = 0;
   }

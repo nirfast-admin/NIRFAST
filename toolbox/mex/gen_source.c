@@ -36,7 +36,7 @@ void mainloop(double *nodes,
     double disttmp[3], c_val[3][3], k[3];
     static double ones[3] = {1, 1, 1};
     double *dist;
-    dist=(double *)malloc((size_t) (nodem*sizeof(double)));
+    dist=(double *)mxMalloc((size_t) (nodem*sizeof(double)));
 
     for (i=0; i<nodem; ++i){
       dist[i] = sqrt((*(nodes+i) - source[0]) *	      \
@@ -78,7 +78,7 @@ void mainloop(double *nodes,
     double disttmp[4], c_val[4][4], k[4];
     static double ones[4] = {1, 1, 1, 1};
     double *dist;
-    dist=(double *)malloc((size_t) (nodem*sizeof(double)));
+    dist=(double *)mxMalloc((size_t) (nodem*sizeof(double)));
 
     for (i=0; i<nodem; ++i){
       dist[i] = sqrt((*(nodes+i) - source[0]) *	      \
