@@ -18,15 +18,15 @@ soldata = [];
 
 if isfield(mesh,'mua')
     listsolfnames{end+1} = 'mua';
-    soldata(:,end+1) = mesh.mua;
+    soldata(:,end+1) = mesh.mua(:,1);
 end
 if isfield(mesh,'mus')
     listsolfnames{end+1} = 'mus';
-    soldata(:,end+1) = mesh.mus;
+    soldata(:,end+1) = mesh.mus(:,1);
 end
 if isfield(mesh,'kappa')
     listsolfnames{end+1} = 'kappa';
-    soldata(:,end+1) = mesh.kappa;
+    soldata(:,end+1) = mesh.kappa(:,1);
 end
 if isfield(mesh,'muax')
     listsolfnames{end+1} = 'muax';
