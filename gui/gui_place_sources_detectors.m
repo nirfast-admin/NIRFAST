@@ -270,6 +270,7 @@ end
         
 set(mainGUIdata.script, 'String', content);
 guidata(nirfast, mainGUIdata);
+gui_set_chromophores('mesh',handles.meshloc);
 close(gui_place_sources_detectors);
 
 
