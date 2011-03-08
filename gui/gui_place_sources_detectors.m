@@ -270,7 +270,13 @@ end
         
 set(mainGUIdata.script, 'String', content);
 guidata(nirfast, mainGUIdata);
-gui_set_chromophores('mesh',handles.meshloc);
+
+mesh = load_mesh(handles.meshloc);
+if strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')   
+    gui_set_chromophores('mesh',handles.meshloc);
+end
+
+
 close(gui_place_sources_detectors);
 
 
