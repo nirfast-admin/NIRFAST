@@ -187,29 +187,32 @@ mesh.sp(:,1) = -p(1);
 mesh.sa(:,1) = exp(p(2));
 
 % generate initial guess if optimization toolbox exists
-if exist('constrain_lsqfit')
-     display('Using Optimization Toolbox');
-    [A,b,Aeq,beq,lb,ub]=constrain_lsqfit(nwn,nc);
-
-    [C,resnorm,residual,exitflag,output,lambda] = lsqlin(E,mua_big,A,b,Aeq,beq,lb,ub)
-
-
-    if(C(end)==0)
-        % for water recon (no fat)...
-        ub(end) = 0.5;lb(end) = 0.5;
-        [C,resnorm,residual,exitflag,output,lambda] = lsqlin(E,mua_big,A,b,Aeq,beq,lb,ub)
-    end
-    
-    mesh.conc = repmat(C',length(mesh.nodes),1);
-
-    % for scattering parameters
-    x0 = [1.0;1.0];
-    xdata = wv_array./1000;
-
-    [x,resnorm] = lsqcurvefit(@power_fit,x0,xdata,mus_big)
-
-    mesh.sa(:) = x(1);
-    mesh.sp(:) = x(2);
-
-end
+% if exist('lsqlin') && ...
+%         strcmp(mesh.chromscattlist{1},'HbO') && ...
+%         strcmp(mesh.chromscattlist{2},'deoxyHb') && ...
+%         strcmp(mesh.chromscattlist{3},'Water')
+%      display('Using constrained fit');
+%     [A,b,Aeq,beq,lb,ub]=constrain_lsqfit(nwn,nc);
+% 
+%     [C,resnorm,residual,exitflag,output,lambda] = lsqlin(E,mua_big,A,b,Aeq,beq,lb,ub)
+% 
+% 
+%     if(C(end)==0)
+%         % for water recon (no fat)...
+%         ub(end) = 0.5;lb(end) = 0.5;
+%         [C,resnorm,residual,exitflag,output,lambda] = lsqlin(E,mua_big,A,b,Aeq,beq,lb,ub)
+%     end
+%     
+%     mesh.conc = repmat(C',length(mesh.nodes),1);
+% 
+%     % for scattering parameters
+%     x0 = [1.0;1.0];
+%     xdata = wv_array./1000;
+% 
+%     [x,resnorm] = lsqcurvefit(@power_fit,x0,xdata,mus_big)
+% 
+%     mesh.sa(:) = x(1);
+%     mesh.sp(:) = x(2);
+% 
+% end
 
