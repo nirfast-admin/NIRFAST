@@ -96,3 +96,12 @@ TORT  OR OTHERWISE, ARISING  FROM, OUT  OF OR  IN CONNECTION  WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ==============================================================================
+
+
+--- excoef.txt ---
+
+Hemoglobin values from Scott Prahl found at http://omlc.ogi.edu/spectra/hemoglobin/summary.html.  Values were multiplied by 2.303 to convert from base e to base 10 and divided by 10,000 to convert from cm-1/M to mm-1/mM.
+
+Water values from Hale and Query found at http://omlc.ogi.edu/spectra/water/data/hale73.dat.  Values were divided by 10 to convert from cm-1 to mm-1
+
+Lipid values from Veen et al found at http://omlc.ogi.edu/spectra/fat/fat.txt.  Values were divided by 1000 to convert from m-1 to mm-1

@@ -18,11 +18,11 @@ mesh.chromscattlist{end+1,1} = 'S-Power';
 excoef = importdata('excoef.txt');
 
 for i = 1 : length(mesh.wv)
-    if (wv(i)<600) || (wv(i)>1000)
+    if isempty(find(mesh.wv(i)==excoef.data(:,1)))
         errordlg(['The Wavelength ' num2str(mesh.wv(i)) ...
-            ' is not between 600 and 1000 nm'],'NIRFAST Error');
-        error(['The Wavelength ' char(mesh.chromscattlist(i,1)) ...
-            ' is not between 600 and 1000 nm']);
+            ' is not found in excoef.txt'],'NIRFAST Error');
+        error(['The Wavelength ' num2str(mesh.wv(i)) ...
+            ' is not found in excoef.txt']);
     end
     k=1;
     for j=1:length(chrom_list)
@@ -33,8 +33,15 @@ for i = 1 : length(mesh.wv)
             error(['The Chromophore ' char(chrom_list(j)) ...
                 ' is not defined in extinction coefficient file']);
         else
-            mesh.excoef(i,k) = excoef.data(wv(i)-599,ind+1);
-            k=k+1;
+            temp = excoef.data(find(mesh.wv(i)==excoef.data(:,1)),ind+1);
+            if isnan(temp)
+                errordlg('There is no data for the chromophore at that wavelength', ...
+                    'NIRFAST Error');
+                error('There is no data for the chromophore at that wavelength');
+            else
+                mesh.excoef(i,k) = temp;
+                k=k+1;
+            end
         end
     end
 end

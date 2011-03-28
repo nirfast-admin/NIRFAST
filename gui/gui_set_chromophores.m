@@ -22,7 +22,7 @@ function varargout = gui_set_chromophores(varargin)
 
 % Edit the above text to modify the response to help gui_set_chromophores
 
-% Last Modified by GUIDE v2.5 04-Mar-2011 13:37:57
+% Last Modified by GUIDE v2.5 24-Mar-2011 11:15:29
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -108,6 +108,12 @@ end
 if get(handles.lipids,'Value')==1
     chrom = [chrom '''Lipids'';'];
 end
+if get(handles.lutex,'Value')==1
+    chrom = [chrom '''LuTex'';'];
+end
+if get(handles.gdtex,'Value')==1
+    chrom = [chrom '''GdTex'';'];
+end
 chrom = [chrom '}'];
 
 content{end+1} = strcat('set_chromophores(''',mesh,''',',chrom,',',wv,');');
@@ -186,3 +192,21 @@ function sp_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of sp
+
+
+% --- Executes on button press in lutex.
+function lutex_Callback(hObject, eventdata, handles)
+% hObject    handle to lutex (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of lutex
+
+
+% --- Executes on button press in gdtex.
+function gdtex_Callback(hObject, eventdata, handles)
+% hObject    handle to gdtex (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of gdtex
