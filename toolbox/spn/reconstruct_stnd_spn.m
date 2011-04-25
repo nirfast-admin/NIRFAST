@@ -50,6 +50,29 @@ if ~strcmp(fwd_mesh.type,'stnd_spn')
     error('Mesh type is incorrect');
 end
 
+%*******************************************************
+% read data - This is the calibrated experimental data or simulated data
+anom = load_data(data_fn);
+if ~isfield(anom,'paa')
+    errordlg('Data not found or not properly formatted','NIRFAST Error');
+    error('Data not found or not properly formatted');
+end
+
+% remove zeroed data
+anom.paa(anom.link(:,3)==0,:) = [];
+data_link = anom.link;
+
+anom = anom.paa;
+anom(:,1) = log(anom(:,1)); %take log of amplitude
+anom(:,2) = anom(:,2)/180.0*pi; % phase is in radians and not degrees
+anom(anom(:,2)<0,2) = anom(anom(:,2)<0,2) + (2*pi);
+anom(anom(:,2)>(2*pi),2) = anom(anom(:,2)>(2*pi),2) - (2*pi);
+anom = reshape(anom',length(anom)*2,1); 
+
+fwd_mesh.link = data_link;
+clear data
+%*******************************************************
+
 % Load or calculate second mesh for reconstruction basis
 if ischar(recon_basis)
   recon_mesh = load_mesh(recon_basis);
@@ -81,43 +104,6 @@ end
 pixel.support = mesh_support(recon_mesh.nodes,...
                              recon_mesh.elements,...
                              recon_mesh.element_area);
-
-% read data - This is the calibrated experimental data or simulated data
-anom = load_data(data_fn);
-if ~isfield(anom,'paa')
-    errordlg('Data not found or not properly formatted','NIRFAST Error');
-    error('Data not found or not properly formatted');
-end
-anom = anom.paa;
-anom(:,1) = log(anom(:,1)); %take log of amplitude
-anom(:,2) = anom(:,2)/180.0*pi; % phase is in radians and not degrees
-anom(find(anom(:,2)<0),2) = anom(find(anom(:,2)<0),2) + (2*pi);
-anom(find(anom(:,2)>(2*pi)),2) = anom(find(anom(:,2)>(2*pi)),2) - (2*pi);
-% find NaN in data
-
-datanum = 0;
-[ns,junk]=size(fwd_mesh.source.coord);
-for i = 1 : ns
-  for j = 1 : length(fwd_mesh.link(i,:))
-      datanum = datanum + 1;
-      if fwd_mesh.link(i,j) == 0
-          anom(datanum,:) = NaN;
-      end
-  end
-end
-
-ind = unique([find(isnan(anom(:,1))==1); find(isnan(anom(:,2))==1)]);
-% set mesh linkfile not to calculate NaN pairs:
-link = fwd_mesh.link';
-link(ind) = 0;
-fwd_mesh.link = link';
-recon_mesh.link = link';
-clear link
-% remove NaN from data
-ind = setdiff(1:size(anom,1),ind);
-anom = anom(ind,:);
-clear ind;
-anom = reshape(anom',length(anom)*2,1); 
 
 % check for input regularization
 if isstruct(lambda) && ~(strcmp(lambda.type,'JJt') || strcmp(lambda.type,'JtJ'))
@@ -178,6 +164,8 @@ for it = 1 : iteration
       disp('spn must be 1,3,5, or 7');
       return
   end
+  data.amplitude(data_link(:,3)==0,:) = [];
+  data.phase(data_link(:,3)==0,:) = [];
 
   % Set jacobian as Phase and Amplitude part instead of complex
   J = J.complete;

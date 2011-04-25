@@ -1,12 +1,12 @@
 function [fwd_mesh,pj_error] = reconstruct_fl(fwd_mesh,...
-                                              recon_basis,...
-                                              frequency,...
-                                              data_fn,...
-                                              iteration,...
-                                              lambda,...
-                                              output_fn,...
-                                              filter_n)
- 
+    recon_basis,...
+    frequency,...
+    data_fn,...
+    iteration,...
+    lambda,...
+    output_fn,...
+    filter_n)
+
 % [fwd_mesh,pj_error] = reconstruct_fl(fwd_mesh,...
 %                                      recon_basis,...
 %                                      frequency,...
@@ -17,7 +17,7 @@ function [fwd_mesh,pj_error] = reconstruct_fl(fwd_mesh,...
 %                                      filter_n)
 %
 % reconstruction program for fluorescence meshes
-% 
+%
 % fwd_mesh is the input mesh (variable or filename)
 % recon_basis is the reconstruction basis (pixel basis or mesh filename)
 % frequency is the modulation frequency (MHz)
@@ -32,6 +32,20 @@ function [fwd_mesh,pj_error] = reconstruct_fl(fwd_mesh,...
 % always CW for fluor
 frequency = 0;
 
+%*******************************************************
+% Read data
+data = load_data(data_fn);
+if ~isfield(data,'amplitudefl')
+    errordlg('Data not found or not properly formatted','NIRFAST Error');
+    error('Data not found or not properly formatted');
+end
+% remove zeroed data
+ind = data.link(:,3)==0;
+data.amplitudefl(ind,:) = []; clear ind
+anom = log(data.amplitudefl);
+% Only reconstructs fluorescence yield!
+
+%*******************************************************
 % load fine mesh for fwd solve: can input mesh structured variable
 % or load from file
 if ischar(fwd_mesh)==1
@@ -41,34 +55,35 @@ if ~strcmp(fwd_mesh.type,'fluor')
     errordlg('Mesh type is incorrect','NIRFAST Error');
     error('Mesh type is incorrect');
 end
+fwd_mesh.link = data.link;
+clear data
 
 etamuaf_sol=[output_fn '_etamuaf.sol'];
-% stau_sol=[output_fn '_tau.sol'];
 
 %**********************************************************
 % Initiate log file
 
-    fid_log = fopen([output_fn '.log'],'w');
-    fprintf(fid_log,'Forward Mesh   = %s\n',fwd_mesh.name);
-    if ischar(recon_basis)
-        fprintf(fid_log,'Basis          = %s\n',recon_basis);
-    end
-    fprintf(fid_log,'Frequency      = %f MHz\n',frequency);
-    if ischar(data_fn) ~= 0
-        fprintf(fid_log,'Data File      = %s\n',data_fn);
-    end
-    if isstruct(lambda)
-        fprintf(fid_log,'Initial Regularization  = %d\n',lambda.value);
-    else
-        fprintf(fid_log,'Initial Regularization  = %d\n',lambda);
-    end
-    fprintf(fid_log,'Filtering        = %d\n',filter_n);
-    fprintf(fid_log,'Output Files   = %s',etamuaf_sol);
-    fprintf(fid_log,'Initial Guess muaf = %d\n',fwd_mesh.muaf(1));
-    % fprintf(fid_log,'Output Files   = %s',tau_sol);
-    fprintf(fid_log,'\n');
+fid_log = fopen([output_fn '.log'],'w');
+fprintf(fid_log,'Forward Mesh   = %s\n',fwd_mesh.name);
+if ischar(recon_basis)
+    fprintf(fid_log,'Basis          = %s\n',recon_basis);
+end
+fprintf(fid_log,'Frequency      = %f MHz\n',frequency);
+if ischar(data_fn) ~= 0
+    fprintf(fid_log,'Data File      = %s\n',data_fn);
+end
+if isstruct(lambda)
+    fprintf(fid_log,'Initial Regularization  = %d\n',lambda.value);
+else
+    fprintf(fid_log,'Initial Regularization  = %d\n',lambda);
+end
+fprintf(fid_log,'Filtering        = %d\n',filter_n);
+fprintf(fid_log,'Output Files   = %s',etamuaf_sol);
+fprintf(fid_log,'Initial Guess muaf = %d\n',fwd_mesh.muaf(1));
+% fprintf(fid_log,'Output Files   = %s',tau_sol);
+fprintf(fid_log,'\n');
 
-
+%***********************************************************
 % get direct excitation field
 data_fwd = femdata(fwd_mesh,frequency);
 data_fwd.phi = data_fwd.phix;
@@ -76,50 +91,16 @@ data_fwd.phi = data_fwd.phix;
 %***********************************************************
 % load recon_mesh
 if ischar(recon_basis)
-  recon_mesh = load_mesh(recon_basis);
-  [fwd_mesh.fine2coarse,...
-   recon_mesh.coarse2fine] = second_mesh_basis(fwd_mesh,recon_mesh);
+    recon_mesh = load_mesh(recon_basis);
+    [fwd_mesh.fine2coarse,...
+        recon_mesh.coarse2fine] = second_mesh_basis(fwd_mesh,recon_mesh);
 elseif isstruct(recon_basis) == 0
-  [fwd_mesh.fine2coarse,recon_mesh] = pixel_basis(recon_basis,fwd_mesh);
+    [fwd_mesh.fine2coarse,recon_mesh] = pixel_basis(recon_basis,fwd_mesh);
 elseif isstruct(recon_basis) == 1
-   recon_mesh = recon_basis;
-  [fwd_mesh.fine2coarse,...
-   recon_mesh.coarse2fine] = second_mesh_basis(fwd_mesh,recon_mesh);
+    recon_mesh = recon_basis;
+    [fwd_mesh.fine2coarse,...
+        recon_mesh.coarse2fine] = second_mesh_basis(fwd_mesh,recon_mesh);
 end
-
-%**********************************************************
-% read data
-anom = load_data(data_fn);
-if ~isfield(anom,'amplitudefl')
-    errordlg('Data not found or not properly formatted','NIRFAST Error');
-    error('Data not found or not properly formatted');
-end
-anom = log(anom.amplitudefl);
-% Only reconstructs fluorescence yield!
-% find NaN in data
-
-datanum = 0;
-[ns,junk]=size(fwd_mesh.source.coord);
-for i = 1 : ns
-  for j = 1 : length(fwd_mesh.link(i,:))
-      datanum = datanum + 1;
-      if fwd_mesh.link(i,j) == 0
-          anom(datanum,1) = NaN;
-      end
-  end
-end
-
-ind = find(isnan(anom(:,1))==1);
-% set mesh linkfile not to calculate NaN pairs:
-link = fwd_mesh.link';
-link(ind) = 0;
-fwd_mesh.link = link';
-recon_mesh.link = link';
-clear link
-% remove NaN from data
-ind = setdiff(1:size(anom,1),ind);
-anom = anom(ind,:);
-clear ind;
 
 %************************************************************
 % initialize projection error
@@ -127,7 +108,7 @@ pj_error=[];
 
 %*************************************************************
 % modulation frequency
-omega = 2*pi*frequency*1e6; 
+omega = 2*pi*frequency*1e6;
 % set fluorescence variables
 fwd_mesh.gamma = (fwd_mesh.eta.*fwd_mesh.muaf)./(1+(omega.*fwd_mesh.tau).^2);
 
@@ -155,18 +136,19 @@ for it = 1 : iteration
     
     % build jacobian
     [Jwholem,datafl] = jacobian_fl(fwd_mesh,frequency,data_fwd);
+    ind = datafl.link(:,3)==0;
+    datafl.amplitudem(ind,:) = []; clear ind
     
     % Read reference data
     clear ref;
     ref(:,1) = log(datafl.amplitudem);
-   
-    data_diff = (anom-ref);
-   pj_error = [pj_error sum(abs(data_diff.^2))]; 
     
-
+    data_diff = (anom-ref);
+    pj_error = [pj_error sum(abs(data_diff.^2))];
+        
     %***********************
     % Screen and Log Info
-  
+    
     disp('---------------------------------');
     disp(['Iteration_fl Number          = ' num2str(it)]);
     disp(['Projection_fl error          = ' num2str(pj_error(end))]);
@@ -187,39 +169,32 @@ for it = 1 : iteration
             fprintf(fid_log,'STOPPING CRITERIA FOR FLUORESCENCE COMPONENT REACHED\n');
             % set output
             data_recon.elements = fwd_mesh.elements;
-            data_recon.etamuaf = fwd_mesh.etamuaf;  
+            data_recon.etamuaf = fwd_mesh.etamuaf;
             break
         end
     end
     %*************************
     clear data_recon
-
+    
     % Interpolate Jacobian onto recon mesh
     [Jm,recon_mesh] = interpolatef2r_fl(fwd_mesh,recon_mesh,Jwholem.completem);
-    %Jm = Jm(1:2:end-1, 1:end/2); % take only intensity portion
-    Jm = Jm(:, 1:end/2);
+    Jm = Jm(:, 1:end/2); % take only intensity portion
     
     % Normalize Jacobian wrt fl source gamma
     Jm = Jm*diag([recon_mesh.gamma]);
-
+    
     if strcmp(lambda.type, 'JJt')
         % build Hessian
         [nrow,ncol]=size(Jm);
         Hess = zeros(nrow);
         Hess = Jm*Jm';
-
-        % initailize temp Hess, data and mesh, incase PJ increases.
-        Hess_tmp = Hess;
-        mesh_tmp = recon_mesh;
-        data_tmp = data_diff;
-
-
+       
         % add regularization
         reg = lambda.value.*(max(diag(Hess)));
         disp(['Regularization Fluor           = ' num2str(reg)]);
         fprintf(fid_log,'Regularization Fluor            = %f\n',reg);
         Hess = Hess+(eye(nrow).*reg);
-
+        
         % Calculate update
         u = Jm'*(Hess\data_diff);
         u = u.*[recon_mesh.gamma];
@@ -228,34 +203,28 @@ for it = 1 : iteration
         [nrow,ncol]=size(Jm);
         Hess = zeros(ncol);
         Hess = Jm'*Jm;
-
-        % initailize temp Hess, data and mesh, incase PJ increases.
-        Hess_tmp = Hess;
-        mesh_tmp = recon_mesh;
-        data_tmp = data_diff;
-
-
+        
         % add regularization
         reg = lambda.value.*(max(diag(Hess)));
         disp(['Regularization Fluor           = ' num2str(reg)]);
         fprintf(fid_log,'Regularization Fluor            = %f\n',reg);
         for i = 1 : ncol
-          Hess(i,i) = Hess(i,i) + reg;
+            Hess(i,i) = Hess(i,i) + reg;
         end
-
+        
         % Calculate update
         u = Hess\Jm'*data_diff;
         u = u.*[recon_mesh.gamma];
     end
     
-    % value update:  
+    % value update:
     recon_mesh.gamma = recon_mesh.gamma+u;
     recon_mesh.etamuaf = recon_mesh.gamma.*(1+(omega.*recon_mesh.tau).^2);
     % assuming we know eta
     recon_mesh.muaf = recon_mesh.etamuaf./recon_mesh.eta;
     clear u Hess Hess_norm tmp data_diff G
     
-    % interpolate onto fine mesh  
+    % interpolate onto fine mesh
     [fwd_mesh,recon_mesh] = interpolatep2f_fl(fwd_mesh,recon_mesh);
     
     % filter
@@ -263,11 +232,11 @@ for it = 1 : iteration
         disp('Filtering');
         fwd_mesh = mean_filter(fwd_mesh,filter_n);
     end
-      
- 
+    
+    %plotimage(fwd_mesh,fwd_mesh.eta.*fwd_mesh.muaf);
     %**********************************************************
     % Write solution to file
-
+    
     if it == 1
         fid = fopen(etamuaf_sol,'w');
     else
@@ -283,6 +252,7 @@ for it = 1 : iteration
     
 end
 fin_it = it-1;
+fclose(fid_log);
 
 %******************************************************
 % Sub functions
@@ -346,19 +316,19 @@ end
 function [fwd_mesh,recon_mesh] = interpolatep2f_fl(fwd_mesh,recon_mesh)
 
 for i = 1 : length(fwd_mesh.nodes)
-  fwd_mesh.gamma(i,1) = ...
-      (recon_mesh.coarse2fine(i,2:end) * ...
-       recon_mesh.gamma(recon_mesh.elements(recon_mesh.coarse2fine(i,1),:)));
-  fwd_mesh.muaf(i,1) = ...
-      (recon_mesh.coarse2fine(i,2:end) * ...
-       recon_mesh.muaf(recon_mesh.elements(recon_mesh.coarse2fine(i,1),:)));
-   fwd_mesh.eta(i,1) = ...
-      (recon_mesh.coarse2fine(i,2:end) * ...
-       recon_mesh.eta(recon_mesh.elements(recon_mesh.coarse2fine(i,1),:)));
-  fwd_mesh.etamuaf(i,1) = ...
-      (recon_mesh.coarse2fine(i,2:end) * ...
-       recon_mesh.etamuaf(recon_mesh.elements(recon_mesh.coarse2fine(i,1),:)));
-  fwd_mesh.tau(i,1) = ...
-      (recon_mesh.coarse2fine(i,2:end) * ...
-       recon_mesh.tau(recon_mesh.elements(recon_mesh.coarse2fine(i,1),:)));
+    fwd_mesh.gamma(i,1) = ...
+        (recon_mesh.coarse2fine(i,2:end) * ...
+        recon_mesh.gamma(recon_mesh.elements(recon_mesh.coarse2fine(i,1),:)));
+    fwd_mesh.muaf(i,1) = ...
+        (recon_mesh.coarse2fine(i,2:end) * ...
+        recon_mesh.muaf(recon_mesh.elements(recon_mesh.coarse2fine(i,1),:)));
+    fwd_mesh.eta(i,1) = ...
+        (recon_mesh.coarse2fine(i,2:end) * ...
+        recon_mesh.eta(recon_mesh.elements(recon_mesh.coarse2fine(i,1),:)));
+    fwd_mesh.etamuaf(i,1) = ...
+        (recon_mesh.coarse2fine(i,2:end) * ...
+        recon_mesh.etamuaf(recon_mesh.elements(recon_mesh.coarse2fine(i,1),:)));
+    fwd_mesh.tau(i,1) = ...
+        (recon_mesh.coarse2fine(i,2:end) * ...
+        recon_mesh.tau(recon_mesh.elements(recon_mesh.coarse2fine(i,1),:)));
 end

@@ -2,12 +2,9 @@ function save_data(data,fn)
 
 % save_data(data,fn)
 %
-% where data is the structured variable containing 
+% where data is the structured variable containing
 % amplitude and phase (*.paa)
-% Saves calculated boundary data. Automatically determines type of data 
-
-
-
+% Saves calculated boundary data. Automatically determines type of data
 
 % check if the user reversed the inputs
 if ischar(data)
@@ -16,35 +13,48 @@ if ischar(data)
     fn = temp;
 end
 
+
 % SPECTRAL
 if isfield(data,'wv') == 1
-  fid = fopen(fn,'w');
-  [nrow,ncol]=size(data.wv);
-  for i = 1 : nrow
-    for j = 1 : ncol
-      fprintf(fid,'w%-10g\t',data.wv(i,j));
+    str = '';
+    str2 = '';
+    if isfield(data,'link') == 1
+        paa = data.link(:,1:2);
+        fid = fopen(fn,'w');
+        fprintf(fid,'source\tdet\t');
+        for i = 1:length(data.wv)
+            fprintf(fid,'w%-10g\t%-10s\t%-10s\t',data.wv(i));
+            paa = [paa, data.link(:,i+2), data.paa(:,2*i-1:2*i)];
+        end
+        fprintf(fid,'\n');
+    else 
+        disp('Data not formatted properly:  Requires link information')
+        return
     end
-    fprintf(fid,'\n');
-  end
-  
-  [nrow,ncol]=size(data.paa);
-  for i = 1 : nrow
-    for j = 1 : ncol
-      fprintf(fid,'%-10g\t',data.paa(i,j));
+        
+    [nrow,ncol]=size(paa);
+    for i = 1 : nrow
+        for j = 1 : ncol
+            fprintf(fid,'%-10g\t',paa(i,j));
+        end
+        fprintf(fid,'\n');
     end
-    fprintf(fid,'\n');
-  end
-  
-  
-% FLUORESCENCE
+   
+    
+    % FLUORESCENCE
 elseif isfield(data,'amplitudex') || isfield(data,'amplitudemm') || isfield(data,'amplitudefl')...
         || isfield(data,'phasex') || isfield(data,'phasemm') || isfield(data,'phasefl')
-    fid = fopen(fn,'w');
+
     str = '';
     str2 = '';
     paa = [];
     
     % check which fields exist
+    if isfield(data,'link')
+        str = [str ',''source''' ',''det''' ',''active'''];
+        str2 = [str2 '%-10s\t%-10s\t%-10s\t']; 
+        paa = [data.link];
+    end
     if isfield(data,'phasex')
         str = [str ',''xphase'''];
         str2 = [str2 '%-10s\t'];
@@ -77,34 +87,36 @@ elseif isfield(data,'amplitudex') || isfield(data,'amplitudemm') || isfield(data
     end
     
     % print file header
+    fid = fopen(fn,'w');
     str = ['fprintf(fid,''' str2 '\n''' str ');'];
     eval(str);
     
     % print data
     [nrow,ncol]=size(paa);
     for i = 1 : nrow
-      for j = 1 : ncol
-        fprintf(fid,'%-10g\t',paa(i,j));
-      end
-      fprintf(fid,'\n');
+        for j = 1 : ncol
+            fprintf(fid,'%-10g\t',paa(i,j));
+        end
+        fprintf(fid,'\n');
     end
-  
-
+    
+    
 % STANDARD
 else
-  fid = fopen(fn,'w');
- [nrow,ncol]=size(data.paa);
-  for j = 1 : ceil(ncol/2)
-    fprintf(fid,...
-	    '%-10s\t%-10s\t',...
-	    'amplitude','phase');
-  end
-  fprintf(fid,'\n');
-  for i = 1 : nrow
-    for j = 1 : ncol
-      fprintf(fid,'%-10g\t',data.paa(i,j));
+    fid = fopen(fn,'w');   
+    data.paa = [data.link, data.paa];
+    [nrow,ncol]=size(data.paa);
+    for j = 1 : ceil(ncol/5)
+        fprintf(fid,...
+            '%-10s\t%-10s\t%-10s\t%-10s\t%-10s\t',...
+            'source','det','active','amplitude','phase');
     end
     fprintf(fid,'\n');
-  end
+    for i = 1 : nrow
+        for j = 1 : ncol
+            fprintf(fid,'%-10g\t',data.paa(i,j));
+        end
+        fprintf(fid,'\n');
+    end
 end
 fclose(fid);

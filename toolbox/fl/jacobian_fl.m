@@ -10,7 +10,6 @@ function [J,data]=jacobian_fl(mesh,frequency,datax)
 % datax is the excitation field data (variable)
 
 
-
 % error checking
 if frequency < 0
     errordlg('Frequency must be nonnegative','NIRFAST Error');
@@ -60,17 +59,17 @@ if isfield(mesh,'ident') == 1
 end
 
 % Calculate the RHS (the source vectors) for the Emission.
+source = unique(mesh.link(:,1));
 [nnodes,junk]=size(mesh.nodes);
-[nsource,junk]=size(mesh.source.coord);
+[nsource,junk]=size(source);
 qvec = zeros(nnodes,nsource);
-
 % Simplify the RHS of emission equation
 beta = mesh.gamma.*(1-(sqrt(-1).*omega.*mesh.tau));
 % get rid of any zeros!
 if frequency == 0
-    beta(find(beta==0)) = 1e-20;
+    beta(beta==0) = 1e-20;
 else
-    beta(find(beta==0)) = complex(1e-20,1e-20);
+    beta(beta==0) = complex(1e-20,1e-20);
 end
 
 if mesh.dimension == 2
@@ -106,21 +105,26 @@ clear qvec R MASS_m;
 
 % Calculate boundary data
 [data.complexm]=get_boundary_data(mesh,data.phim);
+data.link = mesh.link;
 
 % Map complex data to amplitude and phase
 data.amplitudem = abs(data.complexm);
 
 data.phasem = atan2(imag(data.complexm),...
 		   real(data.complexm));
-data.phasem(find(data.phasem<0)) = data.phasem(find(data.phasem<0)) + (2*pi);
+data.phasem(data.phasem<0) = data.phasem(data.phasem<0) + (2*pi);
 data.phasem = data.phasem*180/pi;
 
 data.paam = [data.amplitudem data.phasem];
 data.phix = datax.phi;
 
 % Build the Emission jacobian
+data2 = data;
+ind = data.link(:,3) == 0;
+data2.complexm(ind,:)=[];
+    
 if omega == 0
-    [J] = build_jacobian_cw_fl(mesh,data,omega);
+    [J] = build_jacobian_cw_fl(mesh,data2,omega);
 else
-    [J] = build_jacobian_fl(mesh,data,omega);
+    [J] = build_jacobian_fl(mesh,data2,omega);
 end

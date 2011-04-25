@@ -366,32 +366,28 @@ else
     data = data_big(:,i);
 end
 
-% calculate the source / detector distance for each measurement
-k = 1;
-truek = 1;
-linkind = [];
-[ns,junk]=size(mesh.source.coord);
-for i = 1 : ns
-  for j = 1 : length(mesh.link(i,:))
-    if mesh.link(i,j) ~= 0
-      jj = mesh.link(i,j);
-      dist(k,1) = sqrt(sum((mesh.source.coord(i,:) - ...
-                mesh.meas.coord(jj,:)).^2));
-        k = k+1;
-        dist_full(truek,1) = sqrt(sum((mesh.source.coord(i,:) - ...
-                mesh.meas.coord(jj,:)).^2));
+% source/detector distances
+dist = zeros(length(mesh.link),1);
+for i = 1:length(mesh.link)
+    snum = mesh.link(i,1);
+    mnum = mesh.link(i,2);
+    snum = mesh.source.num == snum;
+    mnum = mesh.meas.num == mnum;
+    if sum(snum)==0 || sum(mnum)==0
+        dist_full(i,1)=0;
+        mesh.link(i,3)=0;
     else
-        linkind = [linkind; truek];
-        dist_full(truek,1) = NaN;
-        data(truek,1) = NaN;
+        dist_full(i,1) = sqrt(sum((mesh.source.coord(snum,:) - ...
+        mesh.meas.coord(mnum,:)).^2,2)); 
     end
-    truek = truek + 1;
-  end
 end
 
+% get an index from link file of data to actually use
+linki = logical(mesh.link(:,3));
+
 % Set lnrI, ph
-data_tmp = data;
-data_tmp(linkind,:) = [];
+data_tmp = data(linki,:);
+dist = dist_full(linki);
 [j,k] = size(data_tmp(:,1));
 [j2,k2] = size(dist);
 lnrI = log(data_tmp(:,1).*dist);

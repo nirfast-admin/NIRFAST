@@ -61,3 +61,5 @@ for i = 1 : nwv
   data.wv = [data.wv wv_array(i)];
   clear data_single_wv
 end
+
+data.link = mesh.link;

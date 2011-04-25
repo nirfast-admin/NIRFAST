@@ -31,7 +31,6 @@ function [fwd_mesh,pj_error] = reconstruct_stnd_cw(fwd_mesh,...
 frequency = 0;
 
 tic;
-
 %****************************************
 % If not a workspace variable, load mesh
 if ischar(fwd_mesh)== 1
@@ -42,6 +41,23 @@ if ~strcmp(fwd_mesh.type,'stnd')
     error('Mesh type is incorrect');
 end
 
+%*******************************************************
+% read data - This is the calibrated experimental data or simulated data
+anom = load_data(data_fn);
+if ~isfield(anom,'paa')
+    errordlg('Data not found or not properly formatted','NIRFAST Error');
+    error('Data not found or not properly formatted');
+end
+
+% remove zeroed data
+anom.paa(anom.link(:,3)==0,:) = [];
+data_link = anom.link;
+
+anom = anom.paa;
+anom = log(anom(:,1)); %take log of amplitude
+fwd_mesh.link = data_link;
+
+%*******************************************************
 % Load or calculate second mesh for reconstruction basis
 if ischar(recon_basis)
   recon_mesh = load_mesh(recon_basis);
@@ -74,39 +90,6 @@ pixel.support = mesh_support(recon_mesh.nodes,...
                              recon_mesh.elements,...
                              recon_mesh.element_area);
 
-% read data - This is the calibrated experimental data or simulated data
-anom = load_data(data_fn);
-if ~isfield(anom,'paa')
-    errordlg('Data not found or not properly formatted','NIRFAST Error');
-    error('Data not found or not properly formatted');
-end
-anom = anom.paa;
-anom = log(anom(:,1));
-% find NaN in data
-
-datanum = 0;
-[ns,junk]=size(fwd_mesh.source.coord);
-for i = 1 : ns
-  for j = 1 : length(fwd_mesh.link(i,:))
-      datanum = datanum + 1;
-      if fwd_mesh.link(i,j) == 0
-          anom(datanum,:) = NaN;
-      end
-  end
-end
-
-ind = find(isnan(anom(:,1))==1);
-% set mesh linkfile not to calculate NaN pairs:
-link = fwd_mesh.link';
-link(ind) = 0;
-fwd_mesh.link = link';
-recon_mesh.link = link';
-clear link
-% remove NaN from data
-ind = setdiff(1:size(anom,1),ind);
-anom = anom(ind,:);
-clear ind;
-
 % check for input regularization
 if isstruct(lambda) && ~(strcmp(lambda.type,'JJt') || strcmp(lambda.type,'JtJ'))
     lambda.type = 'Automatic';
@@ -123,10 +106,10 @@ if strcmp(lambda.type, 'Automatic')
         lambda.type = 'JtJ';
     end
 end
-
+%*******************************************************
 % Initiate projection error
 pj_error = [];
-
+%*******************************************************
 % Initiate log file
 fid_log = fopen([output_fn '.log'],'w');
 fprintf(fid_log,'Forward Mesh   = %s\n',fwd_mesh.name);
@@ -152,6 +135,7 @@ for it = 1 : iteration
   
   % Calculate jacobian
   [J,data]=jacobian_stnd(fwd_mesh,frequency,recon_mesh);
+  data.amplitude(data_link(:,3)==0,:) = [];
 
   % Set jacobian as Phase and Amplitude part instead of complex
   J = J.complete;

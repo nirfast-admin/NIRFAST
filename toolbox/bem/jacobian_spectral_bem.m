@@ -106,6 +106,7 @@ end
 %% Assign outputs
 data.paa = zeros(ndata,nwv*2);
 data.wv = wv_array;
+data.link = mesh.link;
 J = [];
 J_small = zeros(ndata*2,nregions*(m+2));
 for i = 1:nwv

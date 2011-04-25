@@ -26,10 +26,12 @@ end
 
 if nargin == 2
   wv_array = sort(mesh.wv);
+  linki = 1:length(wv_array);
 elseif nargin == 3
   wv_array = sort(wv);
   for i = 1:length(wv_array)
     flag = find(mesh.wv == wv_array(i));
+    linki(i) = flag; % keeps correct link column with wv_array
     if isempty(flag) == 1
       disp('ERROR: wv_array contains wavelengths not present in the extinction coefficients')
       data = [];
@@ -57,7 +59,7 @@ data.paa = []; data.wv=[];
   % calculate absorption and scattering coefficients from concetrations and
   % scattering parameters a and b
   [mesh.mua, mesh.mus, mesh.kappa] = calc_mua_mus(mesh,wv_array(1));
-  
+ 
   % if sources are not fixed, move sources depending on mus
   if mesh.source.fixed == 0
     mus_eff = mesh.mus;
@@ -65,10 +67,15 @@ data.paa = []; data.wv=[];
     clear mus_eff
   end
   
-  [data_single_wv,mesh] = femdata_stnd(mesh,frequency);
+  mesh_temp = mesh;
+  % build link file for first wv from first wv of function call.
+  mesh_temp.link = [mesh.link(:,1:2) mesh.link(:,linki(1)+2)];
+  
+  [data_single_wv,junk] = femdata_stnd(mesh_temp,frequency);
   data.paa = [data.paa, data_single_wv.paa];
   data.wv = [data.wv wv_array(1)];
-  clear data_single_wv
+  data.link = mesh_temp.link;
+  clear data_single_wv junk
   
   % PARALLEL
   if parallel
@@ -81,7 +88,7 @@ data.paa = []; data.wv=[];
       % calculate absorption and scattering coefficients from concetrations and
       % scattering parameters a and b
       mesh_temp=mesh;
-
+      mesh_temp.link = [mesh.link(:,1:2) mesh.link(:,linki(i)+2)];
       [mesh_temp.mua, mesh_temp.mus, mesh_temp.kappa] = calc_mua_mus(mesh_temp,wv_array(i));
 
       % if sources are not fixed, move sources depending on mus
@@ -95,6 +102,7 @@ data.paa = []; data.wv=[];
       data_amp(:,i) = data_single_wv.paa(:,1);
       data_phase(:,i)= data_single_wv.paa(:,2);
       data_wv(i) = wv_array(i);
+      data_link(:,i-1) = mesh.link(:,linki(i)+2);
       % clear data_single_wv
     end
   else
@@ -108,7 +116,8 @@ data.paa = []; data.wv=[];
       % calculate absorption and scattering coefficients from concetrations and
       % scattering parameters a and b
       mesh_temp=mesh;
-
+      mesh_temp.link = [mesh.link(:,1:2) mesh.link(:,linki(i)+2)];
+      
       [mesh_temp.mua, mesh_temp.mus, mesh_temp.kappa] = calc_mua_mus(mesh_temp,wv_array(i));
 
       % if sources are not fixed, move sources depending on mus
@@ -122,6 +131,7 @@ data.paa = []; data.wv=[];
       data_amp(:,i) = data_single_wv.paa(:,1);
       data_phase(:,i)= data_single_wv.paa(:,2);
       data_wv(i) = wv_array(i);
+      data_link(:,i-1) = mesh.link(:,linki(i)+2);
       % clear data_single_wv
     end
   end
@@ -129,8 +139,9 @@ data.paa = []; data.wv=[];
 for i=2:nwv
     data.paa=[data.paa,data_amp(:,i), data_phase(:,i)];
     data.wv(i)=data_wv(i);
+    data.link(:,i+2) = data_link(:,i-1);
 end
-
+    
 if isfield(mesh,'R')
     mesh=rmfield(mesh,'R');
 end

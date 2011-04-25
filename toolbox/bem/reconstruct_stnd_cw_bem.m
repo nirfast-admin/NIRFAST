@@ -38,39 +38,23 @@ if ~strcmp(fwd_mesh.type,'stnd_bem')
     error('Mesh type is incorrect');
 end
 
+%*******************************************************
 % read data - This is the calibrated experimental data or simulated data
 anom = load_data(data_fn);
-
 if ~isfield(anom,'paa')
     errordlg('Data not found or not properly formatted','NIRFAST Error');
     error('Data not found or not properly formatted');
 end
 
+% remove zeroed data
+anom.paa(anom.link(:,3)==0,:) = [];
+data_link = anom.link;
+
 anom = anom.paa;
-anom = log(anom(:,1));
-% find NaN in data
+anom = log(anom(:,1)); %take log of amplitude
+fwd_mesh.link = data_link;
 
-datanum = 0;
-[ns,junk]=size(fwd_mesh.source.coord);
-for i = 1 : ns
-  for j = 1 : length(fwd_mesh.link(i,:))
-      datanum = datanum + 1;
-      if fwd_mesh.link(i,j) == 0
-          anom(datanum,:) = NaN;
-      end
-  end
-end
-
-ind = find(isnan(anom(:,1))==1);
-% set mesh linkfile not to calculate NaN pairs:
-link = fwd_mesh.link';
-link(ind) = 0;
-fwd_mesh.link = link';
-clear link
-% remove NaN from data
-ind = setdiff(1:size(anom,1),ind);
-anom = anom(ind,:);
-clear ind;
+%*******************************************************
 
 % Initiate projection error
 pj_error=zeros(1,iteration);
@@ -99,6 +83,7 @@ for it = 1 : iteration
   
   % Calculate jacobian
   [J,data]=jacobian_stnd_bem(fwd_mesh,frequency);
+  data.amplitude(data_link(:,3)==0,:) = [];
 
   % Read reference data calculated by initial -current- guess
   clear ref;

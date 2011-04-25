@@ -55,6 +55,7 @@ if ~isfield(paa_anom,'paa')
     errordlg('Data not found or not properly formatted','NIRFAST Error');
     error('Data not found or not properly formatted');
 end
+mesh_anom.link = paa_anom.link;
 paa_anom = paa_anom.paa;
 
 % set phase in radians
@@ -68,6 +69,7 @@ end
 
 % load homogeneous data
 paa_homog = load_data(homog_data);
+mesh_homog.link = paa_homog.link;
 paa_homog = paa_homog.paa;
 
 % set phase in radians
@@ -128,7 +130,8 @@ paa_cal(:,1) = exp(paa_cal(:,1));
 
 % calibrated data out
 data.paa = paa_cal;
-
+data.link = [mesh_anom.link(:,1:2) and(mesh_anom.link(:,3),mesh_homog.link(:,3))];
+mesh.link = data.link;
 % set mesh values for global calculated patient values
 mesh.mua(:) = mua_a;
 mesh.mus(:) = mus_a;

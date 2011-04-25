@@ -6,7 +6,7 @@ function [J,data,mesh] = jacobian_spectral_cw(mesh,wv_array,mesh2)
 % Calculates jacobian for a spectral mesh
 % if specific wavelengths are specified, only those are used.
 % if a reconstruction basis is given, interpolates jacobian onto that mesh
-% 
+%
 % mesh is the input mesh (variable or filename)
 % wv is optional wavelength array
 % mesh2 is optional reconstruction basis (mesh variable)
@@ -21,7 +21,7 @@ parallel = parallel_init();
 
 %% load mesh
 if ischar(mesh)== 1
-  mesh = load_mesh(mesh);
+    mesh = load_mesh(mesh);
 end
 
 %% error checking
@@ -61,18 +61,9 @@ nwv = length(wv_array);
 [junk,m]=size(mesh.excoef);
 
 if exist('mesh2') == 1
-  nnodes = length(mesh2.nodes);
+    nnodes = length(mesh2.nodes);
 else
-  nnodes = length(mesh.nodes);
-end
-
-% get total number of datapoints
-ndata = length(find(mesh.link~=0));
-
-% create a copy of original linkfile before modifying to ignore NaN
-mesh.linkorig = mesh.link;
-if exist('mesh2') == 1
-    mesh2.linkorig = mesh2.link;
+    nnodes = length(mesh.nodes);
 end
 
 if exist('mesh2')
@@ -89,30 +80,20 @@ else
     mesh2_J(1:nwv) = mesh;
 end
 for i = 1:nwv
-      % calculate absorption and scattering coefficients
-      [mesh_J(i).mua,mesh_J(i).mus,mesh_J(i).kappa,E(i).val] = calc_mua_mus(mesh,wv_array(i));
-      if exist('mesh2') == 1
-          [mesh2_J(i).mua,mesh2_J(i).mus,mesh2_J(i).kappa, E(i).val] = calc_mua_mus(mesh2,wv_array(i));
-      end
-
-      % if sources are not fixed, move sources depending on mus
-      if mesh_J(i).source.fixed == 0
+    mesh_J(i).link = [mesh.link(:,1:2) mesh.link(:,i+2)];
+    % calculate absorption and scattering coefficients
+    [mesh_J(i).mua,mesh_J(i).mus,mesh_J(i).kappa,E(i).val] = calc_mua_mus(mesh,wv_array(i));
+    if exist('mesh2') == 1
+        [mesh2_J(i).mua,mesh2_J(i).mus,mesh2_J(i).kappa, E(i).val] = calc_mua_mus(mesh2,wv_array(i));
+        mesh2_J(i).link = [mesh.link(:,1:2) mesh.link(:,i+2)];
+    end
+    
+    % if sources are not fixed, move sources depending on mus
+    if mesh_J(i).source.fixed == 0
         mus_eff = mesh_J(i).mus;
         [mesh_J(i)]=move_source(mesh_J(i),mus_eff,3);
         clear mus_eff
-      end
-
-      % set mesh linkfile not to calculate NaN pairs:
-      if isfield(mesh,'ind')
-          link = mesh.linkorig';
-          eval(['ind = mesh.ind.l' num2str(wv_array(i)) ';']);
-          link(ind) = 0;
-          mesh_J(i).link = link';
-          if exist('mesh2') == 1
-            mesh2_J(i).link = link';
-          end
-      end
-      clear link
+    end
 end
 
 %% Parallel Jacobian
@@ -128,39 +109,39 @@ if parallel
         
     end
     
-%% Serial Jacobian
-else   
+    %% Serial Jacobian
+else
     
     for i = 1:nwv
-        
+        disp(['Calculating Jacobian for ', num2str(mesh.wv(i)),'nm']);
         if mesh_basis
             [J_tmp(i),data_tmp(i)]=jacobian_stnd(mesh_J(i),frequency,mesh2_J(i));
         else
             [J_tmp(i),data_tmp(i)]=jacobian_stnd(mesh_J(i),frequency);
         end
-        
     end
-
 end
 
 %% Assign outputs
-data.paa = zeros(ndata,nwv*2);
+data.paa = zeros(length(mesh.link),nwv*2);
 data.wv = wv_array;
 J = [];
-J_small = zeros(ndata,nnodes*m);
 for i = 1:nwv
+    ndata = sum(mesh.link(:,i+2)~=0);
+    J_small = zeros(ndata,nnodes*m);
+    
     data_tmp(i).paa(end+1:ndata,:) = NaN;
     data.paa(:,i*2-1:i*2) = data_tmp(i).paa;
     
     J_mua = J_tmp(i).complete;
     %J_kappa = J_tmp(i).complete(:,1:nnodes);
-
+    
     % NaN pad for equal length jacobians
     J_mua(end+1:ndata,:) = NaN;
     %J_kappa(end+1:ndata*2,:) = NaN;
-
+    
     for j = 1:m
-      J_small(:,(j-1)*nnodes+1:(j)*nnodes) = E(i).val(j).*(J_mua);
+        J_small(:,(j-1)*nnodes+1:(j)*nnodes) = E(i).val(j).*(J_mua);
     end
     
     J = [J;J_small];
@@ -168,4 +149,3 @@ for i = 1:nwv
     J_tmp(i).complex = [];
 end
 
-mesh.link = mesh.linkorig;

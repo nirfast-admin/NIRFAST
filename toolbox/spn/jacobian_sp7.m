@@ -216,33 +216,36 @@ M4=K7+C256+C2_64+C4_324+C6_13+F4;
 %
 
 
+source = unique(mesh.link(:,1));
 [nnodes,junk]=size(mesh.nodes);
-[nsource,junk]=size(mesh.source.coord);
+[nsource,junk]=size(source);
 qvec = spalloc(nnodes,nsource,nsource*100);
 if mesh.dimension == 2
-  for i = 1 : nsource
-    if mesh.source.fwhm(i) == 0
-        qvec(:,i) = gen_source_point(mesh,mesh.source.coord(i,1:2));
-    else
-      qvec(:,i) = gen_source(mesh.nodes(:,1:2),...
-			   sort(mesh.elements')',...
-			   mesh.dimension,...
-			   mesh.source.coord(i,1:2),...
-			   mesh.source.fwhm(i));
+    for i = 1 : nsource
+        s_ind = mesh.source.num == source(i);
+        if mesh.source.fwhm(s_ind) == 0
+            qvec(:,i) = gen_source_point(mesh,mesh.source.coord(s_ind,1:2));
+        else
+            qvec(:,i) = gen_source(mesh.nodes(:,1:2),...
+                sort(mesh.elements')',...
+                mesh.dimension,...
+                mesh.source.coord(s_ind,1:2),...
+                mesh.source.fwhm(s_ind));
+        end
     end
-  end
 elseif mesh.dimension == 3
-  for i = 1 : nsource
-    if mesh.source.fwhm(i) == 0
-        qvec(:,i) = gen_source_point(mesh,mesh.source.coord(i,1:3));
-    else
-    qvec(:,i) = gen_source(mesh.nodes,...
-			   sort(mesh.elements')',...
-			   mesh.dimension,...
-			   mesh.source.coord(i,:),...
-			   mesh.source.fwhm(i));
+    for i = 1 : nsource
+        s_ind = mesh.source.num == source(i);
+        if mesh.source.fwhm(s_ind) == 0
+            qvec(:,i) = gen_source_point(mesh,mesh.source.coord(s_ind,1:3));
+        else
+            qvec(:,i) = gen_source(mesh.nodes,...
+                sort(mesh.elements')',...
+                mesh.dimension,...
+                mesh.source.coord(s_ind,:),...
+                mesh.source.fwhm(s_ind));
+        end
     end
-  end
 end
 
 %i=nnodes;
@@ -343,25 +346,29 @@ data.phase(find(data.phase<0)) = data.phase(find(data.phase<0)) + (2*pi);
 data.phase = data.phase*180/pi;
 data.paa = [data.amplitude data.phase];
 
+data2 = data;
+ind = data.link(:,3)==0;
+data2.complex(ind,:)=[];
+
 % Calculate Jacobian
 % Catch zero frequency (CW) here
 if nargin == 3 % use second mesh basis for jacobian
-    data2 = interpolatef2r(mesh,mesh2,data);
-    data2.complex = data.complex;
+    data3 = interpolatef2r(mesh,mesh2,data2);
+    data3.complex = data2.complex;
     % Calculate Jacobian
     % Catch zero frequency (CW) here
     if frequency == 0
-        [J] = build_jacobian_cw(mesh2,data2);
+        [J] = build_jacobian_cw(mesh2,data3);
     else
-        [J] = build_jacobian(mesh2,data2);
+        [J] = build_jacobian(mesh2,data3);
     end
 elseif nargin == 2
     % Calculate Jacobian
     % Catch zero frequency (CW) here
     if frequency == 0
-        [J] = build_jacobian_cw(mesh,data);
+        [J] = build_jacobian_cw(mesh,data2);
     else
-        [J] = build_jacobian(mesh,data);
+        [J] = build_jacobian(mesh,data2);
     end
 end
 

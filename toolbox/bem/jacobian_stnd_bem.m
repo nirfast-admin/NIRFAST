@@ -30,6 +30,7 @@ if frequency ~=0
     data.paa(data.paa(:,2)<0,2) = data.paa(data.paa(:,2)<0,2) + (2*pi);
     data.paa(data.paa(:,2)>(2*pi),2) = data.paa(data.paa(:,2)>(2*pi),2) - (2*pi);
 end
+data.link = mesh.link;
 
 %% jacobian
 nregions = length(mesh.mua);

@@ -51,64 +51,42 @@ if exist('wv_array') == 0
   wv_array = fwd_mesh.wv;
 end
 
-%***************************************************
-% load data and wavelength information from data_fn
+%*******************************************************
+% read data - This is the calibrated experimental data or simulated data
 disp('Loading data and wavelength information')
-anom = load_data(data_fn,wv_array);
+data = load_data(data_fn,wv_array);
 % if specified wavelength not available, terminate.
-if isempty(anom) || ~isfield(anom,'paa')
+if isempty(data) || ~isfield(data,'paa')
     errordlg('Data not found or not properly formatted','NIRFAST Error');
     error('Data not found or not properly formatted');
 end
+[n,m] = size(data.link);  [nd,md] = size(data.paa);
+data_link = data.link;
 
-datanum = 0;
-[ns,junk]=size(fwd_mesh.source.coord);
-for i = 1 : ns
-  for j = 1 : length(fwd_mesh.link(i,:))
-      datanum = datanum + 1;
-      if fwd_mesh.link(i,j) == 0
-          anom.paa(datanum,:) = NaN;
-      end
-  end
+if 2*(m-2) ~= md
+    errordlg('data.link does not equal data.paa','NIRFAST Error');
+    error('data.link does not equal data.paa');
 end
 
 % we need log amplitude and phase in radians
-[nr,nc]=size(anom.paa);
-k = 1;
-for i = 1 : 2 : nc
-    anom_a(:,k) = log(anom.paa(:,i));
-    k = k + 1;
+anom_a = [];
+anom_p = [];
+k=1;
+for i = 1:2:md
+    data.paa(:,i) = log(data.paa(:,i));
+    foo = data.paa(:,i+1)/180.0*pi;
+    foo(foo<0) = foo(foo<0) + (2*pi);
+    foo(foo>(2*pi)) = foo(foo>(2*pi)) - (2*pi);
+    data.paa(:,i+1) = foo; clear foo
+    linki = logical(data_link(:,k+2));
+    anom_a = [anom_a; data.paa(linki,i)];
+    anom_p = [anom_p; data.paa(linki,i+1)];
+    k = k+1;
 end
-k = 1;
-for i = 2 : 2 : nc
-    foo = anom.paa(:,i)/180.0*pi;
-    foo(find(foo<0)) = foo(find(foo<0)) + (2*pi);
-    foo(find(foo>(2*pi))) = foo(find(foo>(2*pi))) - (2*pi);
-    anom_p(:,k) = foo;
-    k = k + 1;
-end
-clear k
-
-% find NaN in data
-% assume if phase is bad, so is amplitude and vice-versa
-for i = 1 : length(wv_array)
-    tmp = unique([find(isnan(anom_a(:,i))==1); ...
-                  find(isnan(anom_p(:,i))==1)]);
-    eval(['ind.l' num2str(wv_array(i)) ' = tmp;']);
-end
-clear tmp
-
-% Create a vector of data
-anom = [];
-for i = 1 : length(wv_array)
-    eval(['tmp = ind.l' num2str(wv_array(i)) ';']);
-    ind_tmp = setdiff(1:size(anom_a(:,i),1),tmp);
-    tmp = [anom_a(ind_tmp,i) anom_p(ind_tmp,i)];
-    [nr,nc]=size(tmp);
-    anom = [anom; reshape(tmp',nc*nr,1)];
-end
-fwd_mesh.ind = ind;
-clear anom_* tmp ind*
+anom = zeros(length(anom_a)*2,1);
+anom(1:2:end) = anom_a;
+anom(2:2:end) = anom_p;
+clear data anom_a anom_p
 
 % check to ensure wv_array wavelengths match the wavelength list fwd_mesh
 for i = 1:length(wv_array)
@@ -190,34 +168,25 @@ for it = 1:iteration
   disp('Building Jacobian using jacobian_spectral')
   [J,data,fwd_mesh] = jacobian_spectral_bem(fwd_mesh,frequency,wv_array);
   
-  %remove NaN padding
-  ind = ~isnan(J(:,1));
-  J = J(ind,:);
-  
-  % Read reference data
-  clear ref
-  [nr,nc]=size(data.paa);
-  k = 1;
-  for i = 1 : 2 : nc
-    ref_a(:,k) = data.paa(:,i);
-    k = k + 1;
-  end
-  k = 1;
-  for i = 2 : 2 : nc
-    foo = data.paa(:,i);
-    ref_p(:,k) = foo;
-    k = k + 1;
-  end
-  [nr,nc]=size(ref_a);
-  ref_a = reshape(ref_a,nr*nc,1);
-  ref_p = reshape(ref_p,nr*nc,1);
-  ref = reshape([ref_a ref_p]',nc*nr*2,1);
-  clear ref_a ref_p;
-  
-  %remove NaN padding
-  ind = ~isnan(ref);
-  ref = ref(ind);
-  clear ref_a ref_p ind;
+  % we need log amplitude and phase in radians    
+    ref_a = [];
+    ref_p = [];
+    k=1;
+    for i = 1:2:md
+        data.paa(:,i) = log(data.paa(:,i));
+        foo = data.paa(:,i+1)/180.0*pi;
+        foo(foo<0) = foo(foo<0) + (2*pi);
+        foo(foo>(2*pi)) = foo(foo>(2*pi)) - (2*pi);
+        data.paa(:,i+1) = foo; clear foo
+        linki = logical(data_link(:,k+2));
+        ref_a = [ref_a; data.paa(linki,i)];
+        ref_p = [ref_p; data.paa(linki,i+1)];
+        k = k+1;
+    end
+    ref = zeros(length(ref_a)*2,1);
+    ref(1:2:end) = ref_a;
+    ref(2:2:end) = ref_p;
+    clear data ref_a ref_p
   
   % Calculate data difference:
   data_diff = (anom - ref);

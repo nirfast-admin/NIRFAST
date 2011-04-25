@@ -142,31 +142,34 @@ M3=K5+C64+C2_16+C4_9+F3;
 % Now calculate source vector
 % NOTE last term in mex file 'qvec' is the source FWHM
 
+source = unique(mesh.link(:,1));
 [nnodes,junk]=size(mesh.nodes);
-[nsource,junk]=size(mesh.source.coord);
+[nsource,junk]=size(source);
 qvec = spalloc(nnodes,nsource,nsource*100);
 if mesh.dimension == 2
   for i = 1 : nsource
-    if mesh.source.fwhm(i) == 0
-        qvec(:,i) = gen_source_point(mesh,mesh.source.coord(i,1:2));
+    s_ind = mesh.source.num == source(i);
+    if mesh.source.fwhm(s_ind) == 0
+        qvec(:,i) = gen_source_point(mesh,mesh.source.coord(s_ind,1:2));
     else
       qvec(:,i) = gen_source(mesh.nodes(:,1:2),...
 			   sort(mesh.elements')',...
 			   mesh.dimension,...
-			   mesh.source.coord(i,1:2),...
-			   mesh.source.fwhm(i));
+			   mesh.source.coord(s_ind,1:2),...
+			   mesh.source.fwhm(s_ind));
     end
   end
 elseif mesh.dimension == 3
   for i = 1 : nsource
-    if mesh.source.fwhm(i) == 0
-        qvec(:,i) = gen_source_point(mesh,mesh.source.coord(i,1:3));
+    s_ind = mesh.source.num == source(i);
+    if mesh.source.fwhm(s_ind) == 0
+        qvec(:,i) = gen_source_point(mesh,mesh.source.coord(s_ind,1:3));
     else
     qvec(:,i) = gen_source(mesh.nodes,...
 			   sort(mesh.elements')',...
 			   mesh.dimension,...
-			   mesh.source.coord(i,:),...
-			   mesh.source.fwhm(i));
+			   mesh.source.coord(s_ind,:),...
+			   mesh.source.fwhm(s_ind));
     end
   end
 end
@@ -216,6 +219,7 @@ data.phi3=phi_all(((2*nvtx)+1):3*nvtx,:);
 [data.complex2]=get_boundary_data(mesh,data.phi2);
 [data.complex3]=get_boundary_data(mesh,data.phi3);
 [data.complex]=get_boundary_data(mesh,data.phi);
+data.link = mesh.link;
 
 % Map complex data to amplitude and phase
 % Phi 1

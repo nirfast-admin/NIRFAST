@@ -22,41 +22,28 @@ if ~exist('nographs','var')
     nographs = 0;
 end
 
-% calculate the source / detector distance for each measurement
-k = 1;
-datanum = 0;
-[ns,junk]=size(mesh.source.coord);
-for i = 1 : ns
-  for j = 1 : length(mesh.link(i,:))
-      datanum = datanum + 1;
-      % original fit data loop
-      if isnan(data(datanum,1)) || isnan(data(datanum,2))
-          mesh.link(i,j) = 0;
-      end
-      if mesh.link(i,j) ~= 0
-          jj = mesh.link(i,j);
-          dist(k,1) = sqrt(sum((mesh.source.coord(i,:) - ...
-                    mesh.meas.coord(jj,:)).^2));
-          k = k+1;
-      else
-        data(datanum,1) = NaN;
-      end
-  end
+
+% calculate the source / detector distance for each combination.
+% also make sure that proper sources / detectors are used
+dist = zeros(length(mesh.link),1);
+for i = 1:length(mesh.link)
+    snum = mesh.link(i,1);
+    mnum = mesh.link(i,2);
+    snum = mesh.source.num == snum;
+    mnum = mesh.meas.num == mnum;
+    if sum(snum)==0 || sum(mnum)==0
+        dist(i,1)=0;
+        mesh.link(i,3)=0;
+    else
+        dist(i,1) = sqrt(sum((mesh.source.coord(snum,:) - ...
+        mesh.meas.coord(mnum,:)).^2,2)); 
+    end
 end
 
-% % convert log amplitude into amplitude
-% data(:,1) = exp(data(:,1));
+% get an index from link file of data to actually use
+linki = logical(mesh.link(:,3));
 
 % Set lnrI, lnr and phase!
-[j,k] = size(data(:,1));
-[j2,k2] = size(dist);
-
-% deal with NaNs
-dist_orig = dist;
-ind = unique([find(isnan(data(:,1))==1); find(isnan(data(:,2))==1)]);
-ind = setdiff(1:size(data,1),ind);
-data = data(ind,:);
-
 lnrI = log(data(:,1).*dist);
 lnI = log(data(:,1));
 phase = data(:,2);
@@ -64,11 +51,11 @@ phase = data(:,2);
 if nographs == 0
     figure;
     subplot(2,2,1);
-    plot(dist,lnrI,'.')
+    plot(dist(linki),lnrI(linki),'.')
     ylabel('lnrI');
     xlabel('Source / Detector distance');
     subplot(2,2,2);
-    plot(dist,phase,'.')
+    plot(dist(linki),phase(linki),'.')
     ylabel('Phase');
     xlabel('Source / Detector distance');
     drawnow
@@ -76,8 +63,8 @@ if nographs == 0
 end
 
 % Calculate the coeff of a polynomial fit of distance vs. Phase or lnrI
-m0 = polyfit(dist,phase,1); m0 = m0(1);
-m1 = polyfit(dist,lnrI,1); m1 = m1(1);
+m0 = polyfit(dist(linki),phase(linki),1); m0 = m0(1);
+m1 = polyfit(dist(linki),lnrI(linki),1); m1 = m1(1);
 
 % fit data using an analytical model
 % based on Pogue paper
@@ -130,7 +117,7 @@ mesh.mus(:) = mus;
 mesh.kappa(:) = kappa;
 
 % Fit for mua and mus using FEM
-dist = dist_orig;
+% dist = dist_orig;
 jj = 0;
 while jj ~= iteration
   [fem_data]=femdata(mesh,frequency);
@@ -139,8 +126,8 @@ while jj ~= iteration
   femlnrI = log(fem_data(:,1).*dist);
   femphase = fem_data(:,2);
   
-  phi0 = polyfit(dist,femphase,1); phi0 = phi0(1);
-  alpha0 = polyfit(dist,femlnrI,1); alpha0 = alpha0(1);
+  phi0 = polyfit(dist(linki),femphase(linki),1); phi0 = phi0(1);
+  alpha0 = polyfit(dist(linki),femlnrI(linki),1); alpha0 = alpha0(1);
   
   mesh.mua(:) = mesh.mua(:)+0.0001;
   mesh.kappa = 1./(3*(mesh.mua+mesh.mus));
@@ -151,8 +138,8 @@ while jj ~= iteration
   femlnrI = log(fem_data(:,1).*dist);
   femphase = fem_data(:,2);
   
-  phi1 = polyfit(dist,femphase,1); phi1 = phi1(1);
-  alpha1 = polyfit(dist,femlnrI,1); alpha1 = alpha1(1);
+  phi1 = polyfit(dist(linki),femphase(linki),1); phi1 = phi1(1);
+  alpha1 = polyfit(dist(linki),femlnrI(linki),1); alpha1 = alpha1(1);
   
   mesh.mua(:) = mesh.mua(:)-0.0001;
   mesh.kappa = 1./(3*(mesh.mua+mesh.mus));
@@ -173,8 +160,8 @@ while jj ~= iteration
   femlnrI = log(fem_data(:,1).*dist);
   femphase = fem_data(:,2);
 
-  phi0 = polyfit(dist,femphase,1); phi0 = phi0(1);
-  alpha0 = polyfit(dist,femlnrI,1); alpha0 = alpha0(1);
+  phi0 = polyfit(dist(linki),femphase(linki),1); phi0 = phi0(1);
+  alpha0 = polyfit(dist(linki),femlnrI(linki),1); alpha0 = alpha0(1);
   
   mesh.mus(:) = mesh.mus(:)+0.001;
   mesh.kappa = 1./(3*(mesh.mua+mesh.mus));
@@ -185,8 +172,8 @@ while jj ~= iteration
   femlnrI = log(fem_data(:,1).*dist);
   femphase = fem_data(:,2);
   
-  phi2 = polyfit(dist,femphase,1); phi2 = phi2(1);
-  alpha2 = polyfit(dist,femlnrI,1); alpha2 = alpha2(1);
+  phi2 = polyfit(dist(linki),femphase(linki),1); phi2 = phi2(1);
+  alpha2 = polyfit(dist(linki),femlnrI(linki),1); alpha2 = alpha2(1);
   
   mesh.mus(:) = mesh.mus(:)-0.001;
   mesh.kappa = 1./(3*(mesh.mua+mesh.mus));
@@ -233,53 +220,31 @@ phase = data(:,2);
 
 % Set offset based on particular source / detector
 % we do this because data is not symmetrical!
-[n,m]=size(mesh.link);
-spot = 1;
+n = max(mesh.link(:,1));
 lnI_offset = zeros(size(lnI,1),1);
 phase_offset = zeros(size(phase,1),1);
 for i=1:n
-    num_non = sum(mesh.link(i,:)~=0);
-    lnI_offset(spot:spot+num_non-1) = mean(lnI(spot:spot+num_non-1)-femlnI(spot:spot+num_non-1));
-    phase_offset(spot:spot+num_non-1) = mean(phase(spot:spot+num_non-1)-femphase(spot:spot+num_non-1));
-    spot = spot + num_non;
+    source_all = mesh.link(:,1)==i;
+    source_used = and(mesh.link(:,1)==i , linki);
+    lnI_offset(source_all) = mean(lnI(source_used)-femlnI(source_used));
+    phase_offset(source_all) = mean(phase(source_used)-femphase(source_used));
 end
 
 if nographs == 0
     subplot(2,2,3);
-    plot(lnI,'k');
+    plot(lnI(linki)-lnI_offset(linki),'k');
     hold on
-    plot(femlnI+lnI_offset,'r--');
+    plot(femlnI(linki),'r--');
     axis tight;
     xlabel('log Amplitude');
-    legend('original','Calibrated');
+    legend('Measured-Offset','Model');
     subplot(2,2,4);
-    plot(phase,'k');
+    plot(phase(linki)-phase_offset(linki),'k');
     hold on
-    plot(femphase+phase_offset,'r--');
+    plot(femphase(linki),'r--');
     axis tight;
     xlabel('Phase');
-    legend('original','Calibrated');
+    legend('Measured-Offset','Model');
 end
 
-% restore NaNs to data
-fem_datatmp = fem_data;
-lnI_offsettmp = lnI_offset;
-phase_offsettmp = phase_offset;
-fem_data = [];
-lnI_offset = [];
-phase_offset = [];
-datanum = 0;
-for i = 1 : n
-  for j = 1 : m
-      if mesh.link(i,j) ~= 0
-          datanum = datanum + 1;
-          fem_data = [fem_data; fem_datatmp(datanum,:)];
-          lnI_offset = [lnI_offset; lnI_offsettmp(datanum)];
-          phase_offset = [phase_offset; phase_offsettmp(datanum)];
-      else
-          fem_data = [fem_data; NaN NaN];
-          lnI_offset = [lnI_offset; NaN];
-          phase_offset = [phase_offset; NaN];
-      end
-  end
 end

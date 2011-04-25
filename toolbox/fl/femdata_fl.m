@@ -95,34 +95,37 @@ end
 
 % Now calculate source vector
 % NOTE last term in mex file 'qvec' is the source FWHM
-%
+% First, reconcile link and source variables
+source = unique(mesh.link(:,1));
+[nsource,junk]=size(source);
 [nnodes,junk]=size(mesh.nodes);
-[nsource,junk]=size(mesh.source.coord);
 qvec = spalloc(nnodes,nsource,nsource*100);
 if mesh.dimension == 2
-  for i = 1 : nsource
-    if mesh.source.fwhm(i) == 0
-        qvec(:,i) = gen_source_point(mesh,mesh.source.coord(i,1:2));
-    else
-      qvec(:,i) = gen_source(mesh.nodes(:,1:2),...
-			   sort(mesh.elements')',...
-			   mesh.dimension,...
-			   mesh.source.coord(i,1:2),...
-			   mesh.source.fwhm(i));
+    for i = 1 : nsource
+        s_ind = mesh.source.num == source(i);
+        if mesh.source.fwhm(s_ind) == 0
+            qvec(:,i) = gen_source_point(mesh,mesh.source.coord(s_ind,1:2));
+        else
+            qvec(:,i) = gen_source(mesh.nodes(:,1:2),...
+                sort(mesh.elements')',...
+                mesh.dimension,...
+                mesh.source.coord(s_ind,1:2),...
+                mesh.source.fwhm(s_ind));
+        end
     end
-  end
 elseif mesh.dimension == 3
-  for i = 1 : nsource
-    if mesh.source.fwhm(i) == 0
-        qvec(:,i) = gen_source_point(mesh,mesh.source.coord(i,1:3));
-    else
-    qvec(:,i) = gen_source(mesh.nodes,...
-			   sort(mesh.elements')',...
-			   mesh.dimension,...
-			   mesh.source.coord(i,:),...
-			   mesh.source.fwhm(i));
+    for i = 1 : nsource
+        s_ind = mesh.source.num == source(i);
+        if mesh.source.fwhm(s_ind) == 0
+            qvec(:,i) = gen_source_point(mesh,mesh.source.coord(s_ind,1:3));
+        else
+            qvec(:,i) = gen_source(mesh.nodes,...
+                sort(mesh.elements')',...
+                mesh.dimension,...
+                mesh.source.coord(s_ind,:),...
+                mesh.source.fwhm(s_ind));
+        end
     end
-  end
 end
 
 clear junk i;
@@ -137,14 +140,14 @@ clear junk
 
 % Catch zero frequency (CW) here
 if frequency == 0
-  MASS_x = real(MASS_x);
-  MASS_m = real(MASS_m);
-  qvec = real(qvec);
-%   [i,j,s]=find(qvec);
-%   [m,n] = size(s);
-%   s = complex(s,1e-20);
-%   qvec = sparse(i,j,s,nnodes,nsource);
-%   clear i j s m n
+    MASS_x = real(MASS_x);
+    MASS_m = real(MASS_m);
+    qvec = real(qvec);
+    %   [i,j,s]=find(qvec);
+    %   [m,n] = size(s);
+    %   s = complex(s,1e-20);
+    %   qvec = sparse(i,j,s,nnodes,nsource);
+    %   clear i j s m n
 end
 
 %*******************************************************
@@ -159,16 +162,14 @@ clear qvec;
 
 %********************************************************
 % Calculate the RHS (the source vectors) for the FLUORESCENCE EMISSION.
-[nnodes,junk]=size(mesh.nodes);
-[nsource,junk]=size(mesh.source.coord);
 qvec = zeros(nnodes,nsource);
 % Simplify the RHS of emission equation
 beta = mesh.gamma.*(1-(sqrt(-1).*omega.*mesh.tau));
 % get rid of any zeros!
 if frequency == 0
-    beta(find(beta==0)) = 1e-20;
+    beta(beta==0) = 1e-20;
 else
-    beta(find(beta==0)) = complex(1e-20,1e-20);
+    beta(beta==0) = complex(1e-20,1e-20);
 end
 
 if mesh.dimension == 2
@@ -205,6 +206,7 @@ clear qvec;
 [data.complexx]=get_boundary_data(mesh,data.phix);
 [data.complexfl]=get_boundary_data(mesh,data.phifl);
 [data.complexmm]=get_boundary_data(mesh,data.phimm);
+data.link = mesh.link;
 
 % Map complex data to amplitude
 data.amplitudex = abs(data.complexx);
@@ -220,9 +222,9 @@ data.phasemm = atan2(imag(data.complexmm),...
     real(data.complexmm));
 
 % Calculate phase in degrees
-data.phasex(find(data.phasex<0)) = data.phasex(find(data.phasex<0)) + (2*pi);
-data.phasefl(find(data.phasefl<0)) = data.phasefl(find(data.phasefl<0)) + (2*pi);
-data.phasemm(find(data.phasemm<0)) = data.phasemm(find(data.phasemm<0)) + (2*pi);
+data.phasex(data.phasex<0) = data.phasex(data.phasex<0) + (2*pi);
+data.phasefl(data.phasefl<0) = data.phasefl(data.phasefl<0) + (2*pi);
+data.phasemm(data.phasemm<0) = data.phasemm(data.phasemm<0) + (2*pi);
 data.phasex = data.phasex*180/pi;
 data.phasefl = data.phasefl*180/pi;
 data.phasemm = data.phasemm*180/pi;

@@ -44,55 +44,34 @@ if exist('wv_array') == 0
   wv_array = fwd_mesh.wv;
 end
 
-%***************************************************
-% load data and wavelength information from data_fn
+%*******************************************************
+% read data - This is the calibrated experimental data or simulated data
 disp('Loading data and wavelength information')
-anom = load_data(data_fn,wv_array);
+data = load_data(data_fn,wv_array);
 % if specified wavelength not available, terminate.
-if isempty(anom) || ~isfield(anom,'paa')
+if isempty(data) || ~isfield(data,'paa')
     errordlg('Data not found or not properly formatted','NIRFAST Error');
     error('Data not found or not properly formatted');
 end
+[n,m] = size(data.link);  [nd,md] = size(data.paa);
+data_link = data.link;
 
-datanum = 0;
-[ns,junk]=size(fwd_mesh.source.coord);
-for i = 1 : ns
-  for j = 1 : length(fwd_mesh.link(i,:))
-      datanum = datanum + 1;
-      if fwd_mesh.link(i,j) == 0
-          anom.paa(datanum,:) = NaN;
-      end
-  end
+if 2*(m-2) ~= md
+    errordlg('data.link does not equal data.paa','NIRFAST Error');
+    error('data.link does not equal data.paa');
 end
 
 % we need log amplitude and phase in radians
-[nr,nc]=size(anom.paa);
-k = 1;
-for i = 1 : 2 : nc
-    anom_a(:,k) = log(anom.paa(:,i));
-    k = k + 1;
-end
-clear k
-
-% find NaN in data
-% assume if phase is bad, so is amplitude and vice-versa
-for i = 1 : length(wv_array)
-    tmp = find(isnan(anom_a(:,i))==1);
-    eval(['ind.l' num2str(wv_array(i)) ' = tmp;']);
-end
-clear tmp
-
-% Create a vector of data
 anom = [];
-for i = 1 : length(wv_array)
-    eval(['tmp = ind.l' num2str(wv_array(i)) ';']);
-    ind_tmp = setdiff(1:size(anom_a(:,i),1),tmp);
-    tmp = [anom_a(ind_tmp,i)];
-    [nr,nc]=size(tmp);
-    anom = [anom; reshape(tmp',nc*nr,1)];
+k=1;
+for i = 1:2:md
+    data.paa(:,i) = log(data.paa(:,i));
+    foo = data.paa(:,i+1)/180.0*pi;
+    linki = logical(data_link(:,k+2));
+    anom = [anom; data.paa(linki,i)];
+    k = k+1;
 end
-fwd_mesh.ind = ind;
-clear anom_* tmp ind*
+clear data
 
 % check to ensure wv_array wavelengths match the wavelength list fwd_mesh
 for i = 1:length(wv_array)
@@ -174,28 +153,16 @@ for it = 1:iteration
   disp('Building Jacobian using jacobian_spectral')
   [J,data,fwd_mesh] = jacobian_spectral_cw_bem(fwd_mesh,wv_array);
   
-  %remove NaN padding
-  ind = ~isnan(J(:,1));
-  J = J(ind,:);
-  
-  % Read reference data
-  clear ref
-  [nr,nc]=size(data.paa);
-  k = 1;
-  for i = 1 : 2 : nc
-    ref_a(:,k) = data.paa(:,i);
-    k = k + 1;
-  end
- 
-  [nr,nc]=size(ref_a);
-  ref_a = reshape(ref_a,nr*nc,1);
-  ref = reshape([ref_a]',nc*nr,1);
-  clear ref_a ref_p;
-  
-  %remove NaN padding
-  ind = ~isnan(ref);
-  ref = ref(ind);
-  clear ref_a ref_p ind;
+  % we need log amplitude and phase in radians    
+    ref = [];
+    k=1;
+    for i = 1:2:md
+        data.paa(:,i) = log(data.paa(:,i));
+        linki = logical(data_link(:,k+2));
+        ref = [ref; data.paa(linki,i)];
+        k = k+1;
+    end
+    clear data
   
   % Calculate data difference:
   data_diff = (anom - ref);

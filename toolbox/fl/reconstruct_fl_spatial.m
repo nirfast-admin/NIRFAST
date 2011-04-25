@@ -33,6 +33,20 @@ function [fwd_mesh,pj_error] = reconstruct_fl_spatial(fwd_mesh,...
 % always CW for fluor
 frequency = 0;
 
+%*******************************************************
+% Read data
+data = load_data(data_fn);
+if ~isfield(data,'amplitudefl')
+    errordlg('Data not found or not properly formatted','NIRFAST Error');
+    error('Data not found or not properly formatted');
+end
+% remove zeroed data
+ind = data.link(:,3)==0;
+data.amplitudefl(ind,:) = []; clear ind
+anom = log(data.amplitudefl);
+% Only reconstructs fluorescence yield!
+
+%*******************************************************
 % load fine mesh for fwd solve: can input mesh structured variable
 % or load from file
 if ischar(fwd_mesh)==1
@@ -42,9 +56,10 @@ if ~strcmp(fwd_mesh.type,'fluor')
     errordlg('Mesh type is incorrect','NIRFAST Error');
     error('Mesh type is incorrect');
 end
+fwd_mesh.link = data.link;
+clear data 
 
 etamuaf_sol=[output_fn '_etamuaf.sol'];
-% stau_sol=[output_fn '_tau.sol'];
 
 %**********************************************************
 % Initiate log file
@@ -58,14 +73,18 @@ etamuaf_sol=[output_fn '_etamuaf.sol'];
     if ischar(data_fn) ~= 0
         fprintf(fid_log,'Data File      = %s\n',data_fn);
     end
+if isstruct(lambda)
+    fprintf(fid_log,'Initial Regularization  = %d\n',lambda.value);
+else
     fprintf(fid_log,'Initial Regularization  = %d\n',lambda);
-    fprintf(fid_log,'Filtering        = %d\n',filter_n);
-    fprintf(fid_log,'Output Files   = %s',etamuaf_sol);
-    fprintf(fid_log,'Initial Guess muaf = %d\n',fwd_mesh.muaf(1));
-    % fprintf(fid_log,'Output Files   = %s',tau_sol);
-    fprintf(fid_log,'\n');
+end
+fprintf(fid_log,'Filtering        = %d\n',filter_n);
+fprintf(fid_log,'Output Files   = %s',etamuaf_sol);
+fprintf(fid_log,'Initial Guess muaf = %d\n',fwd_mesh.muaf(1));
+% fprintf(fid_log,'Output Files   = %s',tau_sol);
+fprintf(fid_log,'\n');
 
-
+%***********************************************************
 % get direct excitation field
 data_fwd = femdata(fwd_mesh,frequency);
 data_fwd.phi = data_fwd.phix;
@@ -83,40 +102,6 @@ elseif isstruct(recon_basis) == 1
   [fwd_mesh.fine2coarse,...
    recon_mesh.coarse2fine] = second_mesh_basis(fwd_mesh,recon_mesh);
 end
-
-%**********************************************************
-% read data
-anom = load_data(data_fn);
-if ~isfield(anom,'amplitudefl')
-    errordlg('Data not found or not properly formatted','NIRFAST Error');
-    error('Data not found or not properly formatted');
-end
-anom = log(anom.amplitudefl);
-% Only reconstructs fluorescence yield!
-% find NaN in data
-
-datanum = 0;
-[ns,junk]=size(fwd_mesh.source.coord);
-for i = 1 : ns
-  for j = 1 : length(fwd_mesh.link(i,:))
-      datanum = datanum + 1;
-      if fwd_mesh.link(i,j) == 0
-          anom(datanum,1) = NaN;
-      end
-  end
-end
-
-ind = find(isnan(anom(:,1))==1);
-% set mesh linkfile not to calculate NaN pairs:
-link = fwd_mesh.link';
-link(ind) = 0;
-fwd_mesh.link = link';
-recon_mesh.link = link';
-clear link
-% remove NaN from data
-ind = setdiff(1:size(anom,1),ind);
-anom = anom(ind,:);
-clear ind;
 
 %************************************************************
 % initialize projection error
@@ -144,13 +129,15 @@ for it = 1 : iteration
     
     % build jacobian
     [Jwholem,datafl] = jacobian_fl(fwd_mesh,frequency,data_fwd);
+    ind = datafl.link(:,3)==0;
+    datafl.amplitudem(ind,:) = []; clear ind
     
     % Read reference data
     clear ref;
     ref(:,1) = log(datafl.amplitudem);
-   
+    
     data_diff = (anom-ref);
-    pj_error = [pj_error sum(abs(data_diff.^2))]; 
+    pj_error = [pj_error sum(abs(data_diff.^2))];
     
 
     %***********************
@@ -194,15 +181,9 @@ for it = 1 : iteration
     [nrow,ncol]=size(Jm);
     Hess = zeros(nrow);
     Hess = Jm'*Jm;
-    
-    % initailize temp Hess, data and mesh, incase PJ increases.
-    Hess_tmp = Hess;
-    mesh_tmp = recon_mesh;
-    data_tmp = data_diff;
-    
-        
+       
     % add regularization
-    reg = lambda.*(max(diag(Hess)));
+    reg = lambda.value.*(max(diag(Hess)));
     disp(['Regularization Fluor           = ' num2str(reg)]);
     fprintf(fid_log,'Regularization Fluor            = %f\n',reg);
     Hess = Hess+(LtL.*reg);
@@ -246,6 +227,7 @@ for it = 1 : iteration
     
 end
 fin_it = it-1;
+fclose(fid_log);
 
 %******************************************************
 % Sub functions

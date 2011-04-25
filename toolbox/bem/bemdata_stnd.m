@@ -48,7 +48,8 @@ rhs_idx = false(totn,1);
 q_tot=zeros(totn,1);
 K=zeros(totn,totn);
 
-num_sources = size(mesh.source.coord,1);
+source = unique(mesh.link(:,1));
+[num_sources,junk]=size(source);
 nnod = length(mesh.nodes);
 visits=ones(size(relations,1),1);
 %% Main loop (over all the sources)
@@ -100,8 +101,9 @@ for scounter=1:num_sources
         % Store nodes and elements of region I
         [regionI_elems regionI_nodes] = GetNodesAndElementsOfRegion(mesh,regionInfo(relations(1,1))); 
     end
+    s_ind = mesh.source.num == source(scounter);
     qq = build_source(nnod,mesh.nodes(regionI_nodes,:),regionI_nodes,...
-        omega(1),mesh.kappa(1),mesh.source.coord(scounter,:),1);
+        omega(1),mesh.kappa(1),mesh.source.coord(s_ind,:),1);
     q_tot(rhs_idx,scounter) = qq(regionI_nodes,:);
 end
 % Solve the equation: K.u = q_tot
@@ -109,6 +111,7 @@ u = K\q_tot;
 % Get Nodal solutions and phase/amplitude at detector locations
 u = GetNodalSolutions(u,mesh,NoBdyNodes);
 data=GetDataAtDetectorLocations(u,mesh);
+data.link = mesh.link;
 
 
 
@@ -139,10 +142,14 @@ function data = GetDataAtDetectorLocations(u,mesh)
 % Calculates phase and amplitude values at detector locations
 %%
 tmp=[];
-for scounter = 1:size(mesh.source.coord,1)
-    detectors_used = mesh.link(scounter,:);
-    detectors_used = detectors_used(find(detectors_used(:) ~= 0)');
-    meas_int_func_ss = mesh.meas.int_func(detectors_used',:);
+source = unique(mesh.link(:,1));
+[nsource,junk]=size(source);
+for scounter = 1:nsource
+    bf = mesh.link(:,1)==scounter & mesh.link(:,3)==1;
+    detectors_used = mesh.link(bf,2);
+    [tf idx] = ismember(detectors_used,mesh.meas.num);
+
+    meas_int_func_ss = mesh.meas.int_func(idx,:);
     nrr = size(meas_int_func_ss,1);
     if (nrr == 0)
         data_ss = [];

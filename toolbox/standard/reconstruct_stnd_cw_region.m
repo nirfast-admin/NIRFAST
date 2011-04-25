@@ -44,42 +44,26 @@ if ~strcmp(fwd_mesh.type,'stnd')
     error('Mesh type is incorrect');
 end
 
+%*******************************************************
 % read data - This is the calibrated experimental data or simulated data
 anom = load_data(data_fn);
 if ~isfield(anom,'paa')
     errordlg('Data not found or not properly formatted','NIRFAST Error');
     error('Data not found or not properly formatted');
 end
+
+% remove zeroed data
+anom.paa(anom.link(:,3)==0,:) = [];
+data_link = anom.link;
+
 anom = anom.paa;
-anom = log(anom(:,1));
-% find NaN in data
-
-datanum = 0;
-[ns,junk]=size(fwd_mesh.source.coord);
-for i = 1 : ns
-  for j = 1 : length(fwd_mesh.link(i,:))
-      datanum = datanum + 1;
-      if fwd_mesh.link(i,j) == 0
-          anom(datanum,:) = NaN;
-      end
-  end
-end
-
-ind = find(isnan(anom(:,1))==1);
-% set mesh linkfile not to calculate NaN pairs:
-link = fwd_mesh.link';
-link(ind) = 0;
-fwd_mesh.link = link';
-recon_mesh.link = link';
-clear link
-% remove NaN from data
-ind = setdiff(1:size(anom,1),ind);
-anom = anom(ind,:);
-clear ind;
-
+anom = log(anom(:,1)); %take log of amplitude
+fwd_mesh.link = data_link;
+%********************************************************
 % Initiate projection error
 pj_error = [];
 
+%*******************************************************
 % Initiate log file
 fid_log = fopen([output_fn '.log'],'w');
 fprintf(fid_log,'Forward Mesh   = %s\n',fwd_mesh.name);
@@ -91,7 +75,7 @@ fprintf(fid_log,'Filter         = %d\n',filter_n);
 fprintf(fid_log,'Output Files   = %s_mua.sol\n',output_fn);
 fprintf(fid_log,'               = %s_mus.sol\n',output_fn);
 fprintf(fid_log,'Initial Guess mua = %d\n',fwd_mesh.mua(1));
-
+%*******************************************************
 % This calculates the mapping matrix that reduces Jacobian from nodal
 % values to regional values
 disp('calculating regions');
@@ -99,11 +83,12 @@ if ~exist('region','var')
     region = unique(fwd_mesh.region);
 end
 K = region_mapper(fwd_mesh,region);
-
+%*******************************************************
 for it = 1 : iteration
   
   % Calculate jacobian
   [J,data]=jacobian_stnd(fwd_mesh,0);
+  data.amplitude(data_link(:,3)==0,:) = [];
   J = J.complete;
   
   % reduce J into regions!

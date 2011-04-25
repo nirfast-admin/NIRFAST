@@ -22,47 +22,34 @@ if size(data,2) > 1
     data = data(:,1);
 end
 
-% calculate the source / detector distance for each measurement
-k = 1;
-datanum = 0;
-[ns,junk]=size(mesh.source.coord);
-for i = 1 : ns
-  for j = 1 : length(mesh.link(i,:))
-      datanum = datanum + 1;
-      if isnan(data(datanum,1))
-          mesh.link(i,j) = 0;
-      end
-      if mesh.link(i,j) ~= 0
-          jj = mesh.link(i,j);
-          dist(k,1) = sqrt(sum((mesh.source.coord(i,:) - ...
-                    mesh.meas.coord(jj,:)).^2));
-          k = k+1;
-      else
-        data(datanum,1) = NaN;
-      end
-  end
+% calculate the source / detector distance for each combination.
+% also make sure that proper sources / detectors are used
+dist = zeros(length(mesh.link),1);
+for i = 1:length(mesh.link)
+    snum = mesh.link(i,1);
+    mnum = mesh.link(i,2);
+    snum = mesh.source.num == snum;
+    mnum = mesh.meas.num == mnum;
+    if sum(snum)==0 || sum(mnum)==0
+        dist(i,1)=0;
+        mesh.link(i,3)=0;
+    else
+        dist(i,1) = sqrt(sum((mesh.source.coord(snum,:) - ...
+        mesh.meas.coord(mnum,:)).^2,2)); 
+    end
 end
 
-% % convert log amplitude into amplitude
-% data(:,1) = exp(data(:,1));
+% get an index from link file of data to actually use
+linki = logical(mesh.link(:,3));
 
 % Set lnrI, lnr and phase!
-[j,k] = size(data(:,1));
-[j2,k2] = size(dist);
-
-% deal with NaNs
-dist_orig = dist;
-ind = find(isnan(data(:,1))==1);
-ind = setdiff(1:size(data,1),ind);
-data = data(ind,:);
-
 lnrI = log(data(:,1).*dist);
 lnI = log(data(:,1));
 
 if nographs == 0
     figure;
-    subplot(1,2,1);
-    plot(dist,lnrI,'.')
+    subplot(2,2,1)
+    plot(dist(linki),lnrI(linki),'.')
     ylabel('lnrI');
     xlabel('Source / Detector distance');
     drawnow
@@ -70,7 +57,7 @@ if nographs == 0
 end
 
 % Calculate the coeff of a polynomial fit of distance vs. lnrI
-m1 = polyfit(dist,lnrI,1); m1 = m1(1);
+m1 = polyfit(dist(linki),lnrI(linki),1); m1 = m1(1);
 
 % fit data using an analytical model
 % based on Pogue paper
@@ -104,7 +91,7 @@ mesh.mua(:) = mua;
 mesh.kappa = 1./(3*(mesh.mua+mesh.mus));
 
 % Fit for mua and mus using FEM
-dist = dist_orig;
+% dist = dist_orig;
 jj = 0;
 while jj ~= iteration
   [fem_data]=femdata(mesh,frequency);
@@ -112,7 +99,7 @@ while jj ~= iteration
     
   femlnrI = log(fem_data(:,1).*dist);
   
-  alpha0 = polyfit(dist,femlnrI,1); alpha0 = alpha0(1);
+  alpha0 = polyfit(dist(linki),femlnrI(linki),1); alpha0 = alpha0(1);
   
   mesh.mua(:) = mesh.mua(:)+0.0001;
   mesh.kappa = 1./(3*(mesh.mua+mesh.mus));
@@ -122,7 +109,7 @@ while jj ~= iteration
   
   femlnrI = log(fem_data(:,1).*dist);
   
-  alpha1 = polyfit(dist,femlnrI,1); alpha1 = alpha1(1);
+  alpha1 = polyfit(dist(linki),femlnrI(linki),1); alpha1 = alpha1(1);
   
   mesh.mua(:) = mesh.mua(:)-0.0001;
   mesh.kappa = 1./(3*(mesh.mua+mesh.mus));
@@ -166,40 +153,22 @@ lnI = log(data(:,1));
 
 % Set offset based on particular source / detector
 % we do this because data is not symmetrical!
-[n,m]=size(mesh.link);
-spot = 1;
+n = max(mesh.link(:,1));
 lnI_offset = zeros(size(lnI,1),1);
 for i=1:n
-    num_non = sum(mesh.link(i,:)~=0);
-    lnI_offset(spot:spot+num_non-1) = mean(lnI(spot:spot+num_non-1)-femlnI(spot:spot+num_non-1));
-    spot = spot + num_non;
+    source_all = mesh.link(:,1)==i;
+    source_used = and(mesh.link(:,1)==i , linki);
+    lnI_offset(source_all) = mean(lnI(source_used)-femlnI(source_used));
 end
 
 if nographs == 0
-    subplot(1,2,2);
-    plot(lnI,'k');
+    subplot(2,2,3:4);
+    plot(lnI(linki)-lnI_offset(linki),'k');
     hold on
-    plot(femlnI+lnI_offset,'r--');
+    plot(femlnI(linki),'r--');
     axis tight;
     xlabel('log Amplitude');
-    legend('original','Calibrated');
+    legend('Measured-Offset','Model');
 end
 
-% restore NaNs to data
-fem_datatmp = fem_data;
-lnI_offsettmp = lnI_offset;
-fem_data = [];
-lnI_offset = [];
-datanum = 0;
-for i = 1 : n
-  for j = 1 : m
-      if mesh.link(i,j) ~= 0
-          datanum = datanum + 1;
-          fem_data = [fem_data; fem_datatmp(datanum,:)];
-          lnI_offset = [lnI_offset; lnI_offsettmp(datanum)];
-      else
-          fem_data = [fem_data; NaN NaN];
-          lnI_offset = [lnI_offset; NaN];
-      end
-  end
 end

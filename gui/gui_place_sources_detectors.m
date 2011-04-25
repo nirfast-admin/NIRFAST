@@ -208,13 +208,6 @@ mainGUIdata  = guidata(mainGUIhandle);
 content = get(mainGUIdata.script,'String');
 batch = get(mainGUIdata.batch_mode,'Value');
 
-link = get(handles.link,'String');
-link_string = strcat('[', link(1,:));
-for i=2:size(link,1)
-    link_string = strcat(link_string, ';', link(i,:));
-end
-link_string = strcat(link_string, ']');
-
 sources = get(handles.sources,'String');
 sources_string = strcat('[', sources(1,:));
 for i=2:size(sources,1)
@@ -231,6 +224,17 @@ end
 detectors_string = strcat(detectors_string, ']');
 detectors_string = char(detectors_string);
 
+s = eval(sources_string);
+d = eval(detectors_string);
+link_string = '[';
+for si=1:size(s,1)
+    for di=1:size(d,1)
+        link_string = strcat(link_string, ' ', num2str(si), ...
+            ' ', num2str(di), ' 1;');
+    end
+end
+link_string = strcat(link_string, ']');
+
 content{end+1} = strcat('mesh_tmp = load_mesh(''',handles.meshloc,''');');
 if ~batch
     evalin('base',content{end});
@@ -243,11 +247,23 @@ content{end+1} = strcat('mesh_tmp.source.coord = ',sources_string,';');
 if ~batch
     evalin('base',content{end});
 end
+content{end+1} = strcat('mesh_tmp.source.num = (1:size(',sources_string,',1))'';');
+if ~batch
+    evalin('base',content{end});
+end
+content{end+1} = strcat('mesh_tmp.source.fwhm = zeros(size(',sources_string,',1),1)'';');
+if ~batch
+    evalin('base',content{end});
+end
 content{end+1} = strcat('mesh_tmp.source.fixed = 0;');
 if ~batch
     evalin('base',content{end});
 end
 content{end+1} = strcat('mesh_tmp.meas.coord = ',detectors_string,';');
+if ~batch
+    evalin('base',content{end});
+end
+content{end+1} = strcat('mesh_tmp.meas.num = (1:size(',detectors_string,',1))'';');
 if ~batch
     evalin('base',content{end});
 end

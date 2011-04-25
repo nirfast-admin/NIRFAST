@@ -27,7 +27,7 @@ function [data,mesh] = calibrate_spectral(homog_data,...
 % nographs is a flag for displaying the graphs
 % data is the calibrated data
 % mesh is the calibrated mesh with initial guesses
-
+% data link file will be reference for which data to use.
 
 
 if ~exist('nographs','var')
@@ -57,29 +57,50 @@ if ~isfield(paa_anom,'paa') || ~isfield(paa_anom,'wv')
     errordlg('Data not found or not properly formatted','NIRFAST Error');
     error('Data not found or not properly formatted');
 end
+
+% set excoef in meshes based on data.wv
+excoef_tmp = [];
+for i = 1:length(paa_anom.wv)
+   a = mesh_anom.wv==paa_anom.wv(i);
+   excoef_tmp = [excoef_tmp; mesh_anom.excoef(a,:)];
+end
+mesh.excoef = excoef_tmp;
+mesh_anom.excoef = excoef_tmp; clear excoef_tmp;
+mesh_anom.wv = paa_anom.wv;
 mesh.wv = paa_anom.wv;
+mesh.link = paa_anom.link;
 paa_anom = paa_anom.paa;
 
 % Look for phase wrapping
 [j,k] = size(paa_anom);
 for i=1:2:k
-paa_anom(find(paa_anom(:,i+1)<0),i+1) = ...
-    paa_anom(find(paa_anom(:,i+1)<0),i+1) + (360);
-paa_anom(find(paa_anom(:,i+1)>(360)),i+1) = ...
-    paa_anom(find(paa_anom(:,i+1)>(360)),i+1) - (360);
+paa_anom(paa_anom(:,i+1)<0,i+1) = ...
+    paa_anom(paa_anom(:,i+1)<0,i+1) + (360);
+paa_anom(paa_anom(:,i+1)>(360),i+1) = ...
+    paa_anom(paa_anom(:,i+1)>(360),i+1) - (360);
 end
 
 % load homogeneous data
 paa_homog  = load_data(homog_data);
+
+mesh_homog.link = paa_homog.link;
+% set excoef in meshes based on data.wv
+excoef_tmp = [];
+for i = 1:length(paa_homog.wv)
+   a = mesh_homog.wv==paa_homog.wv(i);
+   excoef_tmp = [excoef_tmp; mesh_homog.excoef(a,:)];
+end
+mesh_homog.excoef = excoef_tmp; clear excoef_tmp;
+mesh_homog.wv = paa_homog.wv;
 paa_homog = paa_homog.paa;
 
 % Look for phase wrapping
 [j,k] = size(paa_homog);
 for i=1:2:k
-paa_homog(find(paa_homog(:,i+1)<0),i+1) = ...
-    paa_homog(find(paa_homog(:,i+1)<0),i+1) + (360);
-paa_homog(find(paa_homog(:,i+1)>(360)),i+1) = ...
-    paa_homog(find(paa_homog(:,i+1)>(360)),i+1) - (360);
+paa_homog(paa_homog(:,i+1)<0,i+1) = ...
+    paa_homog(paa_homog(:,i+1)<0,i+1) + (360);
+paa_homog(paa_homog(:,i+1)>(360),i+1) = ...
+    paa_homog(paa_homog(:,i+1)>(360),i+1) - (360);
 end
 
 mua_big = []; 
@@ -87,13 +108,15 @@ mus_big = [];
 [j,k] = size(paa_homog);
 
 % initiliaze data paa
-data.paa = zeros(length(mesh_homog.link(:)),k);
-
+data.paa = zeros(length(mesh.link),k);
+data.link = zeros(length(mesh.link),length(mesh.wv)+2);
+data.link(:,1:2) = mesh.link(:,1:2);
 % loop through wavelengths
 for i=1:2:k
     % Make a standard mesh for this wavelength
     wvmesh = mesh_homog;
     wvmesh.type = 'stnd';
+    wvmesh.link = [mesh_homog.link(:,1:2) mesh_homog.link(:,(i+1)/2+2)];
     [wvmesh.mua, wvmesh.mus, wvmesh.kappa] = calc_mua_mus(mesh_homog,mesh.wv(((i-1)/2)+1));
     
     % Calculate global mua and mus plus offsets for phantom data
@@ -116,7 +139,8 @@ for i=1:2:k
     % Make a standard mesh for this wavelength
     wvmesh = mesh_anom;
     wvmesh.type = 'stnd';
-    [wvmesh.mua, wvmesh.mus, wvmesh.kappa] = calc_mua_mus(mesh_anom,mesh.wv(((i-1)/2)+1));
+    wvmesh.link = [mesh.link(:,1:2) mesh.link(:,(i+1)/2+2)];
+    [wvmesh.mua, wvmesh.mus, wvmesh.kappa] = calc_mua_mus(mesh,mesh.wv(((i-1)/2)+1));
 
     % Calculate global mua and mus plus offsets for patient data
     if frequency == 0
@@ -140,7 +164,6 @@ for i=1:2:k
     % calculate offsets between modeled homogeneous and measured
     % homogeneous and using these calibrate data
     data_h_fem(:,1) = log(data_h_fem(:,1));
-    data_a_fem(:,1) = log(data_a_fem(:,1));
     paa_anom(:,i) = log(paa_anom(:,i));
     paa_homog(:,i) = log(paa_homog(:,i));
     paa_anomtmp = paa_anom(:,i:i+1);
@@ -153,7 +176,8 @@ for i=1:2:k
 
     % calibrated data out into larger complete array
     data.paa(:,i:i+1) = paa_cal;
-
+    data.link(:,(i+1)/2+2) = and(mesh.link(:,(i+1)/2+2) , mesh_homog.link(:,(i+1)/2+2));
+    
     % create an array for optical properties for all wavelengths
     mua_big = [mua_big; mua_a];
     mus_big = [mus_big; mus_a];
@@ -162,7 +186,8 @@ end
 
 % set wavelengths array
 data.wv = mesh.wv;
-wv_array = mesh.wv';
+wv_array = data.wv';
+mesh.link = data.link;
 
 [nc,junk] = size(mesh.chromscattlist);
 nwn = length(wv_array);
@@ -187,20 +212,17 @@ mesh.sp(:,1) = -p(1);
 mesh.sa(:,1) = exp(p(2));
 
 % generate initial guess if optimization toolbox exists
-% if exist('lsqlin') && ...
-%         strcmp(mesh.chromscattlist{1},'HbO') && ...
-%         strcmp(mesh.chromscattlist{2},'deoxyHb') && ...
-%         strcmp(mesh.chromscattlist{3},'Water')
-%      display('Using constrained fit');
+% if exist('constrain_lsqfit') % it's fit...
+%      display('Using Optimization Toolbox');
 %     [A,b,Aeq,beq,lb,ub]=constrain_lsqfit(nwn,nc);
 % 
-%     [C,resnorm,residual,exitflag,output,lambda] = lsqlin(E,mua_big,A,b,Aeq,beq,lb,ub)
+%     [C,resnorm,residual,exitflag,output,lambda] = lsqlin(E,mua_big,A,b,Aeq,beq,lb,ub);
 % 
 % 
 %     if(C(end)==0)
 %         % for water recon (no fat)...
 %         ub(end) = 0.5;lb(end) = 0.5;
-%         [C,resnorm,residual,exitflag,output,lambda] = lsqlin(E,mua_big,A,b,Aeq,beq,lb,ub)
+%         [C,resnorm,residual,exitflag,output,lambda] = lsqlin(E,mua_big,A,b,Aeq,beq,lb,ub);
 %     end
 %     
 %     mesh.conc = repmat(C',length(mesh.nodes),1);
@@ -215,4 +237,3 @@ mesh.sa(:,1) = exp(p(2));
 %     mesh.sp(:) = x(2);
 % 
 % end
-

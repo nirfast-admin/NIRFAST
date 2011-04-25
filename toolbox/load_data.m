@@ -23,10 +23,10 @@ data.name = 'nirfast';
 if ischar(fn) ~= 0
     
     if ~exist(fn,'file')
-      errordlg('The data file could not be found','NIRFAST Error');
-      error('The data file could not be found');
+        errordlg('The data file could not be found','NIRFAST Error');
+        error('The data file could not be found');
     end
-
+    
     datatemp = importdata(fn);
     
     % support for new matlab importdata format
@@ -46,12 +46,25 @@ if ischar(fn) ~= 0
         test = ' ';
     end
     
-
+    if strcmp(test(1),'s') == 1
+        if isempty(strfind(test,'active')) == 0
+            test(1:strfind(test,'active')+5)=[];
+            data.link = datatemp(:,1:3);
+            datatemp = datatemp(:,4:end);
+        elseif isempty(strfind(test,'w')) == 0
+            foo = strfind(test,'w');
+            test(1:foo(1)-1) = [];
+            data.link = datatemp(:,1:2);
+            datatemp = datatemp(:,3:end);
+        end
+        test = test(find(isspace(test)==0):end);
+    end
+    
     % FLUORESCENCE
     if (strcmp(test(1),'x') == 1 || strcmp(test(1),'f') == 1 || strcmp(test(1),'m') == 1)
         
         % find labels
-        S = char(text);
+        S = test;
         i = 1;
         while ~isempty(S)
             [T,S] = strtok(S);
@@ -88,21 +101,25 @@ if ischar(fn) ~= 0
             data.paaxflmm = [data.paaxfl data.paamm];
         end
         
-
-    % SPECTRAL
-    elseif (strcmp(test(1),'w') == 1)
+        
+        % SPECTRAL
+    elseif isempty(strfind(test,'w')) == 0
         S = char(text);
-        wloc = findstr(S,'w');
+        wloc = strfind(S,'w');
         for i=1:1:numel(wloc)-1
             data.wv(i) = str2num(strtrim(S(wloc(i)+1:wloc(i+1)-1)));
         end
         data.wv(end+1) = str2num(strtrim(S(wloc(end)+1:end)));
-
-        data.paa = datatemp;       
-
-    % STANDARD
+        
+        % finish writing link
+        data.link = [data.link datatemp(:,1:3:end)];
+        datatemp(:,1:3:end) = [];
+        data.paa = datatemp;
+              
+        
+        % STANDARD
     else
-        [m,n] = size(datatemp);
+        [junk,n] = size(datatemp);
         data.paa = datatemp;
         if n>1
             data.phase = data.paa(:,1);
@@ -111,33 +128,33 @@ if ischar(fn) ~= 0
             data.amplitude = data.paa(:,1);
         end
     end
-
+    
 else
     data = fn;
 end
 
- % if wv_array exists, only take those wavelengths
- % modified for consistency, so that it still outputs Amplitude and phase
- % in radians, and only the wavelength at which it is. HD 07-09-09
- % fixed as data.paa for even wavelengths were wrong HD 07-09-09
+% if wv_array exists, only take those wavelengths
+% modified for consistency, so that it still outputs Amplitude and phase
+% in radians, and only the wavelength at which it is. HD 07-09-09
+% fixed as data.paa for even wavelengths were wrong HD 07-09-09
 if (nargin > 1 && isfield(data,'wv'))
     anom_big = [];
     for i = 1:length(wv_array)
-          index_wv = find(data.wv == wv_array(i));
-          if isempty(index_wv)
-              display([ num2str(wv_array(i)) ' nm data not available']);
-              data = [];
-              return;
-          end
-          anom(:,1) = data.paa(:,(index_wv(1)-1)*2+1);
-          anom(:,2) = data.paa(:,(index_wv(1)-1)*2+2);
-          %anom(:,1) = log(anom(:,1));
-          %anom(:,2) = anom(:,2)/180.0*pi;
-          %anom(find(anom(:,2)<0),2) = anom(find(anom(:,2)<0),2) + (2*pi);
-          %anom(find(anom(:,2)>(2*pi)),2) = anom(find(anom(:,2)>(2*pi)),2) - (2*pi);
-          %anom = reshape(anom',length(anom)*2,1);
-          anom_big = [anom_big anom];
-          clear anom
+        index_wv = find(data.wv == wv_array(i));
+        if isempty(index_wv)
+            display([ num2str(wv_array(i)) ' nm data not available']);
+            data = [];
+            return;
+        end
+        anom(:,1) = data.paa(:,(index_wv(1)-1)*2+1);
+        anom(:,2) = data.paa(:,(index_wv(1)-1)*2+2);
+        %anom(:,1) = log(anom(:,1));
+        %anom(:,2) = anom(:,2)/180.0*pi;
+        %anom(find(anom(:,2)<0),2) = anom(find(anom(:,2)<0),2) + (2*pi);
+        %anom(find(anom(:,2)>(2*pi)),2) = anom(find(anom(:,2)>(2*pi)),2) - (2*pi);
+        %anom = reshape(anom',length(anom)*2,1);
+        anom_big = [anom_big anom];
+        clear anom
     end
     data.paa = anom_big;
     data.wv = wv_array;
