@@ -22,7 +22,8 @@ end
 fprintf('\n\tConverting inp files and re-orienting. Please wait...\n');
 
 fcounter = num_flag;
-if fcounter==0 % just one inp file
+if fcounter==-1 % just one inp file
+    fcounter = 0; num_flag = 0;
     fn = [fnprefix myext];
 else % Multiple inp files
     fn = [fnprefix num2str(fcounter) myext];
