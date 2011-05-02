@@ -17,77 +17,86 @@ end
 % STANDARD OR SPECTRAL
 if isfield(data,'paa')
     [j,k] = size(data.paa);
+    m = 1;
     for i=1:2:k
         figure;
-        semilogy(1:1:j,data.paa(:,i),form);
+        linki = logical(data.link(:,m+2));
+        m = m + 1;
+        semilogy(data.paa(linki,i),form);
         title('Amplitude');
         figure;
-        plot(1:1:j,data.paa(:,i+1),form);
+        plot(data.paa(linki,i+1),form);
         title('Phase');
     end
 % FLUORESCENCE
 elseif isfield(data,'paaxflmm')
+    linki = logical(data.link(:,3));
     [j,k] = size(data.paaxflmm);
     figure;
-    semilogy(1:1:j,data.paax(:,1),form);
+    semilogy(data.paax(linki,1),form);
     title('Excitation Amplitude');
     figure;
-    plot(1:1:j,data.paax(:,2),form);
+    plot(data.paax(linki,2),form);
     title('Excitation Phase');
     figure;
-    semilogy(1:1:j,data.paafl(:,1),form);
+    semilogy(data.paafl(linki,1),form);
     title('Fluorescence Amplitude');
     figure;
-    plot(1:1:j,data.paafl(:,2),form);
+    plot(data.paafl(linki,2),form);
     title('Fluorescence Phase');
     figure;
-    semilogy(1:1:j,data.paamm(:,1),form);
+    semilogy(data.paamm(linki,1),form);
     title('Emission Amplitude');
     figure;
-    plot(1:1:j,data.paamm(:,2),form);
+    plot(data.paamm(linki,2),form);
     title('Emission Phase');
 elseif isfield(data,'paaxfl')
+    linki = logical(data.link(:,3));
     [j,k] = size(data.paaxfl);
     figure;
-    semilogy(1:1:j,data.paax(:,1),form);
+    semilogy(data.paax(linki,1),form);
     title('Excitation Amplitude');
     figure;
-    plot(1:1:j,data.paax(:,2),form);
+    plot(data.paax(linki,2),form);
     title('Excitation Phase');
     figure;
-    semilogy(1:1:j,data.paafl(:,1),form);
+    semilogy(data.paafl(linki,1),form);
     title('Fluorescence Amplitude');
     figure;
-    plot(1:1:j,data.paafl(:,2),form);
+    plot(data.paafl(linki,2),form);
     title('Fluorescence Phase');
 elseif isfield(data,'paax')
+    linki = logical(data.link(:,3));
     [j,k] = size(data.paax);
     figure;
-    semilogy(1:1:j,data.paax(:,1),form);
+    semilogy(data.paax(linki,1),form);
     title('Excitation Amplitude');
     figure;
-    plot(1:1:j,data.paax(:,2),form);
+    plot(data.paax(linki,2),form);
     title('Excitation Phase');
 elseif isfield(data,'paafl')
+    linki = logical(data.link(:,3));
     [j,k] = size(data.paafl);
     figure;
-    semilogy(1:1:j,data.paafl(:,1),form);
+    semilogy(data.paafl(linki,1),form);
     title('Fluorescence Amplitude');
     figure;
-    plot(1:1:j,data.paafl(:,2),form);
+    plot(data.paafl(linki,2),form);
     title('Fluorescence Phase');
 elseif isfield(data,'paamm')
+    linki = logical(data.link(:,3));
     [j,k] = size(data.paamm);
     figure;
-    semilogy(1:1:j,data.paamm(:,1),form);
+    semilogy(data.paamm(linki,1),form);
     title('Emission Amplitude');
     figure;
-    plot(1:1:j,data.paamm(:,2),form);
+    plot(data.paamm(linki,2),form);
     title('Emission Phase');
 elseif isfield(data,'amplitudefl')
+    linki = logical(data.link(:,3));
     [j,k] = size(data.amplitudefl);
     figure;
-    semilogy(1:1:j,data.amplitudefl,form);
+    semilogy(data.amplitudefl(linki),form);
     title('Fluorescence Amplitude');
 else
     errordlg('Data not found or not properly formatted','NIRFAST Error');
