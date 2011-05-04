@@ -43,9 +43,12 @@ if ~isfield(data_meas,'amplitudefl') && ~isfield(data_meas,'link')
     error('Data not found or not properly formatted');
 end
 
-% run forward model
+% ***********************************************************
+% run forward model for calibration
 mesh.link = data_meas.link;
+mesh.mm = 0; mesh.fl = 0; % flag to only obtain excitation data
 data_fwd = femdata(mesh, frequency);
+mesh.fl = 1; % flag to calculate fl field in future femdata executions
 
 % calculate calibrated data
 if isfield(data_meas,'amplitudex') && isfield(data_fwd,'amplitudex')
@@ -74,6 +77,10 @@ disp('Initializing Bisection method points...')
 % calculate point "a" for bisection method
 mesh.muaf(:) = muafa;
 [fem_data_a1]=femdata(mesh,frequency);  
+% Use phix in all future forward calculations
+mesh.phix = fem_data_a1.phix; % if this field exists, phix will
+% not be calculated in femdata_fl
+
 fem_data_a1.amplitudefl(ind,:) = [];
 fem_lnI_a1 = log(fem_data_a1.amplitudefl);
 Err_a1 = sum((fem_lnI_a1-lnI).^2);

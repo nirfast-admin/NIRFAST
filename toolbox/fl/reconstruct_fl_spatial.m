@@ -86,6 +86,13 @@ fprintf(fid_log,'\n');
 
 %***********************************************************
 % get direct excitation field
+% Flag mesh to not calculate the intrinsic emission and fluorescence
+% emission fields
+fwd_mesh.fl = 0; fwd_mesh.mm = 0; 
+if isfield(fwd_mesh,'phix')~=0
+    fwd_mesh = rmfield(fwd_mesh,'phix');
+end
+% calculate excitation field
 data_fwd = femdata(fwd_mesh,frequency);
 data_fwd.phi = data_fwd.phix;
 
@@ -113,7 +120,6 @@ omega = 2*pi*frequency*1e6;
 % set fluorescence variables
 fwd_mesh.gamma = (fwd_mesh.eta.*fwd_mesh.muaf)./(1+(omega.*fwd_mesh.tau).^2);
 
-
 % Calculate L-matrix
 disp('calculating L matrix');
 L = create_L_fast_final(length(recon_mesh.nodes),...
@@ -121,21 +127,31 @@ L = create_L_fast_final(length(recon_mesh.nodes),...
                         recon_mesh.region);
 LtL = sparse(L'*L);
 clear L
-
+%*************************************************************
+% Calculate part of Jacobian which does not change at each iteration
+% (call it "pre-Jacobian")
+[Jpre,datafl,MASS_m] = prejacobian_fl(fwd_mesh,frequency,data_fwd);
 
 %*************************************************************
 % Iterate
 for it = 1 : iteration
     
-    % build jacobian
-    [Jwholem,datafl] = jacobian_fl(fwd_mesh,frequency,data_fwd);
+    % Update Jacobian with fluroescence field (changes at each iteration) 
+    if it == 1
+        [Jwholem,junk] = update_jacobian_fl(Jpre,fwd_mesh,frequency,data_fwd,MASS_m);
+        clear junk
+    else
+        [Jwholem,datafl] = update_jacobian_fl(Jpre,fwd_mesh,frequency,data_fwd,MASS_m);
+    end
+    Jm = Jwholem.completem; clear Jwholem
+    
+    % Extract log amplitude reference data
+    clear ref;
     ind = datafl.link(:,3)==0;
     datafl.amplitudem(ind,:) = []; clear ind
-    
-    % Read reference data
-    clear ref;
     ref(:,1) = log(datafl.amplitudem);
     
+    % Calculate projection error
     data_diff = (anom-ref);
     pj_error = [pj_error sum(abs(data_diff.^2))];
     
@@ -171,7 +187,7 @@ for it = 1 : iteration
     clear data_recon
 
     % Interpolate Jacobian onto recon mesh
-    [Jm,recon_mesh] = interpolatef2r_fl(fwd_mesh,recon_mesh,Jwholem.completem);
+    [Jm,recon_mesh] = interpolatef2r_fl(fwd_mesh,recon_mesh,Jm);
     Jm = Jm(:, 1:end/2); % take only intensity portion
     
     % Normalize Jacobian wrt fl source gamma
