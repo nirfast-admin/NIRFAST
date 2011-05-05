@@ -104,9 +104,14 @@ if ischar(recon_basis)
 elseif isstruct(recon_basis) == 0
     [fwd_mesh.fine2coarse,recon_mesh] = pixel_basis(recon_basis,fwd_mesh);
 elseif isstruct(recon_basis) == 1
-    recon_mesh = recon_basis;
-    [fwd_mesh.fine2coarse,...
-        recon_mesh.coarse2fine] = second_mesh_basis(fwd_mesh,recon_mesh);
+    if isfield(recon_basis,'nodes')
+        recon_mesh = recon_basis;
+        fwd_mesh.fine2coarse = recon_mesh.fine2coarse;
+    else
+        recon_mesh = recon_basis;
+        [fwd_mesh.fine2coarse,...
+            recon_mesh.coarse2fine] = second_mesh_basis(fwd_mesh,recon_mesh);
+    end
 end
 
 %************************************************************
@@ -271,7 +276,9 @@ end
 fin_it = it-1;
 fclose(fid_log);
 % Output recon basis mesh to use in subsequent reconstruction attempts.
-fwd_mesh.recon_mesh = recon_mesh;
+recon_mesh.fine2coarse = fwd_mesh.fine2coarse;
+fwd_mesh.recon_mesh = rmfield(recon_mesh,{'gamma','etamuaf','muaf','eta','tau'});
+
 
 %******************************************************
 % Sub functions
