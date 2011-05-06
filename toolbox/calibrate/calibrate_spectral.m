@@ -170,8 +170,8 @@ for i=1:2:k
     paa_homogtmp = paa_homog(:,i:i+1); 
     
     paa_cal = paa_anomtmp - ((paa_homogtmp - data_h_fem));
-    paa_cal(:,1) = paa_cal(:,1) - (lnI_a-lnI_h);
-    paa_cal(:,2) = paa_cal(:,2) - (phase_a-phase_h);
+%     paa_cal(:,1) = paa_cal(:,1) - (lnI_a-lnI_h);
+%     paa_cal(:,2) = paa_cal(:,2) - (phase_a-phase_h);
     paa_cal(:,1) = exp(paa_cal(:,1));
 
     % calibrated data out into larger complete array
