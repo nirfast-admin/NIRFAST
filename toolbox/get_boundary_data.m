@@ -11,8 +11,14 @@ function [data] = get_boundary_data(mesh,phi)
 % phi is the field
 % data is the boundary data
 
-
-source = unique(mesh.link(:,1));
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Allocate memory
+ind = mesh.link(:,3)==0;
+foo = mesh.link;
+foo(ind,:)=[]; clear ind
+source = unique(foo(:,1));
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% source = unique(mesh.link(:,1));
 
 if isfield(mesh.meas,'int_func') == 0
     errordlg('Need to call move_detector on the mesh first','NIRFAST Error');
