@@ -61,7 +61,17 @@ end
 % Calculate the RHS (the source vectors) for the Emission.
 source = unique(mesh.link(:,1));
 [nnodes,junk]=size(mesh.nodes);
-[nsource,junk]=size(source);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Allocate memory
+ind = mesh.link(:,3)==0;
+foo = mesh.link;
+foo(ind,:)=[]; clear ind
+source = unique(foo(:,1));
+nsource = length(source);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 qvec = zeros(nnodes,nsource);
 % Simplify the RHS of emission equation
 beta = mesh.gamma.*(1-(sqrt(-1).*omega.*mesh.tau));
