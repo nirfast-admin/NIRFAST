@@ -64,8 +64,17 @@ end
 % Now calculate source vector
 % NOTE last term in mex file 'qvec' is the source FWHM
 source = unique(mesh.link(:,1));
-[nsource,junk]=size(source);
 [nnodes,junk]=size(mesh.nodes);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Allocate memory
+ind = mesh.link(:,3)==0;
+foo = mesh.link;
+foo(ind,:)=[]; clear ind
+source = unique(foo(:,1));
+nsource = length(source);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 qvec = spalloc(nnodes,nsource,nsource*100);
 if mesh.dimension == 2
   for i = 1 : nsource
