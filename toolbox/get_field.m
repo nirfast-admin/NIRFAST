@@ -12,67 +12,59 @@ function [phi,R]=get_field(Mass,mesh,qvec)
 % R is the preconditioner
 % phi is the field
 
-env = getenv('LD_LIBRARY_PATH');
-if isempty(findstr(env,'pardiso'))
-    pardiso = 0;
-else
-    pardiso = 1;
-end
-if exist('pardisolist')
-    eval('pardisolist')
-    hostname = getComputerName();
-    hostname = cellstr(repmat(hostname,length(pardisohost),1));
-else
-    hostname = 'a';
-    pardisohost = 'b';
-end
-
-
-
-[nnodes,nsource]=size(qvec);
-phi=zeros(nnodes,nsource);
-msg=[];
-flag = 0;
-
-if sum(strcmp(pardisohost,hostname)) == 0 
-    % calculate the preconditioner
-    if isfield(mesh,'R') == 0 % for spec, this may have been calculated
-        if length(mesh.nodes) >= 3800
-            R = cholinc(Mass,1e-3);
-        elseif length(mesh.nodes) < 3800
-            R = [];
+if ispref('nirfast','solver')
+    
+    solver = getpref('nirfast','solver');
+    
+    % if pardiso is chosen, make sure it's available
+    if strcmp(solver,'pardiso')
+        env = getenv('LD_LIBRARY_PATH');
+        if isempty(findstr(env,'pardiso'))
+            pardiso = 0;
+        else
+            pardiso = 1;
         end
-    else
-        R = mesh.R;
-    end
-    
-    if length(mesh.nodes) >= 3800
-        for i = 1 : nsource
-            [x,flag] = bicgstab(Mass,qvec(:,i),1e-12,100,R',R);
-            msg = [msg flag];
-            phi(:,i) = x;
+        if exist('pardisolist')
+            eval('pardisolist')
+            hostname = getComputerName();
+            hostname = cellstr(repmat(hostname,length(pardisohost),1));
+        else
+            hostname = 'a';
+            pardisohost = 'b';
         end
+
+        if sum(strcmp(pardisohost,hostname)) == 0 || pardiso == 0
+            disp('Pardiso is not available, using Matlab solver');
+            solver = 'matlab';
+        end
+    end
+    
+else
+    
+    % determine which solver is best
+    env = getenv('LD_LIBRARY_PATH');
+    if isempty(findstr(env,'pardiso'))
+        pardiso = 0;
     else
-        phi = Mass\qvec;
+        pardiso = 1;
+    end
+    if exist('pardisolist')
+        eval('pardisolist')
+        hostname = getComputerName();
+        hostname = cellstr(repmat(hostname,length(pardisohost),1));
+    else
+        hostname = 'a';
+        pardisohost = 'b';
     end
     
-    if isempty(msg)
-        %   disp('Used backslash!')
-    elseif any(msg==1)
-        disp('some solutions did not converge')
-        errordlg('Some solutions did not converge; this could be caused by noisy/bad data','NIRFAST Error');
-        error('Some solutions did not converge; this could be caused by noisy/bad data');
-    elseif any(msg==2)
-        disp('some solutions are unusable')
-        errordlg('Some solutions are unusable; this could be caused by noisy/bad data','NIRFAST Error');
-        error('Some solutions are unusable; this could be caused by noisy/bad data');
-    elseif any(msg==3)
-        disp('some solutions from stagnated iterations')
-        errordlg('Some solutions are unusable; this could be caused by noisy/bad data','NIRFAST Error');
-        error('Some solutions are unusable; this could be caused by noisy/bad data');
+    if sum(strcmp(pardisohost,hostname)) ~= 0 && pardiso == 1
+        solver = 'pardiso';
+    elseif length(mesh.nodes) >= 3800
+        solver = 'bicgstab';
+    else
+        solver = 'matlab';
     end
     
-elseif sum(strcmp(pardisohost,hostname)) ~= 0 & pardiso == 1
-    phi = solve_pardiso(Mass,qvec,0);
-    R = [];
 end
+
+eval(['[phi,R]=solver_' solver '(Mass,mesh,qvec);']);

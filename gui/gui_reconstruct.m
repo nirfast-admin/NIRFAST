@@ -22,7 +22,7 @@ function varargout = gui_reconstruct(varargin)
 
 % Edit the above text to modify the response to help gui_reconstruct
 
-% Last Modified by GUIDE v2.5 26-Apr-2010 14:37:20
+% Last Modified by GUIDE v2.5 09-May-2011 15:37:49
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -87,6 +87,15 @@ if strcmp(handles.type,'stnd_bem') || strcmp(handles.type,'spec_bem')
     set(handles.pixel_basis,'Enable','off');
     set(handles.regmethod,'Enable','off');
 end
+
+% find solvers
+solver_loc = what('solvers');
+solvers = dir([solver_loc.path '/solver_*']);
+varnames = {'automatic'};
+for i=1:size(solvers)
+    varnames{i+1} = solvers(i).name(8:end-2);
+end
+set(handles.solver,'String',varnames);
 
 % find workspace variables
 vars = evalin('base','whos;');
@@ -468,6 +477,16 @@ end
 
 meshloc = get_pathloc(get(handles.mesh,'String'));
 dataloc = get_pathloc(get(handles.data,'String'));
+
+%solver
+solvers = get(handles.solver,'String');
+solver = solvers(get(handles.solver,'Value'));
+if ~strcmp(solver,'automatic')
+    content{end+1} = strcat('setpref(''nirfast'',''solver'',''',solver{1},''');');
+    if ~batch
+        evalin('base',content{end});
+    end
+end
 
 %regularization
 regtype=get(handles.regmethod,'Value');
@@ -1128,3 +1147,24 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
+% --- Executes on selection change in solver.
+function solver_Callback(hObject, eventdata, handles)
+% hObject    handle to solver (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns solver contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from solver
+
+
+% --- Executes during object creation, after setting all properties.
+function solver_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to solver (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
