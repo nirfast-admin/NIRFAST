@@ -57,4 +57,8 @@ for i=1:length(chrom_list)
     end
 end
 
+if isfield(mesh,'link')
+    mesh.link(:,3:2+length(mesh.wv)) = 1;
+end
+
 save_mesh(mesh,meshloc);

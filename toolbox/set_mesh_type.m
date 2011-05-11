@@ -60,7 +60,9 @@ elseif strcmp(type,'spec')
                     0.1741    0.1611    0.0033;
                     0.2278    0.1611    0.0040;
                     0.2370    0.1556    0.0058];
-    mesh.link(:,end+1:end+6) = 1;
+    if isfield(mesh,'link')
+        mesh.link(:,end+1:end+6) = 1;
+    end
 elseif strcmp(type,'stnd_spn')
     mesh.mua = ones(length(mesh.nodes),1).*0.01;
     mesh.mus = ones(length(mesh.nodes),1);

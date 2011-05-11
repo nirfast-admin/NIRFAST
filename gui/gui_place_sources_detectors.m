@@ -229,8 +229,7 @@ d = eval(detectors_string);
 link_string = '[';
 for si=1:size(s,1)
     for di=1:size(d,1)
-        link_string = strcat(link_string, ' ', num2str(si), ...
-            ' ', num2str(di), ' 1;');
+        link_string = [link_string ' ' num2str(si) ' ' num2str(di) ' 1;'];
     end
 end
 link_string = strcat(link_string, ']');
