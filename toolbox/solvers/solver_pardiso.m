@@ -1,4 +1,4 @@
-function [phi,R]=solver_pardiso(Mass,mesh,qvec)
+function [phi,R]=solver_pardiso(MASS,mesh,qvec)
 
 % [phi,R]=solver_pardiso(Mass,mesh,qvec)
 %
