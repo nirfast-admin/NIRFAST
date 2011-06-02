@@ -424,8 +424,10 @@ elseif exist([fn '.link']) == 2
     else
         link = importdata([fn '.link']);
         mesh.link = link.data;
-        if size(mesh.link,2) < length(mesh.wv)+2
-            mesh.link(:,end+1:length(mesh.wv)+2) = 1;
+        if isfield(mesh,'wv') ~= 0
+            if size(mesh.link,2) < length(mesh.wv)+2
+                mesh.link(:,end+1:length(mesh.wv)+2) = 1;
+            end
         end
     end
 end
