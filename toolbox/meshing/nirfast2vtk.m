@@ -16,6 +16,10 @@ end
 listsolfnames = {};
 soldata = [];
 
+if isfield(mesh,'region')
+    listsolfnames{end+1} = 'region';
+    soldata(:,end+1) = mesh.region(:,1);
+end
 if isfield(mesh,'mua')
     listsolfnames{end+1} = 'mua';
     soldata(:,end+1) = mesh.mua(:,1);
