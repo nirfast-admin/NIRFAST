@@ -95,8 +95,7 @@ for it = 1 : iteration
   
   % Calculate jacobian
   [J,data]=jacobian_stnd_bem(fwd_mesh,frequency);
-  data.amplitude(data_link(:,3)==0,:) = [];
-  data.phase(data_link(:,3)==0,:) = [];
+  data.paa(data_link(:,3)==0,:) = [];
 
   % Read reference data calculated by initial -current- guess
   clear ref;
