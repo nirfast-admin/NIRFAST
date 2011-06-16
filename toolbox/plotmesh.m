@@ -26,8 +26,8 @@ if plotflag == 1
     if mesh.dimension == 2
         if isfield(mesh,'source') == 1
             tmp = sort(mesh.source.num);
-            s1 = mesh.source.coord(find(mesh.source.num == tmp(1)),:);
-            s2 = mesh.source.coord(find(mesh.source.num == tmp(2)),:);
+            s1 = mesh.source.coord(mesh.source.num == tmp(1),:);
+            s2 = mesh.source.coord(mesh.source.num == tmp(2),:);
             plot(s1(:,1),s1(:,2),'go',s2(:,1),s2(:,2),'yo',...
                 mesh.source.coord(3:end,1),...
                 mesh.source.coord(3:end,2),'ro','LineWidth',2,'MarkerSize',8);
@@ -43,8 +43,8 @@ if plotflag == 1
     elseif mesh.dimension == 3
         if isfield(mesh,'source') == 1
             tmp = sort(mesh.source.num);
-            s1 = mesh.source.coord(find(mesh.source.num == tmp(1)),:);
-            s2 = mesh.source.coord(find(mesh.source.num == tmp(2)),:);
+            s1 = mesh.source.coord(mesh.source.num == tmp(1),:);
+            s2 = mesh.source.coord(mesh.source.num == tmp(2),:);
             plot3(s1(:,1),s1(:,2),s1(:,3),'go',s2(:,1),s2(:,2),s2(:,3),'yo',...
                 mesh.source.coord(3:end,1),...
                 mesh.source.coord(3:end,2),...
