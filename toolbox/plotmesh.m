@@ -25,10 +25,13 @@ if plotflag == 1
     ind = find(mesh.bndvtx==1);
     if mesh.dimension == 2
         if isfield(mesh,'source') == 1
-            plot(mesh.source.coord(:,1),...
-                mesh.source.coord(:,2),'ro','LineWidth',2,'MarkerSize',8);
-
-
+            tmp = sort(mesh.source.num);
+            s1 = mesh.source.coord(find(mesh.source.num == tmp(1)),:);
+            s2 = mesh.source.coord(find(mesh.source.num == tmp(2)),:);
+            plot(s1(:,1),s1(:,2),'go',s2(:,1),s2(:,2),'yo',...
+                mesh.source.coord(3:end,1),...
+                mesh.source.coord(3:end,2),'ro','LineWidth',2,'MarkerSize',8);
+            
         end
         if isfield(mesh,'meas') == 1
             plot(mesh.meas.coord(:,1),...
@@ -36,13 +39,16 @@ if plotflag == 1
         end
         plot(mesh.nodes(ind,1),mesh.nodes(ind,2),'c.');
         axis equal;
-        legend('Source','Detector');
+        legend('Source 1','Source 2','Sources +','Detector');
     elseif mesh.dimension == 3
         if isfield(mesh,'source') == 1
-            plot3(mesh.source.coord(:,1),...
-                mesh.source.coord(:,2),...
-                mesh.source.coord(:,3),'ro',...
-                'LineWidth',2,'MarkerSize',8);
+            tmp = sort(mesh.source.num);
+            s1 = mesh.source.coord(find(mesh.source.num == tmp(1)),:);
+            s2 = mesh.source.coord(find(mesh.source.num == tmp(2)),:);
+            plot3(s1(:,1),s1(:,2),s1(:,3),'go',s2(:,1),s2(:,2),s2(:,3),'yo',...
+                mesh.source.coord(3:end,1),...
+                mesh.source.coord(3:end,2),...
+                mesh.source.coord(3:end,3),'ro','LineWidth',2,'MarkerSize',8);
         end
         if isfield(mesh,'meas') == 1
             plot3(mesh.meas.coord(:,1),...
@@ -54,7 +60,7 @@ if plotflag == 1
             mesh.nodes(ind,2),...
             mesh.nodes(ind,3),'c.');
         axis equal;
-        legend('Source','Detector');
+        legend('Source 1','Source 2','Sources +','Detector');
     end
 end
 
