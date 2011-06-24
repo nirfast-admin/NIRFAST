@@ -197,12 +197,13 @@ while jj ~= iteration
   
   mua = mean(mesh.mua);
   mus = mean(mesh.mus);
-  disp('Global values calculated from Numerical fit');
-  disp(['Iteration ' num2str(jj) ' of ' num2str(iteration)]);
+  
+end
+
+disp('Global values calculated from Numerical fit');
   disp(['Absorption = ' num2str(mua) ' mm-1 with error of ' num2str(err_a)]);
   disp(['Scatter    = ' num2str(mus) ' mm-1 with error of ' num2str(err_s)]);
   disp('-------------------------------------------------');
-end
 
 % Calculate data based on these global values
 [fem_data]=femdata(mesh,frequency);

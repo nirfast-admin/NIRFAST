@@ -133,11 +133,13 @@ while jj ~= iteration
     errordlg('Negative mua or mus was calculated. This may be caused by bad/noisy data.','NIRFAST Error');
     error('Negative mua or mus was calculated. This may be caused by bad/noisy data.');
   end
-  disp('Global values calculated from Numerical fit');
-  disp(['Iteration ' num2str(jj) ' of ' num2str(iteration)]);
+  
+end
+
+disp('Global values calculated from Numerical fit');
   disp(['Absorption = ' num2str(mua) ' mm-1 with error of ' num2str(err_a)]);
   disp('-------------------------------------------------');
-end
+
 
 % Calculate data based on these global values
 [fem_data]=femdata(mesh,frequency);

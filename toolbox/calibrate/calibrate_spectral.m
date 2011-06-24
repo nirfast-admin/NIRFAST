@@ -1,18 +1,20 @@
-function [data,mesh] = calibrate_spectral(homog_data,...
+function [data,mesh,mua_big,mus_big] = calibrate_spectral(homog_data,...
                    anom_data,...
                    mesh_homog,...
                    mesh_anom,...
         		   frequency,...
         		   iteration,...
-                   nographs)
+                   nographs,...
+                   wv_array)
 
-% [data,mesh] = calibrate_spectral(homog_data,...
+% [data,mesh,mua_big,mus_big] = calibrate_spectral(homog_data,...
 %                   anom_data,...
 %                   mesh_homog,...
 %                   mesh_anom,...
 %        		   frequency,...
 %        		   iteration,...
-%                   nographs)
+%                   nographs,...
+%                   wv_array)
 %
 % Calibrates spectral data, using homogeneous data measured on phantom
 % and the anomaly data. This function requires the MATLAB optimization
@@ -25,13 +27,21 @@ function [data,mesh] = calibrate_spectral(homog_data,...
 % frequency is the modulation frequency (MHz)
 % iteration is the number of iterations for fitting
 % nographs is a flag for displaying the graphs
+% wv_array is the desired wavelength array
 % data is the calibrated data
 % mesh is the calibrated mesh with initial guesses
 % data link file will be reference for which data to use.
+% mua_big and mus_big are the resulting values at each wavelength
 
 
 if ~exist('nographs','var')
     nographs = 0;
+end
+
+parallel = parallel_init();
+
+if parallel == 1
+    nographs = 1;
 end
 
 % error checking
@@ -53,22 +63,35 @@ mesh = mesh_anom;
 
 % load anomaly data
 paa_anom   = load_data(anom_data);
+
+if ~exist('wv_array','var')
+    wv_array = paa_anom.wv;
+end
+
 if ~isfield(paa_anom,'paa') || ~isfield(paa_anom,'wv')
     errordlg('Data not found or not properly formatted','NIRFAST Error');
     error('Data not found or not properly formatted');
 end
-
-% set excoef in meshes based on data.wv
-excoef_tmp = [];
-for i = 1:length(paa_anom.wv)
-   a = mesh_anom.wv==paa_anom.wv(i);
-   excoef_tmp = [excoef_tmp; mesh_anom.excoef(a,:)];
+if exist('wv_array','var')
+    paa_anom_tmp.paa = [];
+    paa_anom_tmp.link = paa_anom.link(:,1:2);
+    paa_anom_tmp.wv = [];
+    excoef_tmp = [];
+    for i = 1:length(paa_anom.wv)
+        if any(wv_array==paa_anom.wv(i))
+            paa_anom_tmp.paa = [paa_anom_tmp.paa paa_anom.paa(:,i*2-1:i*2)];
+            paa_anom_tmp.link = [paa_anom_tmp.link paa_anom.link(:,i+2)];
+            paa_anom_tmp.wv = [paa_anom_tmp.wv paa_anom.wv(i)];
+            a = mesh.wv == paa_anom.wv(i);
+            excoef_tmp = [excoef_tmp; mesh.excoef(a,:)];
+        end
+    end
 end
-mesh.excoef = excoef_tmp;
-mesh_anom.excoef = excoef_tmp; clear excoef_tmp;
+paa_anom = paa_anom_tmp; clear paa_anom_tmp;
 mesh_anom.wv = paa_anom.wv;
 mesh.wv = paa_anom.wv;
 mesh.link = paa_anom.link;
+mesh.excoef = excoef_tmp; clear excoef_tmp;
 paa_anom = paa_anom.paa;
 
 % Look for phase wrapping
@@ -82,17 +105,27 @@ end
 
 % load homogeneous data
 paa_homog  = load_data(homog_data);
-
-mesh_homog.link = paa_homog.link;
-% set excoef in meshes based on data.wv
-excoef_tmp = [];
-for i = 1:length(paa_homog.wv)
-   a = mesh_homog.wv==paa_homog.wv(i);
-   excoef_tmp = [excoef_tmp; mesh_homog.excoef(a,:)];
+if exist('wv_array','var')
+    mesh_homog.wv = wv_array;
+    paa_homog_tmp.paa = [];
+    paa_homog_tmp.link = paa_homog.link(:,1:2);
+    paa_homog_tmp.wv = [];
+    excoef_tmp = [];
+    for i = 1:length(paa_homog.wv)
+        if any(wv_array==paa_homog.wv(i))
+            paa_homog_tmp.paa = [paa_homog_tmp.paa paa_homog.paa(:,i*2-1:i*2)];
+            paa_homog_tmp.link = [paa_homog_tmp.link paa_homog.link(:,i+2)];
+            paa_homog_tmp.wv = [paa_homog_tmp.wv paa_homog.wv(i)];
+            a = mesh_homog.wv == paa_homog.wv(i);
+            excoef_tmp = [excoef_tmp; mesh_homog.excoef(a,:)];
+        end
+    end
 end
-mesh_homog.excoef = excoef_tmp; clear excoef_tmp;
+paa_homog = paa_homog_tmp; clear paa_homog_tmp;
+mesh_homog.link = paa_homog.link;
 mesh_homog.wv = paa_homog.wv;
 paa_homog = paa_homog.paa;
+mesh_homog.excoef = excoef_tmp; clear excoef_tmp;
 
 % Look for phase wrapping
 [j,k] = size(paa_homog);
@@ -107,82 +140,175 @@ mua_big = [];
 mus_big = [];
 [j,k] = size(paa_homog);
 
-% initiliaze data paa
-data.paa = zeros(length(mesh.link),k);
-data.link = zeros(length(mesh.link),length(mesh.wv)+2);
-data.link(:,1:2) = mesh.link(:,1:2);
 % loop through wavelengths
-for i=1:2:k
-    % Make a standard mesh for this wavelength
-    wvmesh = mesh_homog;
-    wvmesh.type = 'stnd';
-    wvmesh.link = [mesh_homog.link(:,1:2) mesh_homog.link(:,(i+1)/2+2)];
-    [wvmesh.mua, wvmesh.mus, wvmesh.kappa] = calc_mua_mus(mesh_homog,mesh.wv(((i-1)/2)+1));
-    
-    % Calculate global mua and mus plus offsets for phantom data
-    if frequency == 0
-        [mua_h,mus_h,lnI_h,data_h_fem] = fit_data_cw(wvmesh,...
-                                                          paa_homog(:,i),...
-                                                          iteration,...
-                                                          nographs);
-        phase_h = zeros(size(lnI_h,1),1);
-    else
-        [mua_h,mus_h,lnI_h,phase_h,data_h_fem] = fit_data(wvmesh,...
-                                                          paa_homog(:,i:i+1),...
-                                                          frequency,...
-                                                          iteration,...
-                                                          nographs);
+kk = length(mesh.wv);
+paa_homog_fit = reshape(paa_homog,j,2,kk);
+paa_anom_fit = reshape(paa_anom,j,2,kk);
+
+% SERIAL
+
+if parallel == 0
+
+    for i=1:kk
+        % Make a standard mesh for this wavelength
+        wvmesh = mesh_homog;
+        wvmesh.type = 'stnd';
+        wvmesh.link = [mesh_homog.link(:,1:2) mesh_homog.link(:,i+2)];
+        [wvmesh.mua, wvmesh.mus, wvmesh.kappa] = calc_mua_mus(mesh_homog,mesh.wv(i));
+        linkh = logical(wvmesh.link(:,3));
+        % Calculate global mua and mus plus offsets for phantom data
+        if frequency == 0
+            paa_homog_fitcw = paa_homog_fit;
+            [mua_h,mus_h,lnI_h,data_h_fem] = fit_data_cw(wvmesh,...
+                                                              paa_homog_fitcw(:,1,i),...
+                                                              iteration,...
+                                                              nographs);
+            phase_h = zeros(size(lnI_h,1),1);
+        else
+            [mua_h,mus_h,lnI_h,phase_h,data_h_fem] = fit_data(wvmesh,...
+                                                              paa_homog_fit(:,:,i),...
+                                                              frequency,...
+                                                              iteration,...
+                                                              nographs);
+        end
+       % mtit(['Homog ' num2str(mesh.wv(i)) 'nm'],'FontSize',14);
+       disp(['Done homog ' num2str(mesh.wv(i)) 'nm'])
+
+        wvmesh = [];
+
+        % Make a standard mesh for this wavelength
+        wvmesh = mesh_anom;
+        wvmesh.type = 'stnd';
+        wvmesh.link = [mesh.link(:,1:2) mesh.link(:,i+2)];
+        [wvmesh.mua, wvmesh.mus, wvmesh.kappa] = calc_mua_mus(mesh,mesh.wv(i));
+        linka = logical(wvmesh.link(:,3));
+        % Calculate global mua and mus plus offsets for patient data
+        if frequency == 0
+            paa_anom_fitcw = paa_anom_fit;
+            [mua_a,mus_a,lnI_a,data_a_fem] = fit_data_cw(wvmesh,...
+                                                              paa_anom_fitcw(:,1,i),...
+                                                              iteration,...
+                                                              nographs);
+            phase_a = zeros(size(lnI_a,1),1);
+        else
+            [mua_a,mus_a,lnI_a,phase_a,data_a_fem] = fit_data(wvmesh,...
+                                                              paa_anom_fit(:,:,i),...
+                                                              frequency,...
+                                                              iteration,...
+                                                              nographs);
+        end
+        % mtit(['Anom ' num2str(mesh.wv(i)) 'nm'],'FontSize',14); 
+        disp(['Done anom ' num2str(mesh.wv(i)) 'nm'])
+
+        wvmesh = [];
+
+
+
+        % calculate offsets between modeled homogeneous and measured
+        % homogeneous and using these calibrate data
+        data_h_fem(:,1) = log(data_h_fem(:,1));
+        paa_anomtmp = [log(paa_anom_fit(:,1,i)) paa_anom_fit(:,2,i)];
+        paa_homogtmp = [log(paa_homog_fit(:,1,i)) paa_homog_fit(:,2,i)];
+
+        paa_cal = paa_anomtmp - ((paa_homogtmp - data_h_fem));
+        paa_cal(:,1) = paa_cal(:,1) - (lnI_a-lnI_h);
+        paa_cal(:,2) = paa_cal(:,2) - (phase_a-phase_h);
+        paa_cal(:,1) = exp(paa_cal(:,1));
+
+        % calibrated data out into larger complete array
+        data(:,:,i) = paa_cal;
+        link(:,i) = and(mesh.link(:,i+2) , mesh_homog.link(:,i+2));
+
+        % create an array for optical properties for all wavelengths
+        mua_big = [mua_big; mua_a];
+        mus_big = [mus_big; mus_a];
+
     end
-    mtit(['Homog ' num2str(mesh.wv(((i-1)/2)+1)) 'nm'],'FontSize',14);
-    clear wvmesh;
-    
-    % Make a standard mesh for this wavelength
-    wvmesh = mesh_anom;
-    wvmesh.type = 'stnd';
-    wvmesh.link = [mesh.link(:,1:2) mesh.link(:,(i+1)/2+2)];
-    [wvmesh.mua, wvmesh.mus, wvmesh.kappa] = calc_mua_mus(mesh,mesh.wv(((i-1)/2)+1));
 
-    % Calculate global mua and mus plus offsets for patient data
-    if frequency == 0
-        [mua_a,mus_a,lnI_a,data_a_fem] = fit_data_cw(wvmesh,...
-                                                          paa_anom(:,i),...
-                                                          iteration,...
-                                                          nographs);
-        phase_a = zeros(size(lnI_a,1),1);
-    else
-        [mua_a,mus_a,lnI_a,phase_a,data_a_fem] = fit_data(wvmesh,...
-                                                          paa_anom(:,i:i+1),...
-                                                          frequency,...
-                                                          iteration,...
-                                                          nographs);
+else
+
+% PARALLEL
+
+    parfor i=1:kk
+        % Make a standard mesh for this wavelength
+        wvmesh = mesh_homog;
+        wvmesh.type = 'stnd';
+        wvmesh.link = [mesh_homog.link(:,1:2) mesh_homog.link(:,i+2)];
+        [wvmesh.mua, wvmesh.mus, wvmesh.kappa] = calc_mua_mus(mesh_homog,mesh.wv(i));
+        linkh = logical(wvmesh.link(:,3));
+        % Calculate global mua and mus plus offsets for phantom data
+        if frequency == 0
+            paa_homog_fitcw = paa_homog_fit;
+            [mua_h,mus_h,lnI_h,data_h_fem] = fit_data_cw(wvmesh,...
+                                                              paa_homog_fitcw(:,1,i),...
+                                                              iteration,...
+                                                              nographs);
+            phase_h = zeros(size(lnI_h,1),1);
+        else
+            [mua_h,mus_h,lnI_h,phase_h,data_h_fem] = fit_data(wvmesh,...
+                                                              paa_homog_fit(:,:,i),...
+                                                              frequency,...
+                                                              iteration,...
+                                                              nographs);
+        end
+       % mtit(['Homog ' num2str(mesh.wv(i)) 'nm'],'FontSize',14);
+       disp(['Done homog ' num2str(mesh.wv(i)) 'nm'])
+
+        wvmesh = [];
+
+        % Make a standard mesh for this wavelength
+        wvmesh = mesh_anom;
+        wvmesh.type = 'stnd';
+        wvmesh.link = [mesh.link(:,1:2) mesh.link(:,i+2)];
+        [wvmesh.mua, wvmesh.mus, wvmesh.kappa] = calc_mua_mus(mesh,mesh.wv(i));
+        linka = logical(wvmesh.link(:,3));
+        % Calculate global mua and mus plus offsets for patient data
+        if frequency == 0
+            paa_anom_fitcw = paa_anom_fit;
+            [mua_a,mus_a,lnI_a,data_a_fem] = fit_data_cw(wvmesh,...
+                                                              paa_anom_fitcw(:,1,i),...
+                                                              iteration,...
+                                                              nographs);
+            phase_a = zeros(size(lnI_a,1),1);
+        else
+            [mua_a,mus_a,lnI_a,phase_a,data_a_fem] = fit_data(wvmesh,...
+                                                              paa_anom_fit(:,:,i),...
+                                                              frequency,...
+                                                              iteration,...
+                                                              nographs);
+        end
+        % mtit(['Anom ' num2str(mesh.wv(i)) 'nm'],'FontSize',14); 
+        disp(['Done anom ' num2str(mesh.wv(i)) 'nm'])
+
+        wvmesh = [];
+
+
+
+        % calculate offsets between modeled homogeneous and measured
+        % homogeneous and using these calibrate data
+        data_h_fem(:,1) = log(data_h_fem(:,1));
+        paa_anomtmp = [log(paa_anom_fit(:,1,i)) paa_anom_fit(:,2,i)];
+        paa_homogtmp = [log(paa_homog_fit(:,1,i)) paa_homog_fit(:,2,i)];
+
+        paa_cal = paa_anomtmp - ((paa_homogtmp - data_h_fem));
+        paa_cal(:,1) = paa_cal(:,1) - (lnI_a-lnI_h);
+        paa_cal(:,2) = paa_cal(:,2) - (phase_a-phase_h);
+        paa_cal(:,1) = exp(paa_cal(:,1));
+
+        % calibrated data out into larger complete array
+        data(:,:,i) = paa_cal;
+        link(:,i) = and(mesh.link(:,i+2) , mesh_homog.link(:,i+2));
+
+        % create an array for optical properties for all wavelengths
+        mua_big = [mua_big; mua_a];
+        mus_big = [mus_big; mus_a];
+
     end
-    mtit(['Anom ' num2str(mesh.wv(((i-1)/2)+1)) 'nm'],'FontSize',14);                                                  
-    clear wvmesh;
-    
-    
-
-    % calculate offsets between modeled homogeneous and measured
-    % homogeneous and using these calibrate data
-    data_h_fem(:,1) = log(data_h_fem(:,1));
-    paa_anom(:,i) = log(paa_anom(:,i));
-    paa_homog(:,i) = log(paa_homog(:,i));
-    paa_anomtmp = paa_anom(:,i:i+1);
-    paa_homogtmp = paa_homog(:,i:i+1); 
-    
-    paa_cal = paa_anomtmp - ((paa_homogtmp - data_h_fem));
-%     paa_cal(:,1) = paa_cal(:,1) - (lnI_a-lnI_h);
-%     paa_cal(:,2) = paa_cal(:,2) - (phase_a-phase_h);
-    paa_cal(:,1) = exp(paa_cal(:,1));
-
-    % calibrated data out into larger complete array
-    data.paa(:,i:i+1) = paa_cal;
-    data.link(:,(i+1)/2+2) = and(mesh.link(:,(i+1)/2+2) , mesh_homog.link(:,(i+1)/2+2));
-    
-    % create an array for optical properties for all wavelengths
-    mua_big = [mua_big; mua_a];
-    mus_big = [mus_big; mus_a];
 
 end
+
+data.paa = reshape(data,j,k);
+data.link = [mesh.link(:,1:2) link];
 
 % set wavelengths array
 data.wv = mesh.wv;
@@ -212,28 +338,28 @@ mesh.sp(:,1) = -p(1);
 mesh.sa(:,1) = exp(p(2));
 
 % generate initial guess if optimization toolbox exists
-% if exist('constrain_lsqfit') % it's fit...
-%      display('Using Optimization Toolbox');
-%     [A,b,Aeq,beq,lb,ub]=constrain_lsqfit(nwn,nc);
-% 
-%     [C,resnorm,residual,exitflag,output,lambda] = lsqlin(E,mua_big,A,b,Aeq,beq,lb,ub);
-% 
-% 
-%     if(C(end)==0)
-%         % for water recon (no fat)...
-%         ub(end) = 0.5;lb(end) = 0.5;
-%         [C,resnorm,residual,exitflag,output,lambda] = lsqlin(E,mua_big,A,b,Aeq,beq,lb,ub);
-%     end
-%     
-%     mesh.conc = repmat(C',length(mesh.nodes),1);
-% 
-%     % for scattering parameters
-%     x0 = [1.0;1.0];
-%     xdata = wv_array./1000;
-% 
-%     [x,resnorm] = lsqcurvefit(@power_fit,x0,xdata,mus_big)
-% 
-%     mesh.sa(:) = x(1);
-%     mesh.sp(:) = x(2);
-% 
-% end
+if exist('constrain_lsqfit') % it's fit...
+     display('Using Optimization Toolbox');
+    [A,b,Aeq,beq,lb,ub]=constrain_lsqfit(nwn,nc);
+
+    [C,resnorm,residual,exitflag,output,lambda] = lsqlin(E,mua_big,A,b,Aeq,beq,lb,ub);
+
+
+    if(C(end)==0)
+        % for water recon (no fat)...
+        ub(end) = 0.5;lb(end) = 0.5;
+        [C,resnorm,residual,exitflag,output,lambda] = lsqlin(E,mua_big,A,b,Aeq,beq,lb,ub);
+    end
+    
+    mesh.conc = repmat(C',length(mesh.nodes),1);
+
+    % for scattering parameters
+    x0 = [1.0;1.0];
+    xdata = wv_array./1000;
+
+    [x,resnorm] = lsqcurvefit(@power_fit,x0,xdata,mus_big,[.2 .2],[3 3])
+
+    mesh.sa(:) = x(1);
+    mesh.sp(:) = x(2);
+
+end
