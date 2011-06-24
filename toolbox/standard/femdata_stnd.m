@@ -106,6 +106,11 @@ end
 
 clear junk i nnodes nsource;
 
+% Check for distributed source
+if mesh.source.distributed == 1
+    qvec = sum(qvec,2);
+end
+
 % catch error in source vector
 junk = sum(qvec);
 junk = find(junk==0);
