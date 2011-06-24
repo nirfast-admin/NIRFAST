@@ -42,14 +42,19 @@ else
     end
 
     data = [];
-    for i = 1:length(mesh.link);
+    for i = 1:length(mesh.link)
         if mesh.link(i,3) == 1
             sn = source == mesh.link(i,1);
             dn = find(mesh.meas.num == mesh.link(i,2));
             vtx_ind = mesh.elements(mesh.meas.int_func(dn,1),:);
-            data = [data; mesh.meas.int_func(dn,2:end)*phi(vtx_ind,sn)];
+            if mesh.source.distributed == 1
+                data = [data; mesh.meas.int_func(dn,2:end)*phi(vtx_ind,1)];
+            else
+                data = [data; mesh.meas.int_func(dn,2:end)*phi(vtx_ind,sn)];
+            end
         elseif mesh.link(i,3) == 0
             data = [data; NaN];
         end
     end
+    
 end
