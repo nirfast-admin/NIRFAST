@@ -222,6 +222,12 @@ if xflag == 1 || mmflag == 1
         %   clear i j s m n
     end
 end
+
+% Check for distributed source
+if mesh.source.distributed == 1
+    qvec = sum(qvec,2);
+end
+
 %*******************************************************
 % Calculate INTRINSIC FIELDS:
 
