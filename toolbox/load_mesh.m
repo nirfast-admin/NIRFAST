@@ -278,10 +278,15 @@ elseif exist([fn '.source']) == 2
         % format)
         [ntxt,junk] = size(source.textdata);
         [ns,nc]=size(source.data);
+        mesh.source.distributed = 0;
+        if sum(sum(strcmp(source.textdata,'distributed'))) == 1
+            mesh.source.distributed = 1;
+            source.textdata = source.textdata(2:end,:);
+        end
         mesh.source.fixed = 0;
         if sum(sum(strcmp(source.textdata,'fixed'))) == 1
             mesh.source.fixed = 1;
-            source.textdata = source.textdata(2,:);
+            source.textdata = source.textdata(2:end,:);
         end
         mesh.source.num = source.data(:,logical(strcmp(source.textdata,'num')));
         mesh.source.coord(:,1) = source.data(:,logical(strcmp(source.textdata,'x')));
