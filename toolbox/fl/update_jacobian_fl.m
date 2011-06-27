@@ -133,6 +133,12 @@ for i = 1 : nsd
     if mesh.link(i,3) == 1
         J.completem(k,:) = ...
             real(Jin.complexm(k,1:end/2)./data2.complexm(k));
+        %this used to be outside the loop but then was getting too high on
+        %the k and the values of Jin didn't exist
+         k = k + 1;
+    %   ??? Index exceeds matrix dimensions.
+    % Error in ==> update_jacobian_fl at 134
+    %         J.completem(k,:) = ... 
     end
-    k = k + 1;
+%     k = k + 1;
 end
