@@ -47,7 +47,7 @@ else
             sn = source == mesh.link(i,1);
             dn = find(mesh.meas.num == mesh.link(i,2));
             vtx_ind = mesh.elements(mesh.meas.int_func(dn,1),:);
-            if mesh.source.distributed == 1
+            if isfield(mesh.source,'distributed') && mesh.source.distributed == 1
                 data = [data; mesh.meas.int_func(dn,2:end)*phi(vtx_ind,1)];
             else
                 data = [data; mesh.meas.int_func(dn,2:end)*phi(vtx_ind,sn)];
