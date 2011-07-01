@@ -72,7 +72,7 @@ if mesh.dimension == 3 && ~isempty(strfind(os,'PCWIN')) ... % Windows
         && ~strcmp(mesh.type,'fluor_bem') && ~strcmp(mesh.type,'spec_bem')
     
     nirfast2vtk(mesh,'temp_nirfast.vtk');
-    system([which('final.exe') ' temp_nirfast.vtk']);
+    system(['"' which('final.exe') '" temp_nirfast.vtk']);
     
 else
 
