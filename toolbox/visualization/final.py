@@ -9,7 +9,7 @@ from PyQt4.QtGui import *
 # VOLUME VIEW
 class VTK_Widget1(QWidget):
     
-    def __init__(self, slider_z, slider_x, slider_y, parent=None):
+    def __init__(self, slider_x, slider_y, slider_z, parent=None):
 
         super(VTK_Widget1, self).__init__(parent)
         self.source_is_connected = False
