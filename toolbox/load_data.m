@@ -122,8 +122,8 @@ if ischar(fn) ~= 0
         [junk,n] = size(datatemp);
         data.paa = datatemp;
         if n>1
-            data.phase = data.paa(:,1);
-            data.amplitude = data.paa(:,2);
+            data.phase = data.paa(:,2);
+            data.amplitude = data.paa(:,1);
         else
             data.amplitude = data.paa(:,1);
         end
