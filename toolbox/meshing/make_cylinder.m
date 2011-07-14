@@ -35,11 +35,14 @@ end
 x=[];
 y=[];
 z=[];
-i=1;
+x(1) = 0;
+y(1) = 0;
+z(1) = 0;
+i=2;
 mesh.bndvtx=[];
 for hi=0-sizevar.height/2:sizevar.dist:sizevar.height/2
     for ri=sizevar.dist:sizevar.dist:sizevar.r
-        for thi=sizevar.dist/ri:sizevar.dist/ri:2*3.1415926        
+        for thi=0:2*3.1415/floor(2*3.1415*ri/sizevar.dist):2*3.1415       
             [x(i),y(i),z(i)] = pol2cart(thi,ri,hi);
             if (hi == 0-sizevar.height/2) || (hi + sizevar.dist > sizevar.height/2) || (ri+sizevar.dist>sizevar.r)
                 mesh.bndvtx(i) = 1;

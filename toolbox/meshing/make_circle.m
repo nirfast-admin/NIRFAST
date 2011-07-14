@@ -27,10 +27,12 @@ end
 
 x=[];
 y=[];
-i=1;
+x(1) = 0;
+y(1) = 0;
+i=2;
 for ri=sizevar.dist:sizevar.dist:sizevar.r
     s=0;
-    for thi=sizevar.dist/ri:sizevar.dist/ri:2*3.1415926
+    for thi=0:2*3.1415/floor(2*3.1415*ri/sizevar.dist):2*3.1415
         [x(i),y(i)] = pol2cart(thi,ri);
         i = i + 1;
         s=s+1;
