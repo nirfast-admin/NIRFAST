@@ -282,6 +282,10 @@ content{end+1} = 'clear mesh_tmp';
 if ~batch
     evalin('base',content{end});
 end
+content{end+1} = strcat('mesh = load_mesh(''',handles.meshloc,''');');
+if ~batch
+    evalin('base',content{end});
+end
         
 set(mainGUIdata.script, 'String', content);
 guidata(nirfast, mainGUIdata);
