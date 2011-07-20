@@ -238,6 +238,7 @@ end
 if exist([fn '.source']) == 0
     disp([fn '.source file is not present']);
 elseif exist([fn '.source']) == 2
+    mesh.source.distributed = 0;
     source = importdata([fn '.source']);
     
     if isfield(source,'textdata') == 0
@@ -278,7 +279,6 @@ elseif exist([fn '.source']) == 2
         % format)
         [ntxt,junk] = size(source.textdata);
         [ns,nc]=size(source.data);
-        mesh.source.distributed = 0;
         if sum(sum(strcmp(source.textdata,'distributed'))) == 1
             mesh.source.distributed = 1;
             source.textdata = source.textdata(2:end,:);
