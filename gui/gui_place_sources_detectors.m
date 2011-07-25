@@ -22,7 +22,7 @@ function varargout = gui_place_sources_detectors(varargin)
 
 % Edit the above text to modify the response to help gui_place_sources_detectors
 
-% Last Modified by GUIDE v2.5 03-Aug-2010 10:20:49
+% Last Modified by GUIDE v2.5 21-Jul-2011 10:40:33
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -108,6 +108,15 @@ if ~isfield(handles,'dimension')
 end
 
 set(hObject,'toolbar','figure');
+
+% find fiducial files
+fid_loc = what('fiducials');
+fids = dir([fid_loc.path '/fiducials_*']);
+varnames = {'Select System'};
+for i=1:size(fids)
+    varnames{i+1} = fids(i).name(11:end-2);
+end
+set(handles.fiducial_file,'String',varnames);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -234,6 +243,8 @@ for si=1:size(s,1)
 end
 link_string = strcat(link_string, ']');
 
+fixed = get(handles.fix_sd,'Value');
+
 content{end+1} = strcat('mesh_tmp = load_mesh(''',handles.meshloc,''');');
 if ~batch
     evalin('base',content{end});
@@ -254,7 +265,7 @@ content{end+1} = strcat('mesh_tmp.source.fwhm = zeros(size(',sources_string,',1)
 if ~batch
     evalin('base',content{end});
 end
-content{end+1} = strcat('mesh_tmp.source.fixed = 0;');
+content{end+1} = strcat('mesh_tmp.source.fixed = ',num2str(fixed),';');
 if ~batch
     evalin('base',content{end});
 end
@@ -266,7 +277,7 @@ content{end+1} = strcat('mesh_tmp.meas.num = (1:size(',detectors_string,',1))'';
 if ~batch
     evalin('base',content{end});
 end
-content{end+1} = strcat('mesh_tmp.meas.fixed = 0;');
+content{end+1} = strcat('mesh_tmp.meas.fixed = ',num2str(fixed),';');
 if ~batch
     evalin('base',content{end});
 end
@@ -526,3 +537,74 @@ else
     end
     set(handles.detectors,'String',detectors);
 end
+
+
+% --- Executes on button press in fiducial_create.
+function fiducial_create_Callback(hObject, eventdata, handles)
+% hObject    handle to fiducial_create (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% get fiducials
+sources = get(handles.sources,'String');
+sources_string = strcat('[', sources(1,:));
+for i=2:size(sources,1)
+    sources_string = strcat(sources_string, ';', sources(i,:));
+end
+sources_string = strcat(sources_string, ']');
+sources_string = char(sources_string);
+
+% generate sources/detectors
+fids = get(handles.fiducial_file,'String');
+fid = fids(get(handles.fiducial_file,'Value'));
+eval(strcat('[s,d]=fiducials_',fid{1},'(',sources_string,',handles.mesh);'));
+
+% put new sources/detectors into the gui
+sources = {};
+for i=1:1:size(s,1)
+    p = mat2str(s(i,:));
+    sources{end+1} = p(2:end-1);
+end
+set(handles.sources,'String',sources);
+
+detectors = {};
+for i=1:1:size(d,1)
+    p = mat2str(d(i,:));
+    detectors{end+1} = p(2:end-1);
+end
+set(handles.detectors,'String',detectors);
+
+
+
+
+
+% --- Executes on selection change in fiducial_file.
+function fiducial_file_Callback(hObject, eventdata, handles)
+% hObject    handle to fiducial_file (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns fiducial_file contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from fiducial_file
+
+
+% --- Executes during object creation, after setting all properties.
+function fiducial_file_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to fiducial_file (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in fix_sd.
+function fix_sd_Callback(hObject, eventdata, handles)
+% hObject    handle to fix_sd (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of fix_sd
