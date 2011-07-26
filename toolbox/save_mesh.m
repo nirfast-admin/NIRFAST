@@ -90,6 +90,9 @@ end
 if isfield(mesh,'source') == 1
     [nrow,ncol]=size(mesh.source.coord);
     fid = fopen([fn '.source'],'w');
+    if mesh.source.distributed == 1
+        fprintf(fid,'%s\n','distributed');
+    end
     if mesh.source.fixed == 1
         fprintf(fid,'%s\n','fixed');
     end

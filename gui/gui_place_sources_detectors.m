@@ -22,7 +22,7 @@ function varargout = gui_place_sources_detectors(varargin)
 
 % Edit the above text to modify the response to help gui_place_sources_detectors
 
-% Last Modified by GUIDE v2.5 21-Jul-2011 10:40:33
+% Last Modified by GUIDE v2.5 26-Jul-2011 10:00:59
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -244,6 +244,7 @@ end
 link_string = strcat(link_string, ']');
 
 fixed = get(handles.fix_sd,'Value');
+distributed_source = get(handles.distributed_source,'Value');
 
 content{end+1} = strcat('mesh_tmp = load_mesh(''',handles.meshloc,''');');
 if ~batch
@@ -266,6 +267,10 @@ if ~batch
     evalin('base',content{end});
 end
 content{end+1} = strcat('mesh_tmp.source.fixed = ',num2str(fixed),';');
+if ~batch
+    evalin('base',content{end});
+end
+content{end+1} = strcat('mesh_tmp.source.distributed = ',num2str(distributed_source),';');
 if ~batch
     evalin('base',content{end});
 end
@@ -608,3 +613,12 @@ function fix_sd_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of fix_sd
+
+
+% --- Executes on button press in distributed_source.
+function distributed_source_Callback(hObject, eventdata, handles)
+% hObject    handle to distributed_source (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of distributed_source
