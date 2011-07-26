@@ -105,3 +105,9 @@ Hemoglobin values from Scott Prahl found at http://omlc.ogi.edu/spectra/hemoglob
 Water values from Hale and Query found at http://omlc.ogi.edu/spectra/water/data/hale73.dat.  Values were divided by 10 to convert from cm-1 to mm-1
 
 Lipid values from Veen et al found at http://omlc.ogi.edu/spectra/fat/fat.txt.  Values were divided by 1000 to convert from m-1 to mm-1
+
+
+--- mouse atlas ---
+
+The mouse atlas was generated using information from the following:
+George Alexandrakis, Fernando R Rannou, and Arion F Chatziioannou. "Tomographic bioluminescence imaging by use of a combined optical-PET (OPET) system: a computer simulation feasibility study." In Physics In Medicine And Biology. 50 (2005) 4225-4241.
