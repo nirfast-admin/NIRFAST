@@ -120,6 +120,10 @@ content{end+1} = strcat('set_chromophores(''',mesh,''',',chrom,',',wv,');');
 if ~batch
     evalin('base',content{end});
 end
+content{end+1} = strcat('mesh = load_mesh(''',mesh,''');');
+if ~batch
+    evalin('base',content{end});
+end
 
 set(mainGUIdata.script, 'String', content);
 guidata(nirfast, mainGUIdata);
