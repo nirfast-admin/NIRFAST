@@ -46,8 +46,14 @@ for i = 1 : length(mesh.wv)
     end
 end
 
-c1 = ones(length(mesh.nodes),1).*0.01;
-c2 = ones(length(mesh.nodes),1).*0.4;
+if strcmp(mesh.type,'spec')
+    c1 = ones(length(mesh.nodes),1).*0.01;
+    c2 = ones(length(mesh.nodes),1).*0.4;
+elseif strcmp(mesh.type,'spec_bem')
+    nregions = size(mesh.ri,1);
+    c1 = ones(nregions,1).*0.01;
+    c2 = ones(nregions,1).*0.4;
+end
 mesh.conc = [];
 for i=1:length(chrom_list)
     if strcmp('HbO',chrom_list(i)) || strcmp('deoxyHb',chrom_list(i))
@@ -56,6 +62,8 @@ for i=1:length(chrom_list)
         mesh.conc = [mesh.conc c2];
     end
 end
+
+mesh.link(:,3:end) = [];
 
 if isfield(mesh,'link')
     mesh.link(:,3:2+length(mesh.wv)) = 1;
