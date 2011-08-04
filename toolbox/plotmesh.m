@@ -67,10 +67,9 @@ end
 %% plot optical properties
 
 os=computer;
-if mesh.dimension == 3 && ~isempty(strfind(os,'PCWIN')) ... % Windows
+if mesh.dimension == 3 && isempty(strfind(os,'GLNX')) && isempty(strfind(os,'MAC')) ... % Windows
         && ~strcmp(mesh.type,'stnd_bem') ...
         && ~strcmp(mesh.type,'fluor_bem') && ~strcmp(mesh.type,'spec_bem')
-    
     nirfast2vtk(mesh,'temp_nirfast.vtk');
     system(['"' which('nirviz.exe') '" temp_nirfast.vtk']);
     
