@@ -4,13 +4,19 @@ function nodelm2nirfast(fn,saveloc,type)
 %
 % converts .node/.ele files to a nirfast mesh
 %
-% fn is the location of the .ele file
+% fn is the location of the .ele file or a structure
 % saveloc is the location to save the nirfast mesh
 % type is the mesh type to use ('stnd','fluor',etc)
 
 
-%% read .node/.ele files
-[mesh.elements,mesh.nodes,nodemap,elemap,dim,nnpe] = read_nod_elm(fn(1:end-4),1);
+if isstruct(fn)
+    mesh.elements = fn.ele;
+    mesh.nodes = fn.node;
+    nnpe = fn.nnpe;
+    dim = fn.dim;
+else
+    [mesh.elements,mesh.nodes,nodemap,elemap,dim,nnpe] = read_nod_elm(fn(1:end-4),1);
+end
 
 
 %% set mesh properties
