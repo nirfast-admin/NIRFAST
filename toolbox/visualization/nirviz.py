@@ -9,27 +9,15 @@ from PyQt4.QtGui import *
 # VOLUME VIEW
 class VTK_Widget1(QWidget):
     
-    def __init__(self, slider_x, slider_y, slider_z, parent=None):
+    def __init__(self, parent=None):
 
         super(VTK_Widget1, self).__init__(parent)
         self.source_is_connected = False
-        
-        self.slider_x = slider_x
-        self.slider_y = slider_y
-        self.slider_z = slider_z
         
         # vtk to point data
         self.c2p = vtk.vtkCellDataToPointData()
         self.opacityTransferFunction = vtk.vtkPiecewiseFunction()
         self.colorTransferFunction = vtk.vtkColorTransferFunction()
-        
-        # clip plane
-        self.clip_plane = vtk.vtkPlane()
-        self.clip_plane.SetNormal(0, 0, 1)
-        
-        self.clipper = vtk.vtkClipDataSet()
-        self.clipper.SetClipFunction(self.clip_plane)
-        self.clipper.SetInputConnection(self.c2p.GetOutputPort())
 
         # create a volume property for describing how the data will look
         self.volumeProperty = vtk.vtkVolumeProperty()
@@ -41,7 +29,7 @@ class VTK_Widget1(QWidget):
         # convert to unstructured grid volume
         self.triangleFilter = vtk.vtkDataSetTriangleFilter()
         self.triangleFilter.TetrahedraOnlyOn()
-        self.triangleFilter.SetInputConnection(self.clipper.GetOutputPort())
+        self.triangleFilter.SetInputConnection(self.c2p.GetOutputPort())
 
         # create a ray cast mapper
         self.compositeFunction = vtk.vtkUnstructuredGridBunykRayCastFunction()
@@ -84,47 +72,13 @@ class VTK_Widget1(QWidget):
         self.vtkw.Initialize()
         self.vtkw.Start()
         
-        # Associate the line widget with the interactor
-        self.planeWidget = vtk.vtkImplicitPlaneWidget()
-        self.planeWidget.SetInteractor(self.vtkw)
-        self.planeWidget.AddObserver("InteractionEvent", self.PlaneWidgetCallback)
-        self.planeWidget.DrawPlaneOff()
-        self.planeWidget.TubingOn()
-        
-    def PlaneWidgetCallback(self,obj, event):
-        
-        obj.GetPlane(self.clip_plane)
-        org = self.clip_plane.GetOrigin()
-        center = self.source.GetCenter()
-        bounds = self.source.GetBounds()
-            
-        if self.clip_plane.GetNormal() == (1.0,0.0,0.0): 
-            slider_pos = 100*(org[0]-bounds[0])/(bounds[1]-bounds[0])
-            self.slider_x.setValue(slider_pos)
-        if self.clip_plane.GetNormal() == (0.0,1.0,0.0): 
-            slider_pos = 100*(org[1]-bounds[2])/(bounds[3]-bounds[2])
-            self.slider_y.setValue(slider_pos)
-        if self.clip_plane.GetNormal() == (0.0,0.0,1.0): 
-            slider_pos = 100*(org[2]-bounds[4])/(bounds[5]-bounds[4])
-            self.slider_z.setValue(slider_pos)
-        
         
     def SetSource(self,source):   
 
         self.source = source
         self.c2p.SetInput(self.source)
         self.volume.VisibilityOn()
-        
-        self.planeWidget.SetInput(self.source)
-        self.planeWidget.SetPlaceFactor(1.5)
-        self.planeWidget.PlaceWidget()
-        
-        self.planeWidget.GetPlane(self.clip_plane)
-        self.planeWidget.EnabledOn()
-        
-        # the volume will be made completely transparent for values below 5%, 
-        # somewhat transparent up to 65% of the scalar range
-        # and to opaque for values between 65% and 100%
+
         range = source.GetScalarRange()
         zero_pc  = range[0]
         fifty_pc  = range[0]+(range[1]-range[0])*0.50
@@ -132,7 +86,7 @@ class VTK_Widget1(QWidget):
              
         self.opacityTransferFunction.AddPoint(zero_pc, 0.01)
         self.opacityTransferFunction.AddPoint(fifty_pc, 0.01)
-        self.opacityTransferFunction.AddPoint(fifty_pc+1e-6, 0.2) # anything > 65% is transparent    
+        self.opacityTransferFunction.AddPoint(fifty_pc+1e-6, 0.2)   
         
         self.colorTransferFunction.AddRGBPoint(zero_pc, 0.0, 0.0, 1.0)
         self.colorTransferFunction.AddRGBPoint(fifty_pc, 1.0, 0.5, 0.0)
@@ -182,10 +136,17 @@ class VTK_Widget2(QWidget):
         self.reslice = vtk.vtkImageReslice()
         self.reslice.SetInterpolationModeToLinear()
         
+        self.xform = vtk.vtkTransform()
+        
+        self.reslice2 = vtk.vtkImageReslice()
+        self.reslice2.SetInput(self.reslice.GetOutput())
+        self.reslice2.SetResliceTransform(self.xform)
+        self.reslice2.SetInterpolationModeToLinear()
+        
         self.cutter2 = vtk.vtkCutter()
         self.cutter2.SetCutFunction(self.cutPlane)
         self.cutter2.SetValue(0,0)
-        self.cutter2.SetInput(self.reslice.GetOutput())
+        self.cutter2.SetInput(self.reslice2.GetOutput())
 
         self.cutterMapper2=vtk.vtkPolyDataMapper()
         self.cutterMapper2.SetInputConnection(self.cutter2.GetOutputPort())
@@ -275,7 +236,6 @@ class VTK_Widget2(QWidget):
         
         self.vtkw.Initialize()
         self.vtkw.Start()
-        #self.vtkw.Disable()
         
     def SetSource(self,source):
         
@@ -330,16 +290,25 @@ class VTK_Widget2(QWidget):
 
         self.reslice.SetInput(self.source2)
         orn = source.GetImageOrientationPatient()
-        center = source.GetDataOrigin()
-        self.reslice.SetResliceAxesOrigin(center[0], center[1], center[2])
-        self.reslice.SetResliceAxesDirectionCosines(orn[0], orn[3], (1-abs(orn[0])-abs(orn[3])), 
-                                                    orn[1], orn[4], (1-abs(orn[1])-abs(orn[4])), 
-                                                    orn[2], orn[5], (1-abs(orn[2])-abs(orn[5])))
+        M = vtk.vtkMatrix4x4()
+        Sx = (orn[1] * orn[5]) - (orn[2] * orn[4])
+        Sy = (orn[2] * orn[3]) - (orn[0] * orn[5])
+        Sz = (orn[0] * orn[4]) - (orn[1] * orn[3])
+        M.DeepCopy((orn[0], orn[1], orn[2], 1,
+                    orn[3], orn[4], orn[5], 1,
+                    Sx, Sy, Sz, 1,
+                    0, 0, 0, 1))
+        self.reslice.SetResliceAxes(M)
+        self.reslice.SetInterpolationModeToLinear()
+        
+        #self.xform.Translate(-11.0, 130.0, -160.0)
+        self.xform.Translate(0.0, 0.0, 0.0)
        
         self.cutterActor2.VisibilityOn()
         self.cutterMapper2.SetScalarRange(self.source2.GetScalarRange())
         
         self.vtkw.GetRenderWindow().Render()
+        
         
     def AdjustAlpha(self):
         
@@ -386,7 +355,7 @@ class MainVizWindow(QMainWindow):
          self.vtk_widget_2 = VTK_Widget2(0)
          self.vtk_widget_3 = VTK_Widget2(1)
          self.vtk_widget_4 = VTK_Widget2(2)
-         self.vtk_widget_1 = VTK_Widget1(self.vtk_widget_2.cutPlaneSlider,self.vtk_widget_3.cutPlaneSlider,self.vtk_widget_4.cutPlaneSlider)
+         self.vtk_widget_1 = VTK_Widget1()
          
          # the VTK widgets are added to the splitters
          self.VSplitter.addWidget(self.HSplitterTop)
@@ -429,66 +398,20 @@ class MainVizWindow(QMainWindow):
          # property dropdown
          self.dropdown_property = QComboBox()
          
-         # spacing label
-         self.label_spacing = QLabel("      ")
-         
-         # clip buttons
-         self.button_clipx = QPushButton('Clip x')
-         self.button_clipy = QPushButton('Clip y')
-         self.button_clipz = QPushButton('Clip z')
-         
          # toolbar
          self.viewToolbar = self.addToolBar("View")
          self.viewToolbar.setObjectName("ViewToolbar")
          self.viewToolbar.addWidget(self.label_property)
          self.viewToolbar.addWidget(self.dropdown_property)
-         self.viewToolbar.addWidget(self.label_spacing)
-         self.viewToolbar.addWidget(self.button_clipx)
-         self.viewToolbar.addWidget(self.button_clipy)
-         self.viewToolbar.addWidget(self.button_clipz)
          
-         self.connect(self.button_clipx, SIGNAL("clicked()"), self.Clipx)
-         self.connect(self.button_clipy, SIGNAL("clicked()"), self.Clipy)
-         self.connect(self.button_clipz, SIGNAL("clicked()"), self.Clipz)
          self.connect(self.dropdown_property, SIGNAL("currentIndexChanged(int)"), self.SetProperty)
-         
-         
-    def Clipx(self):
-        
-        self.Clip(0)
-        
-    def Clipy(self):
-        
-        self.Clip(1)
-        
-    def Clipz(self):
-        
-        self.Clip(2)
-         
-    def Clip(self, axis):
-        
-        self.vtk_widget_1.hide()
-        self.vtk_widget_2.hide()
-        self.vtk_widget_2 = VTK_Widget2(0)
-        self.vtk_widget_1 = VTK_Widget1(self.vtk_widget_2.cutPlaneSlider,self.vtk_widget_3.cutPlaneSlider,self.vtk_widget_4.cutPlaneSlider)
-        self.HSplitterTop.addWidget(self.vtk_widget_1)
-        self.HSplitterTop.addWidget(self.vtk_widget_2)
-        if axis == 0:
-            self.vtk_widget_1.planeWidget.NormalToXAxisOn()
-        if axis == 1:
-            self.vtk_widget_1.planeWidget.NormalToYAxisOn()
-        if axis == 2:
-            self.vtk_widget_1.planeWidget.NormalToZAxisOn()
-        self.vtk_widget_1.planeWidget.EnabledOn()
-        self.vtk_widget_1.SetSource(self.reader.GetOutput())
-        self.vtk_widget_2.SetSource(self.reader.GetOutput())
             
     def setSource(self,source):
         
         self.reader.SetFileName(source)
         self.reader.ReadAllScalarsOn()
         self.reader.Update()    
-        print self.reader.GetOutput().GetBounds()
+        
         pointdata = self.reader.GetOutput().GetPointData()
         for i in range(pointdata.GetNumberOfArrays()):      
             self.dropdown_property.addItem(pointdata.GetArrayName(i))
@@ -513,8 +436,8 @@ class MainVizWindow(QMainWindow):
                         
         if (len(fname)>0):         
             self.reader2.SetDirectoryName(fname)
-            self.reader2.Update()    
-            print self.reader2.GetOutput().GetBounds()   
+            self.reader2.Update()     
+            
             self.vtk_widget_2.SetSource2(self.reader2)
             self.vtk_widget_3.SetSource2(self.reader2)
             self.vtk_widget_4.SetSource2(self.reader2)
@@ -537,7 +460,7 @@ class MainVizWindow(QMainWindow):
         self.vtk_widget_2 = VTK_Widget2(0)
         self.vtk_widget_3 = VTK_Widget2(1)
         self.vtk_widget_4 = VTK_Widget2(2)
-        self.vtk_widget_1 = VTK_Widget1(self.vtk_widget_2.cutPlaneSlider,self.vtk_widget_3.cutPlaneSlider,self.vtk_widget_4.cutPlaneSlider)
+        self.vtk_widget_1 = VTK_Widget1()
         
         self.HSplitterTop.addWidget(self.vtk_widget_1)
         self.HSplitterTop.addWidget(self.vtk_widget_2)
