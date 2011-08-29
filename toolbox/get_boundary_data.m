@@ -42,7 +42,7 @@ else
     end
 
     data = [];
-    for i = 1:length(mesh.link)
+    for i = 1:size(mesh.link,1) 
         if mesh.link(i,3) == 1
             sn = source == mesh.link(i,1);
             dn = find(mesh.meas.num == mesh.link(i,2));
