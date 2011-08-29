@@ -127,6 +127,9 @@ end
 
 set(mainGUIdata.script, 'String', content);
 guidata(nirfast, mainGUIdata);
+
+gui_launcher
+
 close(gui_set_chromophores);
 
 
