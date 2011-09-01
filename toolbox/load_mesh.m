@@ -226,10 +226,10 @@ if strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'fluor_bem') || strcmp(mesh.
         error('.region file is not present, required for BEM');
     end
     mesh.elements(mesh.region(:,2)==0,:) = ...
-        FixPatchOrientation(mesh.nodes,mesh.elements(mesh.region(:,2)==0,:));
+        FixPatchOrientation(mesh.nodes,mesh.elements(mesh.region(:,2)==0,:),[],1);
     for regn=2:size(unique(mesh.region),1)-1
         mesh.elements(mesh.region(:,2)==regn,:) = ...
-            FixPatchOrientation(mesh.nodes,mesh.elements(mesh.region(:,2)==regn,:));
+            FixPatchOrientation(mesh.nodes,mesh.elements(mesh.region(:,2)==regn,:),[],1);
     end
 end
 

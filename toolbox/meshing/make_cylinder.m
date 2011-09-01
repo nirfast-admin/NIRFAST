@@ -75,7 +75,7 @@ if exist('surf','var') && surf == 1
     mesh.nodes(:,2) = y(:);
     mesh.nodes(:,3) = z(:);
     mesh.elements = MyRobustCrust(mesh.nodes);
-    mesh.elements = FixPatchOrientation(mesh.nodes,mesh.elements);
+    mesh.elements = FixPatchOrientation(mesh.nodes,mesh.elements,[],1);
 else
     for hi=0-sizevar.height/2:sizevar.dist:sizevar.height/2
         for ri=sizevar.dist:sizevar.dist:sizevar.r

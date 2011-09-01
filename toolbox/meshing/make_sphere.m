@@ -59,7 +59,7 @@ if exist('surf','var') && surf == 1
     mesh.nodes = mesh.nodes(mesh.bndvtx==1,:);
     mesh.bndvtx = ones(size(mesh.nodes,1),1);
     mesh.elements = MyRobustCrust(mesh.nodes);
-    mesh.elements = FixPatchOrientation(mesh.nodes,mesh.elements);
+    mesh.elements = FixPatchOrientation(mesh.nodes,mesh.elements,[],1);
 else
     mesh.nodes = mesh.nodes(mesh.bndvtx==1,:);
     mesh.elements = MyRobustCrust(mesh.nodes);

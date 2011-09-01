@@ -65,6 +65,7 @@ for scounter=1:num_sources
             [ar ai br bi] = main_build_matrix_K(mesh.nodes, region_elems, region_coords, region_nodes,...
                 omega(region), mesh.kappa(region), 2048);
             A = complex(ar,ai); B = complex(br,bi);
+            clear ar ai br bi
             
             % Take care of interior solid angle terms
             tmp=length(A);
@@ -93,6 +94,7 @@ for scounter=1:num_sources
                     end
                 end
             end
+            clear A B
             bf=relations(region,:)~=0;
             visits(relations(region,bf)) = visits(relations(region,bf)) + 1;
         end
