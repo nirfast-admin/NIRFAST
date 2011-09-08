@@ -26,7 +26,7 @@ function [fwd_mesh,pj_error] = reconstruct_stnd_bem(fwd_mesh,...
 
 
 
-tic;
+tmainloop = tic;
 
 if frequency < 0
     errordlg('Frequency must be nonnegative','NIRFAST Error');
@@ -72,7 +72,9 @@ pj_error=zeros(1,iteration);
 
 % Initiate log file
 fid_log = fopen([output_fn '.log'],'w');
-write_log(fid_log,'Forward Mesh   = %s\n',fwd_mesh.name);
+cl = fix(clock);
+write_log(fid_log,'Started on %s ',date,1);
+write_log(fid_log,'at %d:%d:%d\n',cl(4:6),1);
 write_log(fid_log,'Forward Mesh   = %s\n',fwd_mesh.name);
 write_log(fid_log,'Frequency      = %f MHz\n',frequency);
 if ischar(data_fn) ~= 0
@@ -198,8 +200,11 @@ for it = 1 : iteration
 end
 
 % close log file!
-time = toc;
-write_log(fid_log,'Computation TimeRegularization = %f\n',time,1);
+time = toc(tmainloop);
+write_log(fid_log,'Computation Time = %f\n',time,1);
+write_log(fid_log,'Finished on %s ',date,1);
+cl = fix(clock);
+write_log(fid_log,'at %d:%d:%d\n',cl(4:6),1);
 fclose(fid_log);
 
 

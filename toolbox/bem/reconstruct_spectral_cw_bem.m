@@ -25,7 +25,7 @@ function [fwd_mesh,pj_error] = reconstruct_spectral_cw_bem(fwd_mesh,...
 % wv_array is optional wavelength array
 
 
-tic
+tmainloop = tic;
 
 frequency = 0;
 
@@ -101,6 +101,9 @@ clear junk*
 %************************************************
 % Initiate log file
 fid_log = fopen([output_fn,'.log'],'w');
+cl = fix(clock);
+write_log(fid_log,'Started on %s ',date,1);
+write_log(fid_log,'at %d:%d:%d\n',cl(4:6),1);
 fprintf(fid_log,'Forward Mesh       = %s\n',fwd_mesh.name);
 fprintf(fid_log,'Frequency          = %f MHz\n',frequency);
 if ischar(data_fn) ~= 0
@@ -310,8 +313,11 @@ for it = 1:iteration
 %  plotmesh(fwd_mesh);
 end
 % Close log file
-time = toc;
-fprintf(fid_log,'Computation Time = %f\n',time);
+time = toc(tmainloop);
+write_log(fid_log,'Computation Time = %f\n',time,1);
+write_log(fid_log,'Finished on %s ',date,1);
+cl = fix(clock);
+write_log(fid_log,'at %d:%d:%d\n',cl(4),cl(5),cl(6));
 fprintf(fid_log,'Final Solution:\n');
 fprintf(fid_log,'%g',it-1);
 fclose(fid_log);
