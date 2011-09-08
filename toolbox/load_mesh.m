@@ -25,7 +25,7 @@ mesh.name = fn;
 %% Read mesh nodes
 if exist([fn '.node']) == 0
     errordlg('.node file is not present','NIRFAST Error');
-    error('.node file is not present');
+    error([fn '.node file is not present']);
 elseif exist([fn '.node']) == 2
     mesh.nodes = load(strcat(fn, '.node'));
     mesh.bndvtx = mesh.nodes(:,1); %sets 1 if boundary node, 0 if internal
