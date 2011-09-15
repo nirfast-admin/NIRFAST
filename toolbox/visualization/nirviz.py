@@ -133,20 +133,10 @@ class VTK_Widget2(QWidget):
             self.cutPlane.SetNormal(0, 0, 1)
             
         # ---DICOM PIPELINE---
-        self.reslice = vtk.vtkImageReslice()
-        self.reslice.SetInterpolationModeToLinear()
-        
-        self.xform = vtk.vtkTransform()
-        
-        self.reslice2 = vtk.vtkImageReslice()
-        self.reslice2.SetInput(self.reslice.GetOutput())
-        self.reslice2.SetResliceTransform(self.xform)
-        self.reslice2.SetInterpolationModeToLinear()
         
         self.cutter2 = vtk.vtkCutter()
         self.cutter2.SetCutFunction(self.cutPlane)
         self.cutter2.SetValue(0,0)
-        self.cutter2.SetInput(self.reslice2.GetOutput())
 
         self.cutterMapper2=vtk.vtkPolyDataMapper()
         self.cutterMapper2.SetInputConnection(self.cutter2.GetOutputPort())
@@ -180,6 +170,11 @@ class VTK_Widget2(QWidget):
         self.lookupTable.SetValueRange(1,1)
         self.lookupTable.SetAlphaRange(1,1)
         self.lookupTable.Build()
+        #self.lookupTable.SetNumberOfColors(256)
+        #self.lookupTable.Build()
+        #for i in range(0,256):
+        #    temp = (((i/32)*32)/255.0)**3
+        #    self.lookupTable.SetTableValue(i, (temp, temp, temp, 1.0))
         
         self.cutterMapper.SetLookupTable(self.lookupTable)
         self.colorbar.SetLookupTable(self.lookupTable)
@@ -200,8 +195,8 @@ class VTK_Widget2(QWidget):
       
         self.ren = vtk.vtkRenderer()
         self.vtkw.GetRenderWindow().AddRenderer(self.ren)
-        self.ren.AddActor(self.cutterActor)
         self.ren.AddActor(self.cutterActor2)
+        self.ren.AddActor(self.cutterActor)
         self.ren.AddActor2D(self.colorbar)
         
         self.cutterActor.VisibilityOff()
@@ -288,22 +283,7 @@ class VTK_Widget2(QWidget):
 
         self.source2 = source.GetOutput()
 
-        self.reslice.SetInput(self.source2)
-        orn = source.GetImageOrientationPatient()
-        M = vtk.vtkMatrix4x4()
-        Sx = (orn[1] * orn[5]) - (orn[2] * orn[4])
-        Sy = (orn[2] * orn[3]) - (orn[0] * orn[5])
-        Sz = (orn[0] * orn[4]) - (orn[1] * orn[3])
-        M.DeepCopy((orn[0], orn[1], orn[2], 1,
-                    orn[3], orn[4], orn[5], 1,
-                    Sx, Sy, Sz, 1,
-                    0, 0, 0, 1))
-        self.reslice.SetResliceAxes(M)
-        self.reslice.SetInterpolationModeToLinear()
-        
-        #self.xform.Translate(-11.0, 130.0, -160.0)
-        self.xform.Translate(0.0, 0.0, 0.0)
-       
+        self.cutter2.SetInput(self.source2)
         self.cutterActor2.VisibilityOn()
         self.cutterMapper2.SetScalarRange(self.source2.GetScalarRange())
         
@@ -313,7 +293,7 @@ class VTK_Widget2(QWidget):
     def AdjustAlpha(self):
         
         slider_pos = self.sender().value() 
-        self.lookupTable.SetAlphaRange(slider_pos/100.0,1)
+        self.lookupTable.SetAlphaRange(slider_pos/100.0,slider_pos/100.0)
         
         self.vtkw.GetRenderWindow().Render() 
         
@@ -370,9 +350,9 @@ class MainVizWindow(QMainWindow):
          
          # we embed a reader in the main window, which will fan out the data to all VTK views
          self.reader = vtk.vtkUnstructuredGridReader()
-         self.reader2 = vtk.vtkDICOMImageReader()
+         self.reader2 = vtk.vtkMetaImageReader()
          self.reader.SetFileName('')
-         self.reader2.SetDirectoryName('')
+         self.reader2.SetFileName('')
          
          # we declare a file open action
          self.fileOpenAction = QAction("&Open Solution",self)
@@ -432,10 +412,11 @@ class MainVizWindow(QMainWindow):
     def fileOpen2(self):
         
         dir ="."
-        fname = unicode(QFileDialog.getExistingDirectory(self,"Select DICOM Directory",dir))
+        format = "*.mha"
+        fname = unicode(QFileDialog.getOpenFileName(self,"Open MetaImage File",dir,format))
                         
         if (len(fname)>0):         
-            self.reader2.SetDirectoryName(fname)
+            self.reader2.SetFileName(fname)
             self.reader2.Update()     
             
             self.vtk_widget_2.SetSource2(self.reader2)
