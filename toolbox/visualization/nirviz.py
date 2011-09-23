@@ -86,7 +86,7 @@ class VTK_Widget1(QWidget):
              
         self.opacityTransferFunction.AddPoint(zero_pc, 0.01)
         self.opacityTransferFunction.AddPoint(fifty_pc, 0.01)
-        self.opacityTransferFunction.AddPoint(fifty_pc+1e-6, 0.2)   
+        self.opacityTransferFunction.AddPoint(fifty_pc+1e-11, 0.2)   
         
         self.colorTransferFunction.AddRGBPoint(zero_pc, 0.0, 0.0, 1.0)
         self.colorTransferFunction.AddRGBPoint(fifty_pc, 1.0, 0.5, 0.0)
@@ -184,7 +184,7 @@ class VTK_Widget2(QWidget):
         self.colorbar.SetWidth( 0.7 )
         self.colorbar.SetHeight( 0.11 )
         self.colorbar.SetPosition( 0.16, 0.01 )
-        self.colorbar.SetLabelFormat("%-#6.5f")
+        self.colorbar.SetLabelFormat("%-#6.3g")
         self.colorbar.GetLabelTextProperty().SetJustificationToCentered()
 
         self.cutterActor=vtk.vtkActor()
