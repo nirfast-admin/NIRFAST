@@ -141,6 +141,6 @@ fprintf(fid,'%s\n',['POINT_DATA ',num2str(numnodes)]); %specify the data that fo
 for i = 1:size(soldata,2)
     fprintf(fid,'%s\n',['SCALARS ', listsolfnames{i}, ' float 1']);
     fprintf(fid,'%s\n','LOOKUP_TABLE default');
-    fprintf(fid,'%f\n', soldata(:,i));
+    fprintf(fid,'%e\n', soldata(:,i));
 end;
 fclose(fid);
