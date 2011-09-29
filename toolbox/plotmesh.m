@@ -75,12 +75,20 @@ end
 %% plot optical properties
 
 os=computer;
-if mesh.dimension == 3 && isempty(strfind(os,'GLNX')) && isempty(strfind(os,'MAC')) ... % Windows
-        && ~strcmp(mesh.type,'stnd_bem') ...
+if mesh.dimension == 3 ... 
+        && isempty(strfind(os,'GLNX')) ... % Not Linux
+        && ( strcmpi(os,'maci') || ~isempty(strfind(os,'PCWIN')) ) ... % Not MAC64
+        && ~strcmp(mesh.type,'stnd_bem') ... % Not BEM mesh
         && ~strcmp(mesh.type,'fluor_bem') && ~strcmp(mesh.type,'spec_bem')
     nirfast2vtk(mesh,'temp_nirfast.vtk');
-    system(['"' which('nirviz.exe') '" temp_nirfast.vtk']);
-    
+    if ~isempty(strfind(os,'PCWIN'))
+        systemcall = ['"' which('nirviz.exe') '" temp_nirfast.vtk'];
+    elseif strcmpi(os,'maci')
+        systemcall = 'open -a nirviz temp_nirfast.vtk';
+    else
+        error(['OS is not supported: ' computer]);
+    end
+    system(systemcall);
 else
 
     figure;
