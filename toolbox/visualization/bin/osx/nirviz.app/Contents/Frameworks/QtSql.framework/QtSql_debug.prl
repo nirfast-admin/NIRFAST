@@ -1,7 +1,0 @@
-QMAKE_PRL_BUILD_DIR = /Users/hamid/Downloads/qt-everywhere-opensource-src-4.7.3/./src/sql
-QMAKE_PRO_INPUT = sql.pro
-QMAKE_PRL_TARGET = QtSql_debug
-QMAKE_PRL_DEFINES = QT_SHARED
-QMAKE_PRL_CONFIG = lex yacc warn_on debug uic resources sdk rez debug DebugBuild Debug build_pass qt warn_on app_bundle incremental global_init_link_order lib_version_first plugin_no_soname link_prl def_files_disabled no_mocdepend stl qt_framework x86 shared dll largefile stl precompile_header mmx 3dnow sse sse2 sse3 x86 absolute_library_soname exceptions_off dylib create_prl link_prl depend_includepath QTDIR_build debug DebugBuild Debug build_pass qt_install_headers qt warn_on depend_includepath qmake_cache target_qt debug_and_release hide_symbols lib_bundle qt_no_framework_direct_includes qt_framework explicitlib create_libtool create_pc explicitlib debug DebugBuild Debug build_pass objective_c x86 no_autoqmake moc thread shared dll
-QMAKE_PRL_VERSION = 4.7.3
-QMAKE_PRL_LIBS = -L/Users/hamid/Downloads/qt-everywhere-opensource-src-4.7.3/lib -F/Users/hamid/Downloads/qt-everywhere-opensource-src-4.7.3/lib -framework QtCore -L/Users/hamid/Downloads/qt-everywhere-opensource-src-4.7.3/lib 
