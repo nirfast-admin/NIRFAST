@@ -22,7 +22,7 @@ function varargout = gui_set_values(varargin)
 
 % Edit the above text to modify the response to help gui_set_values
 
-% Last Modified by GUIDE v2.5 04-Mar-2010 10:10:41
+% Last Modified by GUIDE v2.5 10-Oct-2011 08:56:32
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -658,6 +658,30 @@ function variables_mesh_Callback(hObject, eventdata, handles)
 contents = get(hObject,'String');
 set(handles.mesh,'String',contents{get(hObject,'Value')});
 
+% display regions as point clouds of different colors
+axes(handles.axes);
+hold on
+mesh = evalin('base',contents{get(hObject,'Value')});
+regions = unique(mesh.region);
+colors = {'r','g','b','c','m','y','k','w'};
+for i=1:length(regions)
+    ri = regions(i);
+    if i > 8
+        color = 'k';
+    else
+        color = colors{i};
+    end
+    if mesh.dimension == 2
+        plot(mesh.nodes(mesh.region==ri,1),mesh.nodes(mesh.region==ri,2), ...
+            [color 'o'],'MarkerSize',3);
+    elseif mesh.dimension == 3
+        plot3(mesh.nodes(mesh.region==ri,1),mesh.nodes(mesh.region==ri,2), ...
+            mesh.nodes(mesh.region==ri,3),[color 'o'],'MarkerSize',3);
+    end
+end
+legend(num2str(regions(1:length(regions))));
+hold off
+
 
 % --- Executes during object creation, after setting all properties.
 function variables_mesh_CreateFcn(hObject, eventdata, handles)
@@ -693,5 +717,3 @@ function g_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
