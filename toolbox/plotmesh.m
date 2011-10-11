@@ -83,7 +83,7 @@ if mesh.dimension == 3 ...
     if ~isempty(strfind(os,'PCWIN'))
         systemcall = ['"' which('nirviz.exe') '" temp_nirfast.vtk'];
     elseif strcmpi(os,'maci')
-        systemcall = 'open -a nirviz temp_nirfast.vtk';
+        systemcall = 'open -a nirviz-i386 temp_nirfast.vtk';
     elseif strcmpi(os,'maci64')
         systemcall = 'DYLD_FRAMEWORK_PATH=; open -a nirviz temp_nirfast.vtk';
     else
