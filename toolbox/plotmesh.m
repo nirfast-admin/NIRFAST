@@ -76,8 +76,7 @@ end
 
 os=computer;
 if mesh.dimension == 3 ... 
-        && isempty(strfind(os,'GLNX')) ... % Not Linux && ( strcmpi(os,'maci') || ~isempty(strfind(os,'PCWIN')) ) ... % Not MAC64
-        && ~strcmp(mesh.type,'stnd_bem') ... % Not BEM mesh
+        && ~strcmp(mesh.type,'stnd_bem') ... % Not BEM mesh isempty(strfind(os,'GLNX')) ... % Not Linux && ( strcmpi(os,'maci') || ~isempty(strfind(os,'PCWIN')) ) ... % Not MAC64
         && ~strcmp(mesh.type,'fluor_bem') && ~strcmp(mesh.type,'spec_bem')
     nirfast2vtk(mesh,'temp_nirfast.vtk');
     if ~isempty(strfind(os,'PCWIN'))
@@ -86,6 +85,8 @@ if mesh.dimension == 3 ...
         systemcall = 'open -a nirviz-i386 temp_nirfast.vtk';
     elseif strcmpi(os,'maci64')
         systemcall = 'DYLD_FRAMEWORK_PATH=; open -a nirviz temp_nirfast.vtk';
+    elseif strcmpi(os,'glnx86') || strcmpi(os,'glnxa64')
+        systemcall = ['"' GetSystemCommand('nirviz') '" temp_nirfast.vtk'];
     else
         error(['OS is not supported: ' computer]);
     end
