@@ -79,7 +79,7 @@ if mesh.dimension == 3 ...
         && ~strcmp(mesh.type,'stnd_bem') ... % Not BEM mesh isempty(strfind(os,'GLNX')) ... % Not Linux && ( strcmpi(os,'maci') || ~isempty(strfind(os,'PCWIN')) ) ... % Not MAC64
         && ~strcmp(mesh.type,'fluor_bem') && ~strcmp(mesh.type,'spec_bem')
     nirfast2vtk(mesh,'temp_nirfast.vtk');
-    if ~isempty(strfind(os,'PCWIN'))
+    if ~isempty(strfind(os,'PCWIN64'))
         systemcall = ['"' which('nirviz.exe') '" temp_nirfast.vtk'];
     elseif strcmpi(os,'maci')
         systemcall = 'open -a nirviz-i386 temp_nirfast.vtk';
@@ -88,7 +88,7 @@ if mesh.dimension == 3 ...
     elseif strcmpi(os,'glnx86') || strcmpi(os,'glnxa64')
         systemcall = ['"' GetSystemCommand('nirviz') '" temp_nirfast.vtk'];
     else
-        error(['OS is not supported: ' computer]);
+        error(['OS is not supported for 3D visualization: ' computer]);
     end
     system(systemcall);
 else
