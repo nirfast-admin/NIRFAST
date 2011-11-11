@@ -34,6 +34,7 @@ for ii = 1:nwv
     templink(:,1:2) = mesh.cgFormatLink(:,1:2);
     templink(:,3) = mesh.cgFormatLink(:,2+ii);
     tempMesh.link = templink;
+    tempMesh.cgFormatLink(:,3) = templink(:,3);
     %% Calculate gradient for optical parameters and current wavelength.
     tempMeas = struct;
     tempMeas.paa = measurements.paa(:,(2*ii-1):(2*ii));
