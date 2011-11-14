@@ -17,6 +17,7 @@ if (strcmp(shape,'circle') || strcmp(shape,'rectangle')) && ...
     error('BEM works for 3D shapes only');
 end
 
+sizevar.outputfn = outputfn;
 %% node, elements, bndvtx
 if strcmp(type,'stnd_bem') || strcmp(type,'fluor_bem') || strcmp(type,'spec_bem')
     eval(['mesh = make_' lower(shape) '(sizevar,1);']);

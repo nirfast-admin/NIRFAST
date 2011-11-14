@@ -101,7 +101,13 @@ else
     mesh.nodes(:,3) = z;
     mesh.nodes = mesh.nodes(mesh.bndvtx==1,:);
     mesh.elements = MyRobustCrust(mesh.nodes);
-    writenodelm_nod_elm('test_node_ele',mesh.elements,mesh.nodes);
-    mesh = checkerboard3d_mm('test_node_ele.ele','stnd');
+    if isfield(sizevar,'outputfn')
+        outputdir = fileparts(sizevar.outputfn);
+    else
+        outputdir = pwd;
+    end
+    
+    writenodelm_nod_elm([outputdir filesep 'test_node_ele'],mesh.elements,mesh.nodes);
+    mesh = checkerboard3d_mm([outputdir filesep 'test_node_ele.ele'],'stnd');
 end
 

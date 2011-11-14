@@ -63,6 +63,11 @@ ind = unique([ind1; ind2; ind3; ind4; ind5; ind6]);
 mesh.bndvtx = zeros(nn,1);
 mesh.bndvtx(ind) = 1;
 
+if isfield(sizevar,'outputfn')
+    outputdir = fileparts(sizevar.outputfn);
+else
+    outputdir = pwd;
+end
 if exist('surf','var') && surf == 1
     mesh.nodes = mesh.nodes(mesh.bndvtx==1,:);
     mesh.bndvtx = ones(size(mesh.nodes,1),1);
@@ -71,6 +76,7 @@ if exist('surf','var') && surf == 1
 else
     mesh.nodes = mesh.nodes(mesh.bndvtx==1,:);
     mesh.elements = MyRobustCrust(mesh.nodes);
-    writenodelm_nod_elm('test_node_ele',mesh.elements,mesh.nodes);
-    mesh = checkerboard3d_mm('test_node_ele.ele','stnd');
+    
+    writenodelm_nod_elm([outputdir filesep 'test_node_ele'],mesh.elements,mesh.nodes);
+    mesh = checkerboard3d_mm([outputdir filesep 'test_node_ele.ele'],'stnd');
 end
