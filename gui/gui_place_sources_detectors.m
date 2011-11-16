@@ -107,8 +107,6 @@ if ~isfield(handles,'dimension')
     end
 end
 
-set(hObject,'toolbar','figure');
-
 % find fiducial files
 fid_loc = what('fiducials');
 fids = dir([fid_loc.path '/fiducials_*']);
