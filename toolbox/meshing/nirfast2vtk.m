@@ -117,6 +117,7 @@ numnodes = length(nodes);
 elems = mesh.elements;
 numelems = length(elems);
 
+outfname = add_extension(outfname,'.vtk');
 fid = fopen(outfname,'w');
 
 %define an VTK header for FEM mesh representation
