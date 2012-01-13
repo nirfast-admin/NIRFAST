@@ -50,7 +50,7 @@ class VTK_Widget1(QWidget):
         self.ren.AddVolume(self.volume)
         
         self.alphaSlider = QSlider(Qt.Horizontal)
-        self.alphaSlider.setValue(33)
+        self.alphaSlider.setValue(50)
         self.alphaSlider.setRange(0,100)
         self.alphaSlider.setTickPosition(QSlider.NoTicks) 
         self.connect(self.alphaSlider,SIGNAL("valueChanged(int)"),self.AdjustAlpha)
@@ -84,9 +84,10 @@ class VTK_Widget1(QWidget):
         fifty_pc  = range[0]+(range[1]-range[0])*0.50
         hundred_pc  = range[1]
              
-        self.opacityTransferFunction.AddPoint(zero_pc, 0.01)
-        self.opacityTransferFunction.AddPoint(fifty_pc, 0.01)
-        self.opacityTransferFunction.AddPoint(fifty_pc+1e-11, 0.2)   
+        slider_pos = self.alphaSlider.value()
+        self.opacityTransferFunction.AddPoint(zero_pc, slider_pos*0.0016)
+        self.opacityTransferFunction.AddPoint(fifty_pc, slider_pos*0.0016)
+        self.opacityTransferFunction.AddPoint(fifty_pc+1e-6, 0.2)  
         
         self.colorTransferFunction.AddRGBPoint(zero_pc, 0.0, 0.0, 1.0)
         self.colorTransferFunction.AddRGBPoint(fifty_pc, 1.0, 0.5, 0.0)
@@ -107,8 +108,8 @@ class VTK_Widget1(QWidget):
             fifty_pc  = range[0]+(range[1]-range[0])*0.50
             hundred_pc  = range[1]
                  
-            self.opacityTransferFunction.AddPoint(zero_pc, slider_pos*0.0003)
-            self.opacityTransferFunction.AddPoint(fifty_pc, slider_pos*0.0003)
+            self.opacityTransferFunction.AddPoint(zero_pc, slider_pos*0.0016)
+            self.opacityTransferFunction.AddPoint(fifty_pc, slider_pos*0.0016)
             self.opacityTransferFunction.AddPoint(fifty_pc+1e-6, 0.2) # anything > 65% is transparent 
                 
             self.vtkw.GetRenderWindow().Render() 
@@ -165,25 +166,21 @@ class VTK_Widget2(QWidget):
         self.colorbar.SetLookupTable(self.cutterMapper.GetLookupTable())
         
         self.lookupTable = vtk.vtkLookupTable()
-        self.lookupTable.SetSaturationRange(1,1)
-        self.lookupTable.SetHueRange(0.5,0)
-        self.lookupTable.SetValueRange(1,1)
-        self.lookupTable.SetAlphaRange(1,1)
+        self.lookupTable.SetNumberOfColors(256)
         self.lookupTable.Build()
-        #self.lookupTable.SetNumberOfColors(256)
-        #self.lookupTable.Build()
-        #for i in range(0,256):
-        #    temp = (((i/32)*32)/255.0)**3
-        #    self.lookupTable.SetTableValue(i, (temp, temp, temp, 1.0))
+        for i in range(0,128):
+            self.lookupTable.SetTableValue(i, (1.0, i/127.0, 0.0, 1.0))
+        for i in range(128,256):
+            self.lookupTable.SetTableValue(i, (1.0, 1.0, (i-128.0)/128.0, 1.0))
         
         self.cutterMapper.SetLookupTable(self.lookupTable)
         self.colorbar.SetLookupTable(self.lookupTable)
-        self.colorbar.SetOrientationToHorizontal()
+        self.colorbar.SetOrientationToVertical()
         self.colorbar.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
         self.colorbar.GetPositionCoordinate().SetValue(.2,.05)
-        self.colorbar.SetWidth( 0.7 )
-        self.colorbar.SetHeight( 0.11 )
-        self.colorbar.SetPosition( 0.16, 0.01 )
+        self.colorbar.SetWidth( 0.17 )
+        self.colorbar.SetHeight( 0.7 )
+        self.colorbar.SetPosition( 0.82, 0.18 )
         self.colorbar.SetLabelFormat("%-#6.3g")
         self.colorbar.GetLabelTextProperty().SetJustificationToCentered()
 
@@ -207,13 +204,13 @@ class VTK_Widget2(QWidget):
         self.cutPlaneSlider.setTickPosition(QSlider.NoTicks) 
         self.connect(self.cutPlaneSlider,SIGNAL("valueChanged(int)"),self.AdjustCutPlane)
         
-        self.alphaSlider = QSlider(Qt.Horizontal)
-        self.alphaSlider.setValue(100)
-        self.alphaSlider.setRange(0,100)
-        self.alphaSlider.setTickPosition(QSlider.NoTicks) 
-        self.connect(self.alphaSlider,SIGNAL("valueChanged(int)"),self.AdjustAlpha)
+        self.thSlider = QSlider(Qt.Horizontal)
+        self.thSlider.setValue(0)
+        self.thSlider.setRange(0,100)
+        self.thSlider.setTickPosition(QSlider.NoTicks) 
+        self.connect(self.thSlider,SIGNAL("valueChanged(int)"),self.AdjustTh)
         
-        self.alphaLabel = QLabel("alpha: ")
+        self.thLabel = QLabel("threshold: ")
         
         self.layout = QVBoxLayout()
         self.layout2 = QHBoxLayout()
@@ -221,8 +218,8 @@ class VTK_Widget2(QWidget):
         self.layout2.addWidget(self.vtkw)
         self.layout2.addSpacing(13)
         self.layout2.addWidget(self.cutPlaneSlider)
-        self.layout3.addWidget(self.alphaLabel)
-        self.layout3.addWidget(self.alphaSlider)
+        self.layout3.addWidget(self.thLabel)
+        self.layout3.addWidget(self.thSlider)
         self.layout3.addSpacing(30)
         self.layout.addLayout(self.layout2)
         self.layout.addSpacing(34)
@@ -290,10 +287,21 @@ class VTK_Widget2(QWidget):
         self.vtkw.GetRenderWindow().Render()
         
         
-    def AdjustAlpha(self):
+    def AdjustTh(self):
         
         slider_pos = self.sender().value() 
-        self.lookupTable.SetAlphaRange(slider_pos/100.0,slider_pos/100.0)
+        table_pos = 256.0*slider_pos/100.0     
+        
+        for i in range(0,128):
+            a = 1.0
+            if i < table_pos:
+                a = 0.0
+            self.lookupTable.SetTableValue(i, (1.0, i/127.0, 0.0, a))
+        for i in range(128,256):
+            a = 1.0
+            if i < table_pos:
+                a = 0.0
+            self.lookupTable.SetTableValue(i, (1.0, 1.0, (i-128.0)/128.0, a))
         
         self.vtkw.GetRenderWindow().Render() 
         
