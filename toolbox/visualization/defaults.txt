@@ -1,0 +1,4 @@
+transparency 0.5
+threshold 0.5
+range_min 0.0
+range_max 3.0

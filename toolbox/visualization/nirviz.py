@@ -372,13 +372,19 @@ class MainVizWindow(QMainWindow):
          self.fileOpenAction2.setShortcut("Ctrl+D")
          self.fileOpenAction2.setToolTip("Opens a set of DICOMs")
          self.fileOpenAction2.setStatusTip("Opens a set of DICOMs")
+         
+         self.fileLoadDefaults = QAction("&Load Defaults",self)
+         self.fileLoadDefaults.setToolTip("Loads default values for range/threshold/etc")
+         self.fileLoadDefaults.setStatusTip("Loads default values for range/threshold/etc")
      
          self.connect(self.fileOpenAction, SIGNAL("triggered()"),self.fileOpen)
          self.connect(self.fileOpenAction2, SIGNAL("triggered()"),self.fileOpen2)
+         self.connect(self.fileLoadDefaults, SIGNAL("triggered()"),self.fileLoad)
          
          self.fileMenu = self.menuBar().addMenu("&File")
          self.fileMenu.addAction(self.fileOpenAction)   
          self.fileMenu.addAction(self.fileOpenAction2)
+         self.fileMenu.addAction(self.fileLoadDefaults)
          
          # property label
          self.label_property = QLabel("Property: ")
@@ -430,6 +436,47 @@ class MainVizWindow(QMainWindow):
             self.vtk_widget_2.SetSource2(self.reader2)
             self.vtk_widget_3.SetSource2(self.reader2)
             self.vtk_widget_4.SetSource2(self.reader2)
+            
+    def fileLoad(self):
+        
+        dir ="."
+        format = "*.txt"
+        self.fname = unicode(QFileDialog.getOpenFileName(self,"Load Defaults",dir,format))
+        info_found = 0
+                        
+        if (len(self.fname)>0):         
+            infile = open(self.fname,"r")
+            while infile:
+                line = infile.readline()
+                s = line.split()
+                n = len(s)
+                if n == 0:
+                    break
+                if s[n-2]=="transparency":
+                    transparency = s[n-1]
+                    info_found = 1
+                if s[n-2]=="threshold":
+                    threshold = s[n-1]
+                if s[n-2]=="range_min":
+                    range_min = s[n-1]
+                if s[n-2]=="range_max":
+                    range_max = s[n-1]
+        
+        if info_found==1:
+            self.vtk_widget_1.alphaSlider.setValue(float(transparency)*100)
+            self.vtk_widget_2.thSlider.setValue(float(threshold)*100)
+            self.vtk_widget_3.thSlider.setValue(float(threshold)*100)
+            self.vtk_widget_4.thSlider.setValue(float(threshold)*100)
+            self.vtk_widget_2.cutterMapper.SetScalarRange((float(range_min), float(range_max)))
+            self.vtk_widget_3.cutterMapper.SetScalarRange((float(range_min), float(range_max)))
+            self.vtk_widget_4.cutterMapper.SetScalarRange((float(range_min), float(range_max)))
+            self.vtk_widget_2.vtkw.setFocus()
+            self.vtk_widget_3.vtkw.setFocus()
+            self.vtk_widget_4.vtkw.setFocus()
+            self.vtk_widget_2.vtkw.GetRenderWindow().Render() 
+            self.vtk_widget_3.vtkw.GetRenderWindow().Render()
+            self.vtk_widget_4.vtkw.GetRenderWindow().Render()
+                
             
     def SetProperty(self):
         
