@@ -66,6 +66,12 @@ clear data
 
 % save extinction file for spec mesh type
 if strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')
+    
+    % check if mesh.wv is the right format
+    if size(mesh.wv,1)<size(mesh.wv,2)
+        mesh.wv = mesh.wv';
+    end
+    
     data = [mesh.wv mesh.excoef];
     [nrow,ncol]=size(data);
     fid = fopen([fn '.excoef'],'w');
