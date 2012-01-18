@@ -183,6 +183,18 @@ class VTK_Widget2(QWidget):
         self.colorbar.SetPosition( 0.82, 0.18 )
         self.colorbar.SetLabelFormat("%-#6.3g")
         self.colorbar.GetLabelTextProperty().SetJustificationToCentered()
+        
+        self.textActor = vtk.vtkTextActor()
+        self.textActor.ScaledTextOn()
+        self.textActor.SetDisplayPosition(10, 30)
+        self.textActor.SetInput("")
+        self.textActor.ScaledTextOn()
+        
+        self.textActor.GetPosition2Coordinate().SetCoordinateSystemToNormalizedViewport()
+        self.textActor.GetPosition2Coordinate().SetValue(0.1, 0.04)
+        
+        tprop = self.textActor.GetTextProperty()
+        tprop.SetFontSize(2)
 
         self.cutterActor=vtk.vtkActor()
         self.cutterActor.SetMapper(self.cutterMapper)
@@ -195,6 +207,7 @@ class VTK_Widget2(QWidget):
         self.ren.AddActor(self.cutterActor2)
         self.ren.AddActor(self.cutterActor)
         self.ren.AddActor2D(self.colorbar)
+        self.ren.AddActor2D(self.textActor)
         
         self.cutterActor.VisibilityOff()
            
@@ -324,6 +337,9 @@ class VTK_Widget2(QWidget):
                 self.cutPlane.SetOrigin(center[0],center[1],cut_pos)
 
             self.vtkw.GetRenderWindow().Render() 
+            
+            #print slider_pos
+            self.textActor.SetInput(str(slider_pos))
         
         
 # MAIN WINDOW                          
