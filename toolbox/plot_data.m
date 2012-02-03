@@ -14,8 +14,21 @@ if ischar(data)
     data = load_data(data);
 end
 
+% TIME RESOLVED
+if isfield(data,'tpsf')
+    figure
+    imagesc(data.tpsf);
+    xlabel('time point');
+    ylabel('source/detector pair');
+    title('Time Resolved Data');
+elseif isfield(data,'tpsfx')
+    figure
+    imagesc(data.tpsfx);
+    xlabel('time point');
+    ylabel('source/detector pair');
+    title('Time Resolved Data');
 % STANDARD OR SPECTRAL
-if isfield(data,'paa')
+elseif isfield(data,'paa')
     [j,k] = size(data.paa);
     m = 1;
     for i=1:2:k

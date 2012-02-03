@@ -22,7 +22,7 @@ function varargout = gui_forward_solver(varargin)
 
 % Edit the above text to modify the response to help gui_forward_solver
 
-% Last Modified by GUIDE v2.5 04-Mar-2010 09:12:50
+% Last Modified by GUIDE v2.5 03-Feb-2012 09:31:47
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -72,12 +72,17 @@ end
 if strcmp(handles.type,'stnd')==0
     set(handles.view_solution,'Enable','off');
 end
+if strcmp(handles.type,'stnd')==0 && strcmp(handles.type,'fluor')==0
+    set(handles.time_resolved,'Enable','off');
+end
 set(handles.source1,'Enable','off');
 set(handles.source2,'Enable','off');
 set(handles.spn,'Value',3.0);
 if strcmp(handles.type,'stnd_spn')==0
     set(handles.spn,'Enable','off');
 end
+set(handles.total_time,'Enable','off');
+set(handles.time_interval,'Enable','off');
 
 % find workspace variables
 vars = evalin('base','whos;');
@@ -346,17 +351,37 @@ elseif strcmp(handles.type,'spec_bem')
     end
 else
     % not spn or bem
-    if wv_array
-        content{end+1} = strcat(varname,' = femdata(',meshloc,',',...
-            get(handles.frequency,'String'),',',wv_array,');');
-        if ~batch
-            evalin('base',content{end});
+    if get(handles.time_resolved,'Value')
+        % time resolved
+        if strcmp(handles.type,'stnd')
+            content{end+1} = strcat(varname,' = femdata_stnd_tr(',meshloc,',',...
+                get(handles.total_time,'String'),',',...
+                get(handles.time_interval,'String'),');');
+            if ~batch
+                evalin('base',content{end});
+            end
+        elseif strcmp(handles.type,'fluor')
+            content{end+1} = strcat(varname,' = femdata_fl_tr(',meshloc,',',...
+                get(handles.total_time,'String'),',',...
+                get(handles.time_interval,'String'),');');
+            if ~batch
+                evalin('base',content{end});
+            end
         end
     else
-        content{end+1} = strcat(varname,' = femdata(',meshloc,',',...
-            get(handles.frequency,'String'),');');
-        if ~batch
-            evalin('base',content{end});
+        % not time resolved
+        if wv_array
+            content{end+1} = strcat(varname,' = femdata(',meshloc,',',...
+                get(handles.frequency,'String'),',',wv_array,');');
+            if ~batch
+                evalin('base',content{end});
+            end
+        else
+            content{end+1} = strcat(varname,' = femdata(',meshloc,',',...
+                get(handles.frequency,'String'),');');
+            if ~batch
+                evalin('base',content{end});
+            end
         end
     end
 end
@@ -572,3 +597,64 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
+% --- Executes on button press in time_resolved.
+function time_resolved_Callback(hObject, eventdata, handles)
+% hObject    handle to time_resolved (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of time_resolved
+if get(hObject,'Value')
+    set(handles.total_time,'Enable','on');
+    set(handles.time_interval,'Enable','on');
+    set(handles.frequency,'Enable','off');
+else
+    set(handles.total_time,'Enable','off');
+    set(handles.time_interval,'Enable','off');
+    set(handles.frequency,'Enable','on');
+end
+
+
+function total_time_Callback(hObject, eventdata, handles)
+% hObject    handle to total_time (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of total_time as text
+%        str2double(get(hObject,'String')) returns contents of total_time as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function total_time_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to total_time (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function time_interval_Callback(hObject, eventdata, handles)
+% hObject    handle to time_interval (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of time_interval as text
+%        str2double(get(hObject,'String')) returns contents of time_interval as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function time_interval_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to time_interval (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
