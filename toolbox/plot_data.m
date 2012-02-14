@@ -17,13 +17,13 @@ end
 % TIME RESOLVED
 if isfield(data,'tpsf')
     figure
-    imagesc(data.tpsf);
+    imagesc(log(abs(data.tpsf)));
     xlabel('time point');
     ylabel('source/detector pair');
     title('Time Resolved Data');
 elseif isfield(data,'tpsfx')
     figure
-    imagesc(data.tpsfx);
+    imagesc(log(abs(data.tpsfx)));
     xlabel('time point');
     ylabel('source/detector pair');
     title('Time Resolved Data');
