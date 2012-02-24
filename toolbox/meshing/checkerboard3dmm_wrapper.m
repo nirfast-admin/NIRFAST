@@ -1,4 +1,4 @@
-function checkerboard3dmm_wrapper(fnprefix,saveloc,type,edgesize)
+function checkerboard3dmm_wrapper(fnprefix,saveloc,type,edgesize,gradingflag)
 
 % checkerboard3dmm_wrapper(fnprefix,saveloc,type,edgesize)
 %
@@ -12,9 +12,12 @@ function checkerboard3dmm_wrapper(fnprefix,saveloc,type,edgesize)
 
 %% elements, nodes, region, bndvtx, dimension, type, name
 if nargin < 4 || isempty(edgesize)
-    edgesize=[];
+    edgesize = [];
 end
-mesh = checkerboard3d_mm(fnprefix,type,edgesize);
+if nargin<5 || (nargin>=5 && isempty(gradingflag))
+    gradingflag = 0;
+end
+mesh = checkerboard3d_mm(fnprefix,type,edgesize,gradingflag);
 
 %% optical properties
 mesh = set_mesh_type(mesh,type);
