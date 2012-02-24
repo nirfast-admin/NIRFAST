@@ -22,7 +22,7 @@ function varargout = gui_convert_inptonirfast(varargin)
 
 % Edit the above text to modify the response to help gui_convert_inptonirfast
 
-% Last Modified by GUIDE v2.5 14-Jun-2010 13:07:32
+% Last Modified by GUIDE v2.5 24-Feb-2012 17:51:03
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -150,7 +150,7 @@ if strcmp(handles.type,'stnd_bem') || ...
     end
 else
     content{end+1} = strcat('checkerboard3dmm_wrapper(',inploc,',''',get(handles.savemeshto,'String'),...
-        ''',''',handles.type,''');');
+        ''',''',handles.type,''',[],',num2str(handles.gradingmesh),');');
     if ~batch
         evalin('base',content{end});
     end
@@ -189,3 +189,20 @@ end
 set(handles.savemeshto,'String',[pn fn]);
 
 guidata(hObject, handles);
+
+
+% --- Executes on button press in gradingmesh_checkbox.
+function gradingmesh_checkbox_Callback(hObject, eventdata, handles)
+% hObject    handle to gradingmesh_checkbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of gradingmesh_checkbox
+handles.gradingmesh = get(hObject,'Value');
+guidata(hObject, handles);
+
+% --- Executes during object creation, after setting all properties.
+function gradingmesh_checkbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to gradingmesh_checkbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
