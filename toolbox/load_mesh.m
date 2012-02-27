@@ -233,6 +233,10 @@ if strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'fluor_bem') || strcmp(mesh.
     end
 end
 
+%% fix element orientation for 2D triangular meshes
+if mesh.dimension == 2
+    mesh.elements = check_element_orientation_2d(mesh.elements,mesh.nodes);
+end
 
 %% Load source locations
 if exist([fn '.source']) == 0
