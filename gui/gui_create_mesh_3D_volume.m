@@ -142,7 +142,7 @@ batch = get(mainGUIdata.batch_mode,'Value');
 eleloc = strcat('''',get(handles.ele,'String'),'''');
 
 
-content{end+1} = strcat('nodelm2nirfast(',eleloc,',''',get(handles.savemeshto,'String'),...
+content{end+1} = strcat('solidmesh2nirfast(',eleloc,',''',get(handles.savemeshto,'String'),...
     ''',''',handles.type,''');');
 if ~batch
     evalin('base',content{end});
