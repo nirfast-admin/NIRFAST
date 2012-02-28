@@ -1,8 +1,9 @@
-function nodelm2nirfast(fn,saveloc,type)
+function solidmesh2nirfast(fn,saveloc,type)
 
-% nodelm2nirfast(fn,saveloc,type)
+% solidmesh2nirfast(fn,saveloc,type)
 %
-% converts .node/.ele files to a nirfast mesh
+% converts solid/tetrahedral meshes that are generated in outside
+% applications to nirfast mesh format.
 %
 % fn is the location of the .ele file or a structure
 % saveloc is the location to save the nirfast mesh
@@ -15,7 +16,24 @@ if isstruct(fn)
     nnpe = fn.nnpe;
     dim = fn.dim;
 else
-    [mesh.elements,mesh.nodes,nodemap,elemap,dim,nnpe] = read_nod_elm(fn(1:end-4),1);
+    [pathstr filename ext] = fileparts(fn);
+    if strcmpi(ext,'.ele')
+        [mesh.elements,mesh.nodes,nodemap,elemap,dim,nnpe] = read_nod_elm(fn(1:end-4),1);
+    elseif strcmpi(ext,'.mesh')
+        [mesh.elements mesh.nodes] = readMEDIT(fn);
+    elseif strcmpi(ext,'.vtk')
+        [mesh.elements mesh.nodes]= readVTK(fn);
+    elseif strcmpi(ext,'.inp')
+        [mesh.elements, mesh.points, surf_elem] = read_abaqus_inp_3D(fn);
+        if isempty(mesh.elements)
+            error('solidmesh2nirfast: input mesh is not a solid/volume mesh.');
+        end
+    end
+    if size(mesh.elements,2)<4
+            error('solidmesh2nirfast: Expects a tetrahedral mesh!');
+    end
+    nnpe = 4;
+    dim = size(mesh.nodes,2);
 end
 
 
