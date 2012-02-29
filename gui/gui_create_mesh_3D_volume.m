@@ -22,7 +22,7 @@ function varargout = gui_create_mesh_3D_volume(varargin)
 
 % Edit the above text to modify the response to help gui_create_mesh_3D_volume
 
-% Last Modified by GUIDE v2.5 08-Jul-2010 14:05:09
+% Last Modified by GUIDE v2.5 28-Feb-2012 16:45:41
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -141,16 +141,23 @@ batch = get(mainGUIdata.batch_mode,'Value');
 
 eleloc = strcat('''',get(handles.ele,'String'),'''');
 
-
 content{end+1} = strcat('solidmesh2nirfast(',eleloc,',''',get(handles.savemeshto,'String'),...
-    ''',''',handles.type,''');');
+    ''',''',handles.type,'''');
+if isempty(get(handles.sdfile_name,'String'))
+    content{end} = strcat(content{end},');');
+else
+    content{end} = strcat(content{end},',''',get(handles.sdfile_name,'String'),''');');
+end
+
 if ~batch
     evalin('base',content{end});
 end
 
 set(mainGUIdata.script, 'String', content);
 guidata(nirfast, mainGUIdata);
-gui_place_sources_detectors('mesh',get(handles.savemeshto,'String'));
+if isempty(get(handles.sdfile_name,'String'))
+    gui_place_sources_detectors('mesh',get(handles.savemeshto,'String'));
+end
 close(gui_create_mesh_3D_volume);
 
 
@@ -179,6 +186,45 @@ function browse_savemeshto_Callback(hObject, eventdata, handles)
 if fn == 0
     return;
 end
-set(handles.savemeshto,'String',[pn fn]);
+temp = [pn fn];
+set(handles.savemeshto,'String',temp);
+
+guidata(hObject, handles);
+
+
+
+function sdfile_name_Callback(hObject, eventdata, handles)
+% hObject    handle to sdfile_name (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of sdfile_name as text
+%        str2double(get(hObject,'String')) returns contents of sdfile_name as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function sdfile_name_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to sdfile_name (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in browse_fiducials.
+function browse_fiducials_Callback(hObject, eventdata, handles)
+% hObject    handle to browse_fiducials (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[fn,pn] = myuigetfile({'*.csv;*.txt'},'Select Source/Detector coordinates file');
+if fn == 0
+    return;
+end
+temp = [pn fn];
+set(handles.sdfile_name,'String',temp);
 
 guidata(hObject, handles);

@@ -65,6 +65,11 @@ if(nargin > 3)
 end
 set(hObject,'Name','Convert surface mesh');
 
+% Disable mesh grading for bem type meshes.
+if strfind(handles.type,'bem')
+    set(handles.gradingmesh_checkbox,'Enable','off')
+    set(handles.text7,'Enable','off')
+end
 % Update handles structure
 guidata(hObject, handles);
 

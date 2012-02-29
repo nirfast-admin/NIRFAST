@@ -22,7 +22,7 @@ function varargout = nirfast(varargin)
 
 % Edit the above text to modify the response to help_main nirfast
 
-% Last Modified by GUIDE v2.5 08-Jul-2010 13:58:59
+% Last Modified by GUIDE v2.5 29-Feb-2012 15:53:37
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -60,6 +60,10 @@ set(hObject,'Name','nirfast');
 if exist('IntFG','file') ~= 3
     errordlg('The mex files in toolbox/mex need to be compiled, or the MATLAB path needs to be properly set','NIRFAST Error');
     error('The mex files in toolbox/mex need to be compiled, or the MATLAB path needs to be properly set');
+end
+
+if ismac
+    set(handles.script,'FontSize',12)
 end
 
 % Update handles structure
@@ -1028,3 +1032,10 @@ function create_mesh_3D_volume_spn_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 gui_create_mesh_3D_volume('type','stnd_spn');
+
+
+% --- Executes during object deletion, before destroying properties.
+function script_DeleteFcn(hObject, eventdata, handles)
+% hObject    handle to script (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
