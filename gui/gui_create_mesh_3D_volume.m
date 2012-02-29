@@ -166,8 +166,8 @@ function browse_ele_Callback(hObject, eventdata, handles)
 % hObject    handle to browse_ele (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-[fn,pn] = myuigetfile({'*.ele;.mesh;.vtk;.inp','Solid Mesh Files';...
-    '*.ele','.ele';'*.mesh','.mesh';'.vtk','.vtk';'.inp','.inp'},'Select Mesh File');
+[fn,pn] = myuigetfile({'*.ele;*.mesh;*.vtk;*.inp','Solid Mesh Files';...
+    '*.ele','.ele';'*.mesh','.mesh';'*.vtk','.vtk';'*.inp','.inp'},'Select Mesh File');
 if fn == 0
     return;
 end
