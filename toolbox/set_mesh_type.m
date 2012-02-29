@@ -106,7 +106,7 @@ elseif strcmp(type,'spec_bem')
                     0.2370    0.1556    0.0058];
 else
     errordlg('Invalid mesh type','NIRFAST Error');
-    error('Invalid mesh type');
+    error('Invalid mesh type: %s', type);
 end
 
 mesh.type = type;
