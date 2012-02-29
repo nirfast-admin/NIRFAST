@@ -1,4 +1,4 @@
-function mesh = solidmesh2nirfast(fn,saveloc,type,sdfile)
+function solidmesh2nirfast(fn,saveloc,type,sdfile)
 
 % solidmesh2nirfast(fn,saveloc,type)
 %
@@ -18,6 +18,7 @@ if isstruct(fn)
     dim = fn.dim;
 else
     [pathstr filename ext] = fileparts(fn);
+    fprintf(' Converting %s%s to nirfast mesh...\n',filename,ext);
     if strcmpi(ext,'.ele')
         [mesh.elements,mesh.nodes,nodemap,elemap,dim,nnpe] = read_nod_elm(fn(1:end-4),1);
     elseif strcmpi(ext,'.mesh')
@@ -141,12 +142,12 @@ if nargin>=4 && ~isempty(sdfile)
     mesh = move_detector(mesh);
     mesh = move_source(mesh,mus_eff,100);
     
+    save_mesh(mesh,saveloc);
     % Set up chromophores for spectral meshes
     if strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')   
-        gui_set_chromophores('mesh',saveloc);
+        h = gui_set_chromophores('mesh',saveloc);
+        uiwait(h)
     end
-    save_mesh(mesh,saveloc);
-    mesh = load_mesh(saveloc);
 end
 
 
