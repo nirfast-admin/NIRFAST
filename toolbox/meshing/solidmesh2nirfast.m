@@ -1,4 +1,4 @@
-function solidmesh2nirfast(fn,saveloc,type)
+function mesh = solidmesh2nirfast(fn,saveloc,type,sdfile)
 
 % solidmesh2nirfast(fn,saveloc,type)
 %
@@ -8,7 +8,8 @@ function solidmesh2nirfast(fn,saveloc,type)
 % fn is the location of the .ele file or a structure
 % saveloc is the location to save the nirfast mesh
 % type is the mesh type to use ('stnd','fluor',etc)
-
+% sdfile is optional and is the file name of a text file containign the
+% list of source coordinates
 
 if isstruct(fn)
     mesh.elements = fn.ele;
@@ -82,5 +83,70 @@ exterior_nodes_id = unique(bdy_faces(:));
 mesh.bndvtx = zeros(size(mesh.nodes,1),1);
 mesh.bndvtx(exterior_nodes_id) = 1;
 
+
 %% save the mesh
 save_mesh(mesh,saveloc);
+
+if nargin>=4 && ~isempty(sdfile)
+    % Load the S/D locations from file
+    sdcoords = load(sdfile);
+    if size(sdcoords,2)>3
+        sdcoords = sortrows(sdcoords);
+        num = sdcoords(:,1);
+        sdcoords = sdcoords(:,2:end);
+    else
+        num = (1:size(sdcoords,1))';
+    end
+    % Set up mesh fields for S/D
+    mesh.name = saveloc;
+    mesh.source.coord = sdcoords;
+    mesh.source.num = num;
+    mesh.source.fixed = 0;
+    mesh.source.distributed = 0;
+    mesh.source.fwhm = zeros(size(sdcoords,1),1,'int8');
+    
+    mesh.meas.coord = sdcoords;
+    mesh.meas.fixed = 0;
+    mesh.meas.num = num;
+
+    % Compute mus in order to move sources
+    if strcmp(mesh.type,'stnd') == 1 || strcmp(mesh.type,'stnd_spn')
+        mus_eff = mesh.mus;
+    elseif strcmp(mesh.type,'stnd_bem') == 1
+        mus_eff = mesh.mus(1);
+    elseif strcmp(mesh.type,'fluor') || strcmp(mesh.type,'fluor_bem')
+        mus_eff = mesh.musx;
+    elseif strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')
+        [mua,mus] = calc_mua_mus(mesh,mesh.wv(1));
+        mus_eff = mus;
+        clear mua mus
+    end
+    
+    % Populate link table
+    nsrcs = size(sdcoords,1);
+    link = zeros(nsrcs*(nsrcs-1),3,'int32');
+    c=1;
+    for si=1:size(sdcoords,1)
+        for di=1:size(sdcoords,1)
+            if num(si) == num(di)
+                continue;
+            end
+            link(c,:) = [num(si) num(di) 1];
+            c = c + 1;
+        end
+    end
+    mesh.link = link;
+    
+    % Move source/detectors
+    mesh = move_detector(mesh);
+    mesh = move_source(mesh,mus_eff,100);
+    
+    % Set up chromophores for spectral meshes
+    if strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')   
+        gui_set_chromophores('mesh',saveloc);
+    end
+    save_mesh(mesh,saveloc);
+    mesh = load_mesh(saveloc);
+end
+
+
