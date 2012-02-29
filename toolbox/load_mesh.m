@@ -386,7 +386,7 @@ elseif exist([fn '.meas']) == 2
         [ind,int_func] = mytsearchn(mesh,mesh.meas.coord);
     end
     if any(isnan(ind)) == 1
-        errordlg('Detector(s) outside the mesh','NIRFAST Warning');
+        warndlg('Detector(s) outside the mesh','NIRFAST Warning');
     else
         mesh.meas.int_func = [ind int_func];
     end
