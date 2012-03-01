@@ -84,11 +84,6 @@ end
 [n,m] = size(data.link);  [nd,md] = size(data.paa);
 data_link = data.link;
 
-if 2*(m-2) ~= md
-    errordlg('data.link does not equal data.paa','NIRFAST Error');
-    error('data.link does not equal data.paa');
-end
-
 % we need log amplitude and phase in radians
 anom_a = [];
 anom_p = [];
