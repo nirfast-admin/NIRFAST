@@ -99,20 +99,20 @@ data_fwd.phi = data_fwd.phix;
 %***********************************************************
 % load recon_mesh
 if ischar(recon_basis)
-    recon_mesh = load_mesh(recon_basis);
-    [fwd_mesh.fine2coarse,...
-        recon_mesh.coarse2fine] = second_mesh_basis(fwd_mesh,recon_mesh);
-elseif isstruct(recon_basis) == 0
-    [fwd_mesh.fine2coarse,recon_mesh] = pixel_basis(recon_basis,fwd_mesh);
-elseif isstruct(recon_basis) == 1
-    if isfield(recon_basis,'nodes')
-        recon_mesh = recon_basis;
-        fwd_mesh.fine2coarse = recon_mesh.fine2coarse;
-    else
-        recon_mesh = recon_basis;
-        [fwd_mesh.fine2coarse,...
-            recon_mesh.coarse2fine] = second_mesh_basis(fwd_mesh,recon_mesh);
-    end
+  recon_mesh = load_mesh(recon_basis);
+  [fwd_mesh.fine2coarse,...
+   recon_mesh.coarse2fine] = second_mesh_basis(fwd_mesh,recon_mesh);
+elseif isstruct(recon_basis)
+  recon_mesh = recon_basis;
+  [fwd_mesh.fine2coarse,...
+   recon_mesh.coarse2fine] = second_mesh_basis(fwd_mesh,recon_mesh);
+else
+  [fwd_mesh.fine2coarse,recon_mesh] = pixel_basis(recon_basis,fwd_mesh);
+end
+
+% check for input regularization
+if ~isstruct(lambda)
+    lambda.value = lambda;
 end
 
 %************************************************************
