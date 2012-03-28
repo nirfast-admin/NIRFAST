@@ -96,6 +96,18 @@ TORT  OR OTHERWISE, ARISING  FROM, OUT  OF OR  IN CONNECTION  WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ==============================================================================
+We use some packages from:
+
+CGAL, Computational Geometry Algorithms Library, http://www.cgal.org
+
+Which are either licensed under GPL or LGPL. This prevents using some parts
+of Nirfast's mesh generation tools for commercial applications. In particular
+'image2mesh_gui' should NOT be used for commercial applications.
+
+LGPL: http://www.gnu.org/copyleft/lesser.html
+GPL: http://www.gnu.org/copyleft/gpl.html
+
+==============================================================================
 
 
 --- excoef.txt ---

@@ -146,6 +146,8 @@ batch = get(mainGUIdata.batch_mode,'Value');
 
 inploc = strcat('''',get(handles.inp,'String'),'''');
 
+handles.gradingmesh = get(handles.gradingmesh_checkbox,'Value');
+
 if strcmp(handles.type,'stnd_bem') || ...
         strcmp(handles.type,'fluor_bem') || strcmp(handles.type,'spec_bem')
     content{end+1} = strcat('surf2nirfast_bem(',inploc,',''',get(handles.savemeshto,'String'),...
