@@ -22,23 +22,28 @@ else
     if strcmpi(ext,'.ele')
         [mesh.elements,mesh.nodes,nodemap,elemap,dim,nnpe] = read_nod_elm(fn(1:end-4),1);
     elseif strcmpi(ext,'.mesh')
-        [mesh.elements mesh.nodes] = readMEDIT(fn);
+        [mesh.elements mesh.nodes tri_ nnpe] = readMEDIT(fn);
     elseif strcmpi(ext,'.vtk')
-        [mesh.elements mesh.nodes]= readVTK(fn);
+        [mesh.elements mesh.nodes nnpe]= readVTK(fn);
     elseif strcmpi(ext,'.inp')
-        [mesh.elements, mesh.points, surf_elem] = read_abaqus_inp_3D(fn);
+        [mesh.elements, mesh.points, surf_elem nnpe] = read_abaqus_inp_3D(fn);
         if isempty(mesh.elements)
             error('solidmesh2nirfast: input mesh is not a solid/volume mesh.');
         end
     end
-    if size(mesh.elements,2)<4
+    if nnpe ~=4 || size(mesh.elements,2)<4
             error('solidmesh2nirfast: Expects a tetrahedral mesh!');
     end
     nnpe = 4;
     dim = size(mesh.nodes,2);
 end
 
-
+%% Check Mesh Quality
+[vol q q_area status]=CheckMesh3D(mesh.elements(:,nnpe),mesh.nodes);
+if status.surface ~=0 || status.solid ~= 0
+    ws = sprintf(' The mesh being imported has\n some quality issues that might cause errors later on!\n Check the log messages!\n');
+    warning('Nirfast:MeshQuality',ws);
+end
 %% set mesh properties
 mesh = set_mesh_type(mesh,type);
 if strcmp(type,'stnd_bem') || strcmp(type,'fluor_bem') || strcmp(type,'spec_bem')
@@ -66,7 +71,7 @@ else
         end
         mesh.elements=mesh.elements(:,1:4);
     else
-        mesh.region = zeros(size(mesh.nodes,1),1);
+        mesh.region = ones(size(mesh.nodes,1),1);
     end
     mesh.dimension = dim;
 end
