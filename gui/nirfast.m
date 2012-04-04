@@ -66,6 +66,9 @@ if ismac
     set(handles.script,'FontSize',12)
 end
 
+disp('---Nirfast v7.1---');
+disp('Please cite WWW.NIRFAST.ORG if you use Nirfast in a publication. Thank you!');
+
 % Update handles structure
 guidata(hObject, handles);
 
