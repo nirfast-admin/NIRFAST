@@ -91,34 +91,6 @@ disp('TEST_NIRFAST: complete');
 clearvars -except loc
 close all
 
-%% standard 3d simulation bem
-disp('TEST_NIRFAST: standard 3d simulation bem');
-
-cylinder_bem_stnd = load_mesh([loc '\meshes\bem\cylinder_bem_stnd']);
-blob.x=0;
-blob.y=-10;
-blob.r=12;
-blob.z=0;
-blob.mua=0.012;
-blob.mus=2;
-blob.region=1;
-blob.dist=2;
-cylinder_bem_stnd_anom = add_blob(cylinder_bem_stnd,blob);
-cylinder_bem_stnd_anom_data = bemdata_stnd(cylinder_bem_stnd_anom,100);
-plot_data(cylinder_bem_stnd_anom_data);
-cylinder_bem_stnd_anom_data_noise = add_noise(cylinder_bem_stnd_anom_data,2,2);
-val.mua=0.006;
-val.mus=1;
-cylinder_bem_stnd_anom = set_mesh(cylinder_bem_stnd_anom,2,val);
-lambda.type='Automatic';
-lambda.value=10;
-[mesh,pj] = reconstruct_stnd_bem(cylinder_bem_stnd_anom,100,cylinder_bem_stnd_anom_data_noise,40,10,'',0);
-read_solution(mesh,'');
-
-disp('TEST_NIRFAST: complete');
-clearvars -except loc
-close all
-
 %% create mesh simple shapes
 disp('TEST_NIRFAST: create mesh simple shapes');
 
