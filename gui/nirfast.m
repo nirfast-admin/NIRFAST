@@ -54,20 +54,11 @@ function nirfast_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for nirfast
 handles.output = hObject;
-set(hObject,'Name','nirfast');
-
-% Make sure mex files exist
-if exist('IntFG','file') ~= 3
-    errordlg('The mex files in toolbox/mex need to be compiled, or the MATLAB path needs to be properly set','NIRFAST Error');
-    error('The mex files in toolbox/mex need to be compiled, or the MATLAB path needs to be properly set');
-end
+set(hObject,'Name','Nirfast 7.1 - please cite nirfast.org for publications');
 
 if ismac
     set(handles.script,'FontSize',12)
 end
-
-disp('---Nirfast v7.1---');
-disp('Please cite WWW.NIRFAST.ORG if you use Nirfast in a publication. Thank you!');
 
 % Update handles structure
 guidata(hObject, handles);
