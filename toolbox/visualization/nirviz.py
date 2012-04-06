@@ -49,6 +49,9 @@ class VTK_Widget1(QWidget):
         self.vtkw.GetRenderWindow().AddRenderer(self.ren)
         self.ren.AddVolume(self.volume)
         
+        self.style = vtk.vtkInteractorStyleTrackballCamera()
+        self.vtkw.SetInteractorStyle(self.style)
+        
         self.alphaSlider = QSlider(Qt.Horizontal)
         self.alphaSlider.setValue(50)
         self.alphaSlider.setRange(0,100)
@@ -348,6 +351,8 @@ class MainVizWindow(QMainWindow):
          self.vtk_widget_4 = VTK_Widget2(2)
          self.vtk_widget_1 = VTK_Widget1()
          
+         self.dicom_loaded = 0
+         
          # the VTK widgets are added to the splitters
          self.VSplitter.addWidget(self.HSplitterTop)
          self.VSplitter.addWidget(self.HSplitterBottom)
@@ -432,7 +437,8 @@ class MainVizWindow(QMainWindow):
         format = "*.mha"
         fname = unicode(QFileDialog.getOpenFileName(self,"Open MetaImage File",dir,format))
                         
-        if (len(fname)>0):         
+        if (len(fname)>0):  
+            self.dicom_loaded = 1       
             self.reader2.SetFileName(fname)
             self.reader2.Update()     
             
@@ -509,6 +515,10 @@ class MainVizWindow(QMainWindow):
         self.vtk_widget_2.SetSource(self.reader.GetOutput())
         self.vtk_widget_3.SetSource(self.reader.GetOutput())
         self.vtk_widget_4.SetSource(self.reader.GetOutput())
+        if self.dicom_loaded == 1:
+            self.vtk_widget_2.SetSource2(self.reader2)
+            self.vtk_widget_3.SetSource2(self.reader2)
+            self.vtk_widget_4.SetSource2(self.reader2)
         
                     
 # START APPLICATION    
