@@ -22,7 +22,7 @@ function varargout = nirfast(varargin)
 
 % Edit the above text to modify the response to help_main nirfast
 
-% Last Modified by GUIDE v2.5 29-Feb-2012 15:53:37
+% Last Modified by GUIDE v2.5 10-Apr-2012 09:29:36
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -54,7 +54,7 @@ function nirfast_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for nirfast
 handles.output = hObject;
-set(hObject,'Name','Nirfast 7.1 - please cite nirfast.org for publications');
+set(hObject,'Name','Nirfast 7.1');
 
 if ismac
     set(handles.script,'FontSize',12)
@@ -1033,3 +1033,12 @@ function script_DeleteFcn(hObject, eventdata, handles)
 % hObject    handle to script (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function cite_Callback(hObject, eventdata, handles)
+% hObject    handle to cite (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+msgbox({'Please reference this paper if you use Nirfast for a publication: ','', ...
+    'H. Dehghani, M.E. Eames, P.K. Yalavarthy, S.C. Davis, S. Srinivasan, C.M. Carpenter, B.W. Pogue, and K.D. Paulsen, "Near infrared optical tomography using NIRFAST: Algorithm for numerical model and image reconstruction," Communications in Numerical Methods in Engineering, vol. 25, 2009, pp. 711-732.'},'Cite');
