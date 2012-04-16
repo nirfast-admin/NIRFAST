@@ -83,16 +83,13 @@ if strcmp(mesh.type,'stnd_bem')
 else
     % NOT BEM
     dist = distance(mesh.nodes(:,1:3),ones(length(mesh.bndvtx),1),[blob.x blob.y blob.z]);
-    if isfield(blob, 'mua') && isfield(blob, 'mus')
-        kappa = 1./(3*(blob.mua+blob.mus));
-        mesh.kappa(find(dist<=blob.r)) = kappa;
-    end
     if isfield(blob, 'mua')
         mesh.mua(find(dist<=blob.r)) = blob.mua;
     end
     if isfield(blob, 'mus')
         mesh.mus(find(dist<=blob.r)) = blob.mus;
     end
+    mesh.kappa = 1./(3.*(mesh.mua+mesh.mus));
     if isfield(blob, 'g') && strcmp(mesh.type,'stnd_spn')
         mesh.g(find(dist<=blob.r)) = blob.g;
     end

@@ -72,8 +72,17 @@ end
 % Calculate the RHS (the source vectors) for the Emission.
 source = unique(mesh.link(:,1));
 [nnodes,junk]=size(mesh.nodes);
-[nsource,junk]=size(source);
-qvec = zeros(nnodes,nsource);
+%[nsource,junk]=size(source);
+
+ind = mesh.link(:,3)==0;
+foo = mesh.link;
+foo(ind,:)=[]; clear ind
+source = unique(foo(:,1));
+nsource = length(source);
+
+%qvec = zeros(nnodes,nsource);
+qvec = spalloc(nnodes,nsource,nsource*100);
+
 % Simplify the RHS of emission equation
 beta = mesh.gamma.*(1-(sqrt(-1).*omega.*mesh.tau));
 % get rid of any zeros!
