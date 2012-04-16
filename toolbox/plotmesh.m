@@ -70,17 +70,20 @@ if plotflag == 1
             mesh.nodes(ind,3),'c.');
         axis equal;
     end
+    
+    if isfield(mesh,'source') && size(mesh.source.coord,1)>2
+        legend('Source 1','Source 2','Sources +','Detector');
+    elseif isfield(mesh,'source') && size(mesh.source.coord,1)==2
+        legend('Source 1','Source 2','Detector');
+    elseif isfield(mesh,'source') && size(mesh.source.coord,1)==1
+        legend('Source 1','Detector');
+    else
+        legend('Detector');
+    end
+    
 end
 
-if isfield(mesh,'source') && size(mesh.source.coord,1)>2
-    legend('Source 1','Source 2','Sources +','Detector');
-elseif isfield(mesh,'source') && size(mesh.source.coord,1)==2
-    legend('Source 1','Source 2','Detector');
-elseif isfield(mesh,'source') && size(mesh.source.coord,1)==1
-    legend('Source 1','Detector');
-else
-    legend('Detector');
-end
+
 
 %% plot optical properties
 

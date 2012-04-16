@@ -75,6 +75,9 @@ end
 if strcmp(handles.type,'stnd')==0 && strcmp(handles.type,'fluor')==0
     set(handles.time_resolved,'Enable','off');
 end
+if strcmp(handles.type,'fluor')
+    set(handles.frequency,'String','0');
+end
 set(handles.source1,'Enable','off');
 set(handles.source2,'Enable','off');
 set(handles.spn,'Value',3.0);
