@@ -49,8 +49,11 @@ class VTK_Widget1(QWidget):
         self.vtkw.GetRenderWindow().AddRenderer(self.ren)
         self.ren.AddVolume(self.volume)
         
+        self.style = vtk.vtkInteractorStyleTrackballCamera()
+        self.vtkw.SetInteractorStyle(self.style)
+        
         self.alphaSlider = QSlider(Qt.Horizontal)
-        self.alphaSlider.setValue(33)
+        self.alphaSlider.setValue(50)
         self.alphaSlider.setRange(0,100)
         self.alphaSlider.setTickPosition(QSlider.NoTicks) 
         self.connect(self.alphaSlider,SIGNAL("valueChanged(int)"),self.AdjustAlpha)
@@ -84,9 +87,10 @@ class VTK_Widget1(QWidget):
         fifty_pc  = range[0]+(range[1]-range[0])*0.50
         hundred_pc  = range[1]
              
-        self.opacityTransferFunction.AddPoint(zero_pc, 0.01)
-        self.opacityTransferFunction.AddPoint(fifty_pc, 0.01)
-        self.opacityTransferFunction.AddPoint(fifty_pc+1e-11, 0.2)   
+        slider_pos = self.alphaSlider.value()
+        self.opacityTransferFunction.AddPoint(zero_pc, slider_pos*0.0016)
+        self.opacityTransferFunction.AddPoint(fifty_pc, slider_pos*0.0016)
+        self.opacityTransferFunction.AddPoint(fifty_pc+1e-6, 0.2)  
         
         self.colorTransferFunction.AddRGBPoint(zero_pc, 0.0, 0.0, 1.0)
         self.colorTransferFunction.AddRGBPoint(fifty_pc, 1.0, 0.5, 0.0)
@@ -107,8 +111,8 @@ class VTK_Widget1(QWidget):
             fifty_pc  = range[0]+(range[1]-range[0])*0.50
             hundred_pc  = range[1]
                  
-            self.opacityTransferFunction.AddPoint(zero_pc, slider_pos*0.0003)
-            self.opacityTransferFunction.AddPoint(fifty_pc, slider_pos*0.0003)
+            self.opacityTransferFunction.AddPoint(zero_pc, slider_pos*0.0016)
+            self.opacityTransferFunction.AddPoint(fifty_pc, slider_pos*0.0016)
             self.opacityTransferFunction.AddPoint(fifty_pc+1e-6, 0.2) # anything > 65% is transparent 
                 
             self.vtkw.GetRenderWindow().Render() 
@@ -165,25 +169,21 @@ class VTK_Widget2(QWidget):
         self.colorbar.SetLookupTable(self.cutterMapper.GetLookupTable())
         
         self.lookupTable = vtk.vtkLookupTable()
-        self.lookupTable.SetSaturationRange(1,1)
-        self.lookupTable.SetHueRange(0.5,0)
-        self.lookupTable.SetValueRange(1,1)
-        self.lookupTable.SetAlphaRange(1,1)
+        self.lookupTable.SetNumberOfColors(256)
         self.lookupTable.Build()
-        #self.lookupTable.SetNumberOfColors(256)
-        #self.lookupTable.Build()
-        #for i in range(0,256):
-        #    temp = (((i/32)*32)/255.0)**3
-        #    self.lookupTable.SetTableValue(i, (temp, temp, temp, 1.0))
+        for i in range(0,128):
+            self.lookupTable.SetTableValue(i, (1.0, i/127.0, 0.0, 1.0))
+        for i in range(128,256):
+            self.lookupTable.SetTableValue(i, (1.0, 1.0, (i-128.0)/128.0, 1.0))
         
         self.cutterMapper.SetLookupTable(self.lookupTable)
         self.colorbar.SetLookupTable(self.lookupTable)
-        self.colorbar.SetOrientationToHorizontal()
+        self.colorbar.SetOrientationToVertical()
         self.colorbar.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
         self.colorbar.GetPositionCoordinate().SetValue(.2,.05)
-        self.colorbar.SetWidth( 0.7 )
-        self.colorbar.SetHeight( 0.11 )
-        self.colorbar.SetPosition( 0.16, 0.01 )
+        self.colorbar.SetWidth( 0.17 )
+        self.colorbar.SetHeight( 0.7 )
+        self.colorbar.SetPosition( 0.82, 0.18 )
         self.colorbar.SetLabelFormat("%-#6.3g")
         self.colorbar.GetLabelTextProperty().SetJustificationToCentered()
 
@@ -207,13 +207,13 @@ class VTK_Widget2(QWidget):
         self.cutPlaneSlider.setTickPosition(QSlider.NoTicks) 
         self.connect(self.cutPlaneSlider,SIGNAL("valueChanged(int)"),self.AdjustCutPlane)
         
-        self.alphaSlider = QSlider(Qt.Horizontal)
-        self.alphaSlider.setValue(100)
-        self.alphaSlider.setRange(0,100)
-        self.alphaSlider.setTickPosition(QSlider.NoTicks) 
-        self.connect(self.alphaSlider,SIGNAL("valueChanged(int)"),self.AdjustAlpha)
+        self.thSlider = QSlider(Qt.Horizontal)
+        self.thSlider.setValue(0)
+        self.thSlider.setRange(0,100)
+        self.thSlider.setTickPosition(QSlider.NoTicks) 
+        self.connect(self.thSlider,SIGNAL("valueChanged(int)"),self.AdjustTh)
         
-        self.alphaLabel = QLabel("alpha: ")
+        self.thLabel = QLabel("threshold: ")
         
         self.layout = QVBoxLayout()
         self.layout2 = QHBoxLayout()
@@ -221,8 +221,8 @@ class VTK_Widget2(QWidget):
         self.layout2.addWidget(self.vtkw)
         self.layout2.addSpacing(13)
         self.layout2.addWidget(self.cutPlaneSlider)
-        self.layout3.addWidget(self.alphaLabel)
-        self.layout3.addWidget(self.alphaSlider)
+        self.layout3.addWidget(self.thLabel)
+        self.layout3.addWidget(self.thSlider)
         self.layout3.addSpacing(30)
         self.layout.addLayout(self.layout2)
         self.layout.addSpacing(34)
@@ -290,10 +290,21 @@ class VTK_Widget2(QWidget):
         self.vtkw.GetRenderWindow().Render()
         
         
-    def AdjustAlpha(self):
+    def AdjustTh(self):
         
         slider_pos = self.sender().value() 
-        self.lookupTable.SetAlphaRange(slider_pos/100.0,slider_pos/100.0)
+        table_pos = 256.0*slider_pos/100.0     
+        
+        for i in range(0,128):
+            a = 1.0
+            if i < table_pos:
+                a = 0.0
+            self.lookupTable.SetTableValue(i, (1.0, i/127.0, 0.0, a))
+        for i in range(128,256):
+            a = 1.0
+            if i < table_pos:
+                a = 0.0
+            self.lookupTable.SetTableValue(i, (1.0, 1.0, (i-128.0)/128.0, a))
         
         self.vtkw.GetRenderWindow().Render() 
         
@@ -316,6 +327,9 @@ class VTK_Widget2(QWidget):
                 self.cutPlane.SetOrigin(center[0],center[1],cut_pos)
 
             self.vtkw.GetRenderWindow().Render() 
+            
+            #print slider_pos
+            print slider_pos
         
         
 # MAIN WINDOW                          
@@ -336,6 +350,8 @@ class MainVizWindow(QMainWindow):
          self.vtk_widget_3 = VTK_Widget2(1)
          self.vtk_widget_4 = VTK_Widget2(2)
          self.vtk_widget_1 = VTK_Widget1()
+         
+         self.dicom_loaded = 0
          
          # the VTK widgets are added to the splitters
          self.VSplitter.addWidget(self.HSplitterTop)
@@ -364,13 +380,19 @@ class MainVizWindow(QMainWindow):
          self.fileOpenAction2.setShortcut("Ctrl+D")
          self.fileOpenAction2.setToolTip("Opens a set of DICOMs")
          self.fileOpenAction2.setStatusTip("Opens a set of DICOMs")
+         
+         self.fileLoadDefaults = QAction("&Load Defaults",self)
+         self.fileLoadDefaults.setToolTip("Loads default values for range/threshold/etc")
+         self.fileLoadDefaults.setStatusTip("Loads default values for range/threshold/etc")
      
          self.connect(self.fileOpenAction, SIGNAL("triggered()"),self.fileOpen)
          self.connect(self.fileOpenAction2, SIGNAL("triggered()"),self.fileOpen2)
+         self.connect(self.fileLoadDefaults, SIGNAL("triggered()"),self.fileLoad)
          
          self.fileMenu = self.menuBar().addMenu("&File")
          self.fileMenu.addAction(self.fileOpenAction)   
          self.fileMenu.addAction(self.fileOpenAction2)
+         self.fileMenu.addAction(self.fileLoadDefaults)
          
          # property label
          self.label_property = QLabel("Property: ")
@@ -415,13 +437,55 @@ class MainVizWindow(QMainWindow):
         format = "*.mha"
         fname = unicode(QFileDialog.getOpenFileName(self,"Open MetaImage File",dir,format))
                         
-        if (len(fname)>0):         
+        if (len(fname)>0):  
+            self.dicom_loaded = 1       
             self.reader2.SetFileName(fname)
             self.reader2.Update()     
             
             self.vtk_widget_2.SetSource2(self.reader2)
             self.vtk_widget_3.SetSource2(self.reader2)
             self.vtk_widget_4.SetSource2(self.reader2)
+            
+    def fileLoad(self):
+        
+        dir ="."
+        format = "*.txt"
+        self.fname = unicode(QFileDialog.getOpenFileName(self,"Load Defaults",dir,format))
+        info_found = 0
+                        
+        if (len(self.fname)>0):         
+            infile = open(self.fname,"r")
+            while infile:
+                line = infile.readline()
+                s = line.split()
+                n = len(s)
+                if n == 0:
+                    break
+                if s[n-2]=="transparency":
+                    transparency = s[n-1]
+                    info_found = 1
+                if s[n-2]=="threshold":
+                    threshold = s[n-1]
+                if s[n-2]=="range_min":
+                    range_min = s[n-1]
+                if s[n-2]=="range_max":
+                    range_max = s[n-1]
+        
+        if info_found==1:
+            self.vtk_widget_1.alphaSlider.setValue(float(transparency)*100)
+            self.vtk_widget_2.thSlider.setValue(float(threshold)*100)
+            self.vtk_widget_3.thSlider.setValue(float(threshold)*100)
+            self.vtk_widget_4.thSlider.setValue(float(threshold)*100)
+            self.vtk_widget_2.cutterMapper.SetScalarRange((float(range_min), float(range_max)))
+            self.vtk_widget_3.cutterMapper.SetScalarRange((float(range_min), float(range_max)))
+            self.vtk_widget_4.cutterMapper.SetScalarRange((float(range_min), float(range_max)))
+            self.vtk_widget_2.vtkw.setFocus()
+            self.vtk_widget_3.vtkw.setFocus()
+            self.vtk_widget_4.vtkw.setFocus()
+            self.vtk_widget_2.vtkw.GetRenderWindow().Render() 
+            self.vtk_widget_3.vtkw.GetRenderWindow().Render()
+            self.vtk_widget_4.vtkw.GetRenderWindow().Render()
+                
             
     def SetProperty(self):
         
@@ -451,6 +515,10 @@ class MainVizWindow(QMainWindow):
         self.vtk_widget_2.SetSource(self.reader.GetOutput())
         self.vtk_widget_3.SetSource(self.reader.GetOutput())
         self.vtk_widget_4.SetSource(self.reader.GetOutput())
+        if self.dicom_loaded == 1:
+            self.vtk_widget_2.SetSource2(self.reader2)
+            self.vtk_widget_3.SetSource2(self.reader2)
+            self.vtk_widget_4.SetSource2(self.reader2)
         
                     
 # START APPLICATION    
