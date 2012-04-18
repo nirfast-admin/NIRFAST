@@ -27,7 +27,7 @@ end
 if ischar(mesh) == 1
     mesh = load_mesh(mesh);
 end
-if strcmp(mesh.type,'spec')
+if ~strcmp(mesh.type,'spec')
     errordlg('Mesh type must be spectral (''spec'')','NIRFAST Error');
     error('Mesh type must be spectral (''spec'')');
 end
@@ -67,3 +67,7 @@ for i = 1:numel(wv_array_emiss)
     data_tmp = femdata_fl(mesh,frequency);
     data.paa = [data.paa data_tmp.paafl];
 end
+
+%% put link info into data
+data.link = mesh.link;
+

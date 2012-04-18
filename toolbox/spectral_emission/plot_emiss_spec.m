@@ -27,8 +27,7 @@ if ~isfield(data,'paa') || ~isfield(data,'wv')
 end
 
 figure
-[junk,m] = size(mesh.link);
-index = (source-1)*m+meas;
+index = find(data.link(:,1)==source & data.link(:,2)==meas);
 
 true_fl = load(true_fl_fn);
 A = plot(true_fl(:,1),true_fl(:,2)/max(true_fl(:,2)),data.wv,...

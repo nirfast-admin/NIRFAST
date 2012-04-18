@@ -22,7 +22,7 @@ function varargout = gui_forward_solver_multispectral(varargin)
 
 % Edit the above text to modify the response to help gui_forward_solver_multispectral
 
-% Last Modified by GUIDE v2.5 10-Dec-2009 10:41:49
+% Last Modified by GUIDE v2.5 18-Apr-2012 12:05:38
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -103,7 +103,7 @@ meshname = contents{get(hObject,'Value')};
 set(handles.mesh,'String',meshname);
 mesh = evalin('base',meshname);
 if isfield(mesh,'wv')
-    set(handles.wv_array,'TooltipString',mat2str(mesh.wv'));
+    set(handles.wv_array_emiss,'TooltipString',mat2str(mesh.wv'));
 end
 
 
@@ -461,5 +461,3 @@ function tau_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
