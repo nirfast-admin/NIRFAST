@@ -96,8 +96,7 @@ for i=1:size(mesh.source.coord,1)
             mesh.source.coord(i,1) = pos2(1);
             mesh.source.coord(i,2) = pos2(2);
         else
-            errordlg('The mesh structure is poor, smoothing the mesh may help','NIRFAST Error');
-            error('The mesh structure is poor, smoothing the mesh may help');
+            errordlg('The source(s) could not be moved. The mesh structure may be poor.','NIRFAST Warning');
         end
         
     elseif mesh.dimension == 3
