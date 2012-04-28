@@ -16,10 +16,10 @@ function varname = mygenvarname(pathloc)
 k1 = findstr(pathloc,'/');
 k2 = findstr(pathloc,'\');
 p = findstr(pathloc,'.');
-if isempty(p)
+if isempty(p(end))
     varname = genvarname(pathloc(max([k1 k2 [0]])+1:end));
-elseif p > max([k1 k2 [0]])
-    varname = genvarname(pathloc(max([k1 k2 [0]])+1:p-1));
+elseif p(end) > max([k1 k2 [0]])
+    varname = genvarname(pathloc(max([k1 k2 [0]])+1:p(end)-1));
 else
     varname = 'varb';
 end
