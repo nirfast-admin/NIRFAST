@@ -92,7 +92,9 @@ if mesh.dimension == 3 ...
         && ~strcmp(mesh.type,'stnd_bem') ... % Not BEM mesh isempty(strfind(os,'GLNX')) ... % Not Linux && ( strcmpi(os,'maci') || ~isempty(strfind(os,'PCWIN')) ) ... % Not MAC64
         && ~strcmp(mesh.type,'fluor_bem') && ~strcmp(mesh.type,'spec_bem') && ~strcmpi(os,'glnxa64')
     nirfast2vtk(mesh,'temp_nirfast.vtk');
-    if ~isempty(strfind(os,'PCWIN64'))
+    if strcmpi(os,'PCWIN64')
+        systemcall = ['"' which('nirviz64.exe') '" temp_nirfast.vtk'];
+    elseif strcmpi(os,'PCWIN')
         systemcall = ['"' which('nirviz.exe') '" temp_nirfast.vtk'];
     elseif strcmpi(os,'maci')
         systemcall = 'open -a nirviz-i386 temp_nirfast.vtk';
