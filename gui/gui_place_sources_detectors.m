@@ -67,6 +67,7 @@ end
 
 handles.sourceflag = 0;
 handles.detectorflag = 0;
+rotate3d on
 
 if ~isfield(handles,'dimension')
     % remove source/meas/link files if they exist
