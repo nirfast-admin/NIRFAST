@@ -21,6 +21,8 @@ if nargin == 1
 end
 if plotflag == 1
     figure;
+    setfont(14);
+    
     hold on;
     ind = find(mesh.bndvtx==1);
     if mesh.dimension == 2
@@ -80,6 +82,10 @@ if plotflag == 1
     else
         legend('Detector');
     end
+    
+    xlabel('x position (mm)');
+    ylabel('y position (mm)');
+    zlabel('z position (mm)');
     
 end
 
@@ -443,6 +449,8 @@ else
 
 end
 
+end
+
 
 %% plot image function
 function plotim(mesh,val)
@@ -465,3 +473,15 @@ view(2);
 axis equal; 
 axis off;
 colormap hot;
+
+end
+
+%% set font function
+function setfont(s)
+
+title([],'fontsize',s);
+xlabel([],'fontsize',s);
+xlabel([],'fontsize',s);
+set(gca,'fontsize',s);
+        
+end
