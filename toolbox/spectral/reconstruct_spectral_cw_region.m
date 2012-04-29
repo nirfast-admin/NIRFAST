@@ -69,7 +69,7 @@ nwv = length(wv_array);
 %*******************************************************
 % read data - This is the calibrated experimental data or simulated data
 disp('Loading data and wavelength information')
-data = load_data(data_fn);
+data = load_data(data_fn,wv_array);
 % if specified wavelength not available, terminate.
 if isempty(data) || ~isfield(data,'paa')
     errordlg('Data not found or not properly formatted','NIRFAST Error');

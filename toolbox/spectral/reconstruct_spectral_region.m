@@ -366,8 +366,8 @@ for it = 1:iteration
         clear tmp_string
     end
     clear chrom_scatt
-    pause(1);
-    plotmesh(fwd_mesh);
+    %pause(1);
+    %plotmesh(fwd_mesh);
 end
 % Close log file
 time = toc;
