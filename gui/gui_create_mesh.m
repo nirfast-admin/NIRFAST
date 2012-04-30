@@ -117,14 +117,6 @@ elseif strcmp(contents{get(hObject,'Value')},'Cylinder')
     set(handles.width,'Enable','off');
     set(handles.height,'Enable','on');
     set(handles.depth,'Enable','off');
-elseif strcmp(contents{get(hObject,'Value')},'Sphere')
-    set(handles.x,'Enable','on');
-    set(handles.y,'Enable','on');
-    set(handles.z,'Enable','on');
-    set(handles.radius,'Enable','on');
-    set(handles.width,'Enable','off');
-    set(handles.height,'Enable','off');
-    set(handles.depth,'Enable','off');
 elseif strcmp(contents{get(hObject,'Value')},'Slab')
     set(handles.x,'Enable','on');
     set(handles.y,'Enable','on');
@@ -187,13 +179,6 @@ if strcmp(shape,'Circle') && ~isempty(get(handles.radius,'String'))
     smallest = str2num(get(handles.radius,'String'));
     if isempty(get(handles.distance,'String'))
         set(handles.distance,'String',num2str(smallest*0.025));
-    end
-end
-
-if strcmp(shape,'Sphere') && ~isempty(get(handles.radius,'String'))
-    smallest = str2num(get(handles.radius,'String'));
-    if isempty(get(handles.distance,'String'))
-        set(handles.distance,'String',num2str(smallest*0.035));
     end
 end
 
