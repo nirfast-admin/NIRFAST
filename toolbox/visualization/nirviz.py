@@ -120,11 +120,13 @@ class VTK_Widget1(QWidget):
         
 # ORTHOGONAL VIEW
 class VTK_Widget2(QWidget):
-    def __init__(self, axis, parent=None):
+    def __init__(self, axis, pos, parent=None):
         
         super(VTK_Widget2, self).__init__(parent)
 
         self.axis = axis; # 0 - x, 1 - y, 2 - z
+        
+        self.pos = pos;
 
         self.source_is_connected = False
         
@@ -279,6 +281,8 @@ class VTK_Widget2(QWidget):
         self.vtkw.GetRenderWindow().Render()
         self.source_is_connected = True
         
+        self.AdjustCutPlane()
+        
     def SetSource2(self,source):   
 
         self.source2 = source.GetOutput()
@@ -312,7 +316,7 @@ class VTK_Widget2(QWidget):
         
         if self.source_is_connected:
         
-            slider_pos = self.sender().value() 
+            slider_pos = self.cutPlaneSlider.value() 
             center = self.source.GetCenter()
             bounds = self.source.GetBounds() 
             
@@ -328,8 +332,7 @@ class VTK_Widget2(QWidget):
 
             self.vtkw.GetRenderWindow().Render() 
             
-            #print slider_pos
-            print slider_pos
+            self.pos.setText(str(round(cut_pos,3)));
         
         
 # MAIN WINDOW                          
@@ -345,10 +348,19 @@ class MainVizWindow(QMainWindow):
          self.HSplitterTop = QSplitter(Qt.Horizontal)
          self.HSplitterBottom = QSplitter(Qt.Horizontal)
          
+         # pos labels
+         self.label_pos1 = QLabel("        Position: (")
+         self.label_posx = QLabel("0")
+         self.label_pos2 = QLabel(",")
+         self.label_posy = QLabel("0")
+         self.label_pos3 = QLabel(",")
+         self.label_posz = QLabel("0")
+         self.label_pos4 = QLabel(")")
+         
          # one instance of each of the VTK_Widget classes
-         self.vtk_widget_2 = VTK_Widget2(0)
-         self.vtk_widget_3 = VTK_Widget2(1)
-         self.vtk_widget_4 = VTK_Widget2(2)
+         self.vtk_widget_2 = VTK_Widget2(0,self.label_posx)
+         self.vtk_widget_3 = VTK_Widget2(1,self.label_posy)
+         self.vtk_widget_4 = VTK_Widget2(2,self.label_posz)
          self.vtk_widget_1 = VTK_Widget1()
          
          self.dicom_loaded = 0
@@ -405,6 +417,13 @@ class MainVizWindow(QMainWindow):
          self.viewToolbar.setObjectName("ViewToolbar")
          self.viewToolbar.addWidget(self.label_property)
          self.viewToolbar.addWidget(self.dropdown_property)
+         self.viewToolbar.addWidget(self.label_pos1)
+         self.viewToolbar.addWidget(self.label_posx)
+         self.viewToolbar.addWidget(self.label_pos2)
+         self.viewToolbar.addWidget(self.label_posy)
+         self.viewToolbar.addWidget(self.label_pos3)
+         self.viewToolbar.addWidget(self.label_posz)
+         self.viewToolbar.addWidget(self.label_pos4)
          
          self.connect(self.dropdown_property, SIGNAL("currentIndexChanged(int)"), self.SetProperty)
             
@@ -502,9 +521,9 @@ class MainVizWindow(QMainWindow):
         del self.vtk_widget_3
         del self.vtk_widget_4
         
-        self.vtk_widget_2 = VTK_Widget2(0)
-        self.vtk_widget_3 = VTK_Widget2(1)
-        self.vtk_widget_4 = VTK_Widget2(2)
+        self.vtk_widget_2 = VTK_Widget2(0,self.label_posx)
+        self.vtk_widget_3 = VTK_Widget2(1,self.label_posy)
+        self.vtk_widget_4 = VTK_Widget2(2,self.label_posz)
         self.vtk_widget_1 = VTK_Widget1()
         
         self.HSplitterTop.addWidget(self.vtk_widget_1)
