@@ -856,7 +856,53 @@ function variables_mesh_Callback(hObject, eventdata, handles)
 % Hints: contents = get(hObject,'String') returns variables_mesh contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from variables_mesh
 contents = get(hObject,'String');
-set(handles.mesh,'String',contents{get(hObject,'Value')});
+meshname = contents{get(hObject,'Value')};
+set(handles.mesh,'String',meshname);
+mesh = evalin('base',meshname);
+if isfield(mesh,'mua')
+    set(handles.mua,'String',num2str(mean(mesh.mua)));
+end
+if isfield(mesh,'mus')
+    set(handles.mus,'String',num2str(mean(mesh.mus)));
+end
+if isfield(mesh,'region')
+    set(handles.region,'String',num2str(max(mesh.region)+1));
+end
+if isfield(mesh,'sa')
+    set(handles.sa,'String',num2str(mean(mesh.sa)));
+end
+if isfield(mesh,'sp')
+    set(handles.sp,'String',num2str(mean(mesh.sp)));
+end
+if isfield(mesh,'muax')
+    set(handles.muax,'String',num2str(mean(mesh.muax)));
+end
+if isfield(mesh,'musx')
+    set(handles.musx,'String',num2str(mean(mesh.musx)));
+end
+if isfield(mesh,'muam')
+    set(handles.muam,'String',num2str(mean(mesh.muam)));
+end
+if isfield(mesh,'musm')
+    set(handles.musm,'String',num2str(mean(mesh.musm)));
+end
+if isfield(mesh,'muaf')
+    set(handles.muaf,'String',num2str(mean(mesh.muaf)));
+end
+if isfield(mesh,'eta')
+    set(handles.eta,'String',num2str(mean(mesh.eta)));
+end
+if isfield(mesh,'tau')
+    set(handles.tau,'String',num2str(mean(mesh.tau)));
+end
+if isfield(mesh,'chromscattlist') && isfield(mesh,'conc')
+    str_tmp = '';
+    all_sol = char(mesh.chromscattlist);
+    for i=1:size(all_sol,1)-2
+        str_tmp = [str_tmp deblank(all_sol(i,:)) ' ' num2str(mean(mesh.conc(:,i))) ' '];
+    end
+    set(handles.chromophores,'String',str_tmp);
+end
 
 
 % --- Executes during object creation, after setting all properties.
