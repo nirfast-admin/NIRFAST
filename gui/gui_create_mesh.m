@@ -22,7 +22,7 @@ function varargout = gui_create_mesh(varargin)
 
 % Edit the above text to modify the response to help gui_create_mesh
 
-% Last Modified by GUIDE v2.5 12-Mar-2010 10:35:43
+% Last Modified by GUIDE v2.5 30-Apr-2012 11:11:22
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -172,6 +172,61 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
+function set_node_dist(hObject, eventdata, handles)
+% hObject    handle to savemeshto (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+shapeobj = get(handles.shape,'String');
+shape = shapeobj{get(handles.shape,'Value')};
+
+   
+if strcmp(shape,'Circle') && ~isempty(get(handles.radius,'String'))
+    smallest = str2num(get(handles.radius,'String'));
+    if isempty(get(handles.distance,'String'))
+        set(handles.distance,'String',num2str(smallest*0.025));
+    end
+end
+
+if strcmp(shape,'Sphere') && ~isempty(get(handles.radius,'String'))
+    smallest = str2num(get(handles.radius,'String'));
+    if isempty(get(handles.distance,'String'))
+        set(handles.distance,'String',num2str(smallest*0.035));
+    end
+end
+
+if strcmp(shape,'Rectangle') && ~isempty(get(handles.width,'String')) ...
+        && ~isempty(get(handles.height,'String'))
+    smallest = min([str2num(get(handles.width,'String')), ...
+                    str2num(get(handles.height,'String'))]);
+    if isempty(get(handles.distance,'String'))
+        set(handles.distance,'String',num2str(smallest*0.025));
+    end
+end
+
+if strcmp(shape,'Cylinder') && ~isempty(get(handles.radius,'String')) ...
+        && ~isempty(get(handles.height,'String'))
+    smallest = min([str2num(get(handles.radius,'String')), ...
+                    str2num(get(handles.height,'String'))]);
+    if isempty(get(handles.distance,'String'))
+        set(handles.distance,'String',num2str(smallest*0.035));
+    end
+end
+
+if strcmp(shape,'Slab') && ~isempty(get(handles.width,'String')) ...
+        && ~isempty(get(handles.height,'String')) ...
+        && ~isempty(get(handles.depth,'String'))
+    smallest = min([str2num(get(handles.width,'String')), ...
+                    str2num(get(handles.height,'String')), ...
+                    str2num(get(handles.depth,'String'))]);
+    if isempty(get(handles.distance,'String'))
+        set(handles.distance,'String',num2str(smallest*0.035));
+    end
+end
+
+
 
 function radius_Callback(hObject, eventdata, handles)
 % hObject    handle to radius (see GCBO)
@@ -180,7 +235,7 @@ function radius_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of radius as text
 %        str2double(get(hObject,'String')) returns contents of radius as a double
-
+set_node_dist(hObject, eventdata, handles);
 
 % --- Executes during object creation, after setting all properties.
 function radius_CreateFcn(hObject, eventdata, handles)
@@ -195,7 +250,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
 function height_Callback(hObject, eventdata, handles)
 % hObject    handle to height (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -203,7 +257,7 @@ function height_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of height as text
 %        str2double(get(hObject,'String')) returns contents of height as a double
-
+set_node_dist(hObject, eventdata, handles);
 
 % --- Executes during object creation, after setting all properties.
 function height_CreateFcn(hObject, eventdata, handles)
@@ -226,7 +280,7 @@ function width_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of width as text
 %        str2double(get(hObject,'String')) returns contents of width as a double
-
+set_node_dist(hObject, eventdata, handles);
 
 % --- Executes during object creation, after setting all properties.
 function width_CreateFcn(hObject, eventdata, handles)
@@ -513,7 +567,7 @@ function depth_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of depth as text
 %        str2double(get(hObject,'String')) returns contents of depth as a double
-
+set_node_dist(hObject, eventdata, handles);
 
 % --- Executes during object creation, after setting all properties.
 function depth_CreateFcn(hObject, eventdata, handles)
@@ -526,5 +580,3 @@ function depth_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
