@@ -19,7 +19,11 @@ flag = 0;
 phi=zeros(nnodes,nsource);
 
 if isfield(mesh,'R') == 0
-    R = cholinc(Mass,1e-3);
+    if exist('ichol')
+        R = ichol(Mass,struct('type','ict','droptol',1e-3,'shape','upper'));
+    else
+        R = cholinc(Mass,1e-3);
+    end
     mesh.R = R;
 else
     R = mesh.R;
