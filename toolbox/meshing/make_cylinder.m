@@ -32,6 +32,8 @@ if sizevar.height <= 0
     error('Height must be positive');
 end
 
+hf = waitbar(0,'Creating boundary nodes');
+
 x=[];
 y=[];
 z=[];
@@ -74,10 +76,12 @@ mesh.nodes(:,2) = y(:);
 mesh.nodes(:,3) = z(:);
     
 if isfield(sizevar,'outputfn')
-        outputdir = fileparts(sizevar.outputfn);
-    else
-        outputdir = pwd;
-    end
+    outputdir = fileparts(sizevar.outputfn);
+else
+    outputdir = pwd;
+end
+
+waitbar(0.1,hf,'Creating surface');
     
 if exist('surf','var') && surf == 1
     mesh.elements = MyRobustCrust(mesh.nodes);
@@ -85,6 +89,9 @@ if exist('surf','var') && surf == 1
 else
     mesh.elements = MyRobustCrust(mesh.nodes);
     writenodelm_nod_elm([outputdir filesep 'test_node_ele'],mesh.elements,mesh.nodes);
+    waitbar(0.6,hf,'Creating volume');
     mesh = checkerboard3d_mm([outputdir filesep 'test_node_ele.ele'],'stnd');
 end
 
+waitbar(1.0,hf,'Done');
+close(hf);

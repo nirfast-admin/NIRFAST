@@ -38,6 +38,8 @@ if sizevar.dist <= 0
     error('Distance between nodes must be positive');
 end
 
+h = waitbar(0,'Creating boundary nodes');
+
 xmin = sizevar.xc-sizevar.width/2;
 xmax = sizevar.xc+sizevar.width/2;
 ymin = sizevar.yc-sizevar.height/2;
@@ -68,6 +70,9 @@ if isfield(sizevar,'outputfn')
 else
     outputdir = pwd;
 end
+
+waitbar(0.1,h,'Creating surface');
+
 if exist('surf','var') && surf == 1
     mesh.nodes = mesh.nodes(mesh.bndvtx==1,:);
     mesh.bndvtx = ones(size(mesh.nodes,1),1);
@@ -78,5 +83,9 @@ else
     mesh.elements = MyRobustCrust(mesh.nodes);
     
     writenodelm_nod_elm([outputdir filesep 'test_node_ele'],mesh.elements,mesh.nodes);
+    waitbar(0.6,h,'Creating volume');
     mesh = checkerboard3d_mm([outputdir filesep 'test_node_ele.ele'],'stnd');
 end
+
+waitbar(1.0,h,'Done');
+close(h);

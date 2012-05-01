@@ -30,6 +30,8 @@ if sizevar.dist <= 0
     error('Distance between nodes must be positive');
 end
 
+h = waitbar(0,'Creating nodes');
+
 xmin = sizevar.xc-sizevar.width/2;
 xmax = sizevar.xc+sizevar.width/2;
 ymin = sizevar.yc-sizevar.height/2;
@@ -49,6 +51,11 @@ ind = unique([ind1; ind2; ind3; ind4]);
 mesh.bndvtx = zeros(nn,1);
 mesh.bndvtx(ind) = 1;
 
+waitbar(0.1,h,'Creating elements');
+
 mesh.elements = delaunayn(mesh.nodes);
 
 mesh.nodes(:,3) = zeros(size(mesh.nodes(:,1)));
+
+waitbar(1.0,h,'Done');
+close(h);
