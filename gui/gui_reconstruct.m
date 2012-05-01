@@ -1003,8 +1003,7 @@ else
 end
 
 if get(handles.view_solution,'Value')
-    content{end+1} = strcat('read_solution(mesh,''',...
-        get(handles.savesolutionto,'String'),''');');
+    content{end+1} = 'plotmesh(mesh);';
     if ~batch
         evalin('base',content{end});
     end
