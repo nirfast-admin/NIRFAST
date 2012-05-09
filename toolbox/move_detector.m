@@ -22,6 +22,9 @@ if size(mesh.meas.coord,2) == 2
     remove_last = 1;
 end
 
+%% set fixed
+mesh.meas.fixed = 1;
+
 %% get list of boundary faces
 if size(mesh.elements,2) == 4
     faces = [mesh.elements(:,[1,2,3]);
