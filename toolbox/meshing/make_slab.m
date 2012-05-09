@@ -65,7 +65,7 @@ ind = unique([ind1; ind2; ind3; ind4; ind5; ind6]);
 mesh.bndvtx = zeros(nn,1);
 mesh.bndvtx(ind) = 1;
 
-if isfield(sizevar,'outputfn')
+if isfield(sizevar,'outputfn') && ~isempty(sizevar.outputfn)
     outputdir = fileparts(sizevar.outputfn);
 else
     outputdir = pwd;

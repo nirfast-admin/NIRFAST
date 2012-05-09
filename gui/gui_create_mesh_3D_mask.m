@@ -243,16 +243,23 @@ end
 
 saveloc = '''temp_node_ele.ele''';
 
+savemeshto = get(handles.savemeshto,'String');
+if ~canwrite(savemeshto)
+    [junk fn] = fileparts(savemeshto);
+    savemeshto = [tempdir fn];
+    disp(['No write access, writing here instead: ' savemeshto]);
+end
+
 % inp to mesh
 if strcmp(handles.type,'stnd_bem') || ...
         strcmp(handles.type,'fluor_bem') || strcmp(handles.type,'spec_bem')
-    content{end+1} = strcat('surf2nirfast_bem(',saveloc,',''',get(handles.savemeshto,'String'),...
+    content{end+1} = strcat('surf2nirfast_bem(',saveloc,',''',savemeshto,...
         ''',''',handles.type,''');');
     if ~batch
         evalin('base',content{end});
     end
 else
-    content{end+1} = strcat('checkerboard3dmm_wrapper(',saveloc,',''',get(handles.savemeshto,'String'),...
+    content{end+1} = strcat('checkerboard3dmm_wrapper(',saveloc,',''',savemeshto,...
         ''',''',handles.type,''',',get(handles.edgexy,'String'),');');
     if ~batch
         evalin('base',content{end});
@@ -261,7 +268,7 @@ end
 
 set(mainGUIdata.script, 'String', content);
 guidata(nirfast, mainGUIdata);
-gui_place_sources_detectors('mesh',get(handles.savemeshto,'String'));
+gui_place_sources_detectors('mesh',savemeshto);
 close(gui_create_mesh_3D_mask);
 
 

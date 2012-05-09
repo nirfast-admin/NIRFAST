@@ -351,8 +351,15 @@ if ~batch
 end
 
 if get(handles.savedatato_fluor,'String')
+    saveto = get(handles.savedatato_fluor,'String');
+    if ~canwrite(saveto)
+        [junk fn] = fileparts(saveto);
+        saveto = [tempdir fn];
+        disp(['No write access, writing here instead: ' saveto]);
+    end
+
     content{end+1} = strcat('save_data(',varname_fluor,',''',...
-        get(handles.savedatato_fluor,'String'),''');');
+        saveto,''');');
     if ~batch
         evalin('base',content{end});
     end

@@ -835,8 +835,15 @@ if ~batch
     evalin('base',content{end});
 end
 if get(handles.savemeshto,'String')
+    savemeshto = get(handles.savemeshto,'String');
+    if ~canwrite(savemeshto)
+        [junk fn] = fileparts(savemeshto);
+        savemeshto = [tempdir fn];
+        disp(['No write access, writing here instead: ' savemeshto]);
+    end
+    
     content{end+1} = strcat('save_mesh(',varname,',''',...
-        get(handles.savemeshto,'String'),''');');
+        savemeshto,''');');
     if ~batch
         evalin('base',content{end});
     end

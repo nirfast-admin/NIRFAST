@@ -389,10 +389,16 @@ else
     end
 end
 
-
 if get(handles.save_data_to,'String')
+    saveto = get(handles.save_data_to,'String');
+    if ~canwrite(saveto)
+        [junk fn] = fileparts(saveto);
+        saveto = [tempdir fn];
+        disp(['No write access, writing here instead: ' saveto]);
+    end
+
     content{end+1} = strcat('save_data(',varname,',''',...
-        get(handles.save_data_to,'String'),''');');
+        saveto,''');');
     if ~batch
         evalin('base',content{end});
     end

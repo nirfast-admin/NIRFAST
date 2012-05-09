@@ -173,8 +173,15 @@ batch = get(mainGUIdata.batch_mode,'Value');
 
 meshloc = get_pathloc(get(handles.mesh,'String'));
 
+saveto = get(handles.vtk,'String');
+if ~canwrite(saveto)
+    [junk fn] = fileparts(saveto);
+    saveto = [tempdir fn];
+    disp(['No write access, writing here instead: ' saveto]);
+end
+
 content{end+1} = strcat('nirfast2vtk(',meshloc,...
-    ',''',get(handles.vtk,'String'),...
+    ',''',saveto,...
     ''');');
 if ~batch
     evalin('base',content{end});

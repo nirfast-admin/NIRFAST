@@ -75,7 +75,7 @@ mesh.nodes(:,1) = x(:);
 mesh.nodes(:,2) = y(:);
 mesh.nodes(:,3) = z(:);
     
-if isfield(sizevar,'outputfn')
+if isfield(sizevar,'outputfn') && ~isempty(sizevar.outputfn)
     outputdir = fileparts(sizevar.outputfn);
 else
     outputdir = pwd;

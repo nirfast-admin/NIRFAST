@@ -148,15 +148,22 @@ inploc = strcat('''',get(handles.inp,'String'),'''');
 
 handles.gradingmesh = get(handles.gradingmesh_checkbox,'Value');
 
+savemeshto = get(handles.savemeshto,'String');
+if ~canwrite(savemeshto)
+    [junk fn] = fileparts(savemeshto);
+    savemeshto = [tempdir fn];
+    disp(['No write access, writing here instead: ' savemeshto]);
+end
+
 if strcmp(handles.type,'stnd_bem') || ...
         strcmp(handles.type,'fluor_bem') || strcmp(handles.type,'spec_bem')
-    content{end+1} = strcat('surf2nirfast_bem(',inploc,',''',get(handles.savemeshto,'String'),...
+    content{end+1} = strcat('surf2nirfast_bem(',inploc,',''',savemeshto,...
         ''',''',handles.type,''');');
     if ~batch
         evalin('base',content{end});
     end
 else
-    content{end+1} = strcat('checkerboard3dmm_wrapper(',inploc,',''',get(handles.savemeshto,'String'),...
+    content{end+1} = strcat('checkerboard3dmm_wrapper(',inploc,',''',savemeshto,...
         ''',''',handles.type,''',[],',num2str(handles.gradingmesh),');');
     if ~batch
         evalin('base',content{end});
@@ -165,7 +172,7 @@ end
 
 set(mainGUIdata.script, 'String', content);
 guidata(nirfast, mainGUIdata);
-gui_place_sources_detectors('mesh',get(handles.savemeshto,'String'));
+gui_place_sources_detectors('mesh',savemeshto);
 close(gui_convert_inptonirfast);
 
 

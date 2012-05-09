@@ -509,6 +509,15 @@ if ~batch
     evalin('base',content{end});
 end
 
+%check write access
+saveto = get(handles.savesolutionto,'String');
+if ~canwrite(saveto)
+    [junk fn] = fileparts(saveto);
+    saveto = [tempdir fn];
+    disp(['No write access, writing here instead: ' saveto]);
+    set(handles.savesolutionto,'String',saveto);
+end
+
 % parsing
 % CONJUGATE GRADIENT
 % NOT CONJUGATE GRADIENT

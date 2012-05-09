@@ -258,8 +258,15 @@ if ~batch
 end
     
 if get(handles.savedatato,'String')
+    saveto = get(handles.savedatato,'String');
+    if ~canwrite(saveto)
+        [junk fn] = fileparts(saveto);
+        saveto = [tempdir fn];
+        disp(['No write access, writing here instead: ' saveto]);
+    end
+    
     content{end+1} = strcat('save_data(',varname,','''...
-        ,get(handles.savedatato,'String'),''');');
+        ,saveto,''');');
     if ~batch
         evalin('base',content{end});
     end

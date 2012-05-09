@@ -141,7 +141,14 @@ batch = get(mainGUIdata.batch_mode,'Value');
 
 eleloc = strcat('''',get(handles.ele,'String'),'''');
 
-content{end+1} = strcat('solidmesh2nirfast(',eleloc,',''',get(handles.savemeshto,'String'),...
+savemeshto = get(handles.savemeshto,'String');
+if ~canwrite(savemeshto)
+    [junk fn] = fileparts(savemeshto);
+    savemeshto = [tempdir fn];
+    disp(['No write access, writing here instead: ' savemeshto]);
+end
+
+content{end+1} = strcat('solidmesh2nirfast(',eleloc,',''',savemeshto,...
     ''',''',handles.type,'''');
 if isempty(get(handles.sdfile_name,'String'))
     content{end} = strcat(content{end},');');
@@ -156,7 +163,7 @@ end
 set(mainGUIdata.script, 'String', content);
 guidata(nirfast, mainGUIdata);
 if isempty(get(handles.sdfile_name,'String'))
-    gui_place_sources_detectors('mesh',get(handles.savemeshto,'String'));
+    gui_place_sources_detectors('mesh',savemeshto);
 end
 close(gui_create_mesh_3D_volume);
 

@@ -97,17 +97,21 @@ os=computer;
 if mesh.dimension == 3 ... 
         && ~strcmp(mesh.type,'stnd_bem') ... % Not BEM mesh isempty(strfind(os,'GLNX')) ... % Not Linux && ( strcmpi(os,'maci') || ~isempty(strfind(os,'PCWIN')) ) ... % Not MAC64
         && ~strcmp(mesh.type,'fluor_bem') && ~strcmp(mesh.type,'spec_bem') && ~strcmpi(os,'glnxa64')
-    nirfast2vtk(mesh,'temp_nirfast.vtk');
+    
+    fpath = [tempdir 'temp_nirfast.vtk'];
+    disp(['Saving vtk file to: ' fpath]);
+    
+    nirfast2vtk(mesh,fpath);
     if strcmpi(os,'PCWIN64')
-        systemcall = ['"' which('nirviz64.exe') '" temp_nirfast.vtk'];
+        systemcall = ['"' which('nirviz64.exe') '" ' fpath];
     elseif strcmpi(os,'PCWIN')
-        systemcall = ['"' which('nirviz.exe') '" temp_nirfast.vtk'];
+        systemcall = ['"' which('nirviz.exe') '" ' fpath];
     elseif strcmpi(os,'maci')
-        systemcall = 'open -a nirviz-i386 temp_nirfast.vtk';
+        systemcall = ['open -a nirviz-i386 ' fpath];
     elseif strcmpi(os,'maci64')
-        systemcall = 'DYLD_FRAMEWORK_PATH=; open -a nirviz temp_nirfast.vtk';
+        systemcall = ['DYLD_FRAMEWORK_PATH=; open -a nirviz ' fpath];
     elseif strcmpi(os,'glnx86')
-        systemcall = ['"' GetSystemCommand('nirviz') '" temp_nirfast.vtk'];
+        systemcall = ['"' GetSystemCommand('nirviz') '" ' fpath];
     else
         error(['OS is not supported for 3D visualization: ' computer]);
     end

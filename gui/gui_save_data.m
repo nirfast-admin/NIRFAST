@@ -174,9 +174,15 @@ batch = get(mainGUIdata.batch_mode,'Value');
 
 dataloc = get_pathloc(get(handles.data,'String'));
 
+saveto = get(handles.savedatato,'String');
+if ~canwrite(saveto)
+    [junk fn] = fileparts(saveto);
+    saveto = [tempdir fn];
+    disp(['No write access, writing here instead: ' saveto]);
+end
 
 content{end+1} = strcat('save_data(',...
-    dataloc, ',''',get(handles.savedatato,'String'),''');');
+    dataloc, ',''',saveto,''');');
 if ~batch
     evalin('base',content{end});
 end

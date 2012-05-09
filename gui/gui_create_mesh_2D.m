@@ -187,11 +187,18 @@ batch = get(mainGUIdata.batch_mode,'Value');
 
 bmploc = strcat('''',get(handles.bmp,'String'),'''');
 
+savemeshto = get(handles.savemeshto,'String');
+if ~canwrite(savemeshto)
+    [junk fn] = fileparts(savemeshto);
+    savemeshto = [tempdir fn];
+    disp(['No write access, writing here instead: ' savemeshto]);
+end
+
 content{end+1} = strcat('mask2mesh_2D(',bmploc,...
     ',',get(handles.pixel,'String'),...
     ',',get(handles.edge,'String'),...
     ',',get(handles.triangle,'String'),...
-    ',''',get(handles.savemeshto,'String'),...
+    ',''',savemeshto,...
     ''',''',handles.type,''');');
 if ~batch
     evalin('base',content{end});
@@ -199,7 +206,7 @@ end
 
 set(mainGUIdata.script, 'String', content);
 guidata(nirfast, mainGUIdata);
-gui_place_sources_detectors('mesh',get(handles.savemeshto,'String'));
+gui_place_sources_detectors('mesh',savemeshto);
 close(gui_create_mesh_2D);
 
 

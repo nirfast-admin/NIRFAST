@@ -197,10 +197,17 @@ dataloc = get_pathloc(get(handles.data,'String'));
 varname = [mygenvarname(get(handles.data,'String')) '_noise'];
 
 if get(handles.savedatato,'String')
+    saveto = get(handles.savedatato,'String');
+    if ~canwrite(saveto)
+        [junk fn] = fileparts(saveto);
+        saveto = [tempdir fn];
+        disp(['No write access, writing here instead: ' saveto]);
+    end
+    
     content{end+1} = strcat(varname, ' = add_noise(',...
         dataloc, ',',get(handles.amplitude,'String'),...
         ',',get(handles.phase,'String'),',''',...
-        get(handles.savedatato,'String'),''');');
+        saveto,''');');
     if ~batch
         evalin('base',content{end});
     end
