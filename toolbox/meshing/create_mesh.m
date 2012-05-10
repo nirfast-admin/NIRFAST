@@ -30,7 +30,7 @@ mesh.type = type;
 mesh.name = outputfn;
 
 %% dimension
-if strcmp(shape,'circle') || strcmp(shape,'rectangle')
+if strcmp(shape,'Circle') || strcmp(shape,'Rectangle')
     mesh.dimension = 2;
 else
     mesh.dimension = 3;
