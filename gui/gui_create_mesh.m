@@ -531,7 +531,7 @@ end
 
 set(mainGUIdata.script, 'String', content);
 guidata(nirfast, mainGUIdata);
-gui_place_sources_detectors('mesh',get(handles.savemeshto,'String'));
+gui_place_sources_detectors('mesh',savemeshto);
 close(gui_create_mesh);
 
 
