@@ -43,7 +43,7 @@ elseif isfield(data,'paa')
         else
             title('Amplitude');
         end
-        ylabel('Amplitude (W/m^2)');
+        ylabel('Amplitude (W/mm^2)');
         xlabel('Measurement');
         
         figure
@@ -67,7 +67,7 @@ elseif isfield(data,'paaxflmm')
     
     semilogy(data.paax(linki,1),form);
     title('Excitation Amplitude');
-    ylabel('Amplitude (W/m^2)');
+    ylabel('Amplitude (W/mm^2)');
     xlabel('Measurement');
     figure;
     setfont(14);
@@ -81,7 +81,7 @@ elseif isfield(data,'paaxflmm')
     
     semilogy(data.paafl(linki,1),form);
     title('Fluorescence Amplitude');
-    ylabel('Amplitude (W/m^2)');
+    ylabel('Amplitude (W/mm^2)');
     xlabel('Measurement');
     figure;
     setfont(14);
@@ -95,7 +95,7 @@ elseif isfield(data,'paaxflmm')
     
     semilogy(data.paamm(linki,1),form);
     title('Emission Amplitude');
-    ylabel('Amplitude (W/m^2)');
+    ylabel('Amplitude (W/mm^2)');
     xlabel('Measurement');
     figure;
     setfont(14);
@@ -112,7 +112,7 @@ elseif isfield(data,'paaxfl')
     
     semilogy(data.paax(linki,1),form);
     title('Excitation Amplitude');
-    ylabel('Amplitude (W/m^2)');
+    ylabel('Amplitude (W/mm^2)');
     xlabel('Measurement');
     figure;
     setfont(14);
@@ -126,7 +126,7 @@ elseif isfield(data,'paaxfl')
     
     semilogy(data.paafl(linki,1),form);
     title('Fluorescence Amplitude');
-    ylabel('Amplitude (W/m^2)');
+    ylabel('Amplitude (W/mm^2)');
     xlabel('Measurement');
     figure;
     setfont(14);
@@ -143,7 +143,7 @@ elseif isfield(data,'paax')
     
     semilogy(data.paax(linki,1),form);
     title('Excitation Amplitude');
-    ylabel('Amplitude (W/m^2)');
+    ylabel('Amplitude (W/mm^2)');
     xlabel('Measurement');
     figure;
     setfont(14);
@@ -160,7 +160,7 @@ elseif isfield(data,'paafl')
     
     semilogy(data.paafl(linki,1),form);
     title('Fluorescence Amplitude');
-    ylabel('Amplitude (W/m^2)');
+    ylabel('Amplitude (W/mm^2)');
     xlabel('Measurement');
     figure;
     setfont(14);
@@ -177,7 +177,7 @@ elseif isfield(data,'paamm')
     
     semilogy(data.paamm(linki,1),form);
     title('Emission Amplitude');
-    ylabel('Amplitude (W/m^2)');
+    ylabel('Amplitude (W/mm^2)');
     xlabel('Measurement');
     figure;
     setfont(14);
@@ -194,7 +194,7 @@ elseif isfield(data,'amplitudefl')
     
     semilogy(data.amplitudefl(linki),form);
     title('Fluorescence Amplitude');
-    ylabel('Amplitude (W/m^2)');
+    ylabel('Amplitude (W/mm^2)');
     xlabel('Measurement');
 else
     errordlg('Data not found or not properly formatted','NIRFAST Error');
