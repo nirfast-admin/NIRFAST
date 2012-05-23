@@ -32,9 +32,6 @@ if scatt_dist*10 > min(xd,yd)
     errordlg('Mesh is too small for the scattering coefficient given, 1mm will be used for scattering distance. You might want to ensure that the scale of your mesh is in mm.','NIRFAST Warning');
 end
 
-%% set to fixed
-mesh.source.fixed = 1;
-
 %% get list of boundary faces
 out_normal = 0;
 if size(mesh.elements,2) == 4
