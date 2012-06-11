@@ -228,7 +228,8 @@ content = get(mainGUIdata.script,'String');
 batch = get(mainGUIdata.batch_mode,'Value');
 
 maskloc = get_pathloc(get(handles.mask,'String'));
-saveloc = '''temp_node_ele''';
+saveloc = [tempdir filesep 'temp_node_ele'];
+saveloc = ['''' saveloc ''''];
 
 % mask to inp
 content{end+1} = strcat('MMC(',maskloc,...
@@ -241,25 +242,33 @@ if ~batch
     evalin('base',content{end});
 end
 
-saveloc = '''temp_node_ele.ele''';
+temp_mesh_fn = ['''' tempdir filesep 'temp_node_ele.ele'''];
 
 savemeshto = get(handles.savemeshto,'String');
+if isempty(savemeshto)
+    savemeshto = [handles.type '-mesh'];
+    set(handles.savemeshto,'String',savemeshto);
+    drawnow
+end
+
+savemeshto = getfullpath(savemeshto);
+
 if ~canwrite(savemeshto)
-    [junk fn] = fileparts(savemeshto);
-    savemeshto = [tempdir fn];
+    [junk fn ext1] = fileparts(savemeshto);
+    savemeshto = [tempdir fn ext1];
     disp(['No write access, writing here instead: ' savemeshto]);
 end
 
 % inp to mesh
 if strcmp(handles.type,'stnd_bem') || ...
         strcmp(handles.type,'fluor_bem') || strcmp(handles.type,'spec_bem')
-    content{end+1} = strcat('surf2nirfast_bem(',saveloc,',''',savemeshto,...
+    content{end+1} = strcat('surf2nirfast_bem(',temp_mesh_fn,',''',savemeshto,...
         ''',''',handles.type,''');');
     if ~batch
         evalin('base',content{end});
     end
 else
-    content{end+1} = strcat('checkerboard3dmm_wrapper(',saveloc,',''',savemeshto,...
+    content{end+1} = strcat('checkerboard3dmm_wrapper(',temp_mesh_fn,',''',savemeshto,...
         ''',''',handles.type,''',',get(handles.edgexy,'String'),');');
     if ~batch
         evalin('base',content{end});

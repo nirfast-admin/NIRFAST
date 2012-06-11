@@ -353,8 +353,8 @@ end
 if get(handles.savedatato_fluor,'String')
     saveto = get(handles.savedatato_fluor,'String');
     if ~canwrite(saveto)
-        [junk fn] = fileparts(saveto);
-        saveto = [tempdir fn];
+        [junk fn ext1] = fileparts(saveto);
+        saveto = [tempdir fn ext1];
         disp(['No write access, writing here instead: ' saveto]);
     end
 

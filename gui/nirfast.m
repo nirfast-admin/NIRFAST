@@ -22,7 +22,7 @@ function varargout = nirfast(varargin)
 
 % Edit the above text to modify the response to help_main nirfast
 
-% Last Modified by GUIDE v2.5 10-Apr-2012 09:29:36
+% Last Modified by GUIDE v2.5 17-May-2012 16:04:39
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -136,9 +136,13 @@ function run_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 content = get(handles.script,'String');
-if (ischar(content)~=0)
+% if (ischar(content)~=0)
+%     content = cellstr(content);
+% end
+if ischar(content)
     content = cellstr(content);
 end
+set(handles.script,'String',content);
 for i=1:1:numel(content)
     evalin('base',content{i});
 end

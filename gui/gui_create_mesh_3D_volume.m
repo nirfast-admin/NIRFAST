@@ -142,9 +142,17 @@ batch = get(mainGUIdata.batch_mode,'Value');
 eleloc = strcat('''',get(handles.ele,'String'),'''');
 
 savemeshto = get(handles.savemeshto,'String');
+if isempty(savemshto)
+    [junk1 fn1] = fileparts(eleloc);
+    savemeshto = [fn1 '-2-nirfast-' handles.type];
+    set(handles.savemeshto,'String',savemeshto);
+end
+
+savemeshto = getfullpath(savemeshto);
+
 if ~canwrite(savemeshto)
-    [junk fn] = fileparts(savemeshto);
-    savemeshto = [tempdir fn];
+    [junk fn ext1] = fileparts(savemeshto);
+    savemeshto = [tempdir fn ext1];
     disp(['No write access, writing here instead: ' savemeshto]);
 end
 

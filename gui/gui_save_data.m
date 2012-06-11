@@ -176,8 +176,8 @@ dataloc = get_pathloc(get(handles.data,'String'));
 
 saveto = get(handles.savedatato,'String');
 if ~canwrite(saveto)
-    [junk fn] = fileparts(saveto);
-    saveto = [tempdir fn];
+    [junk fn ext1] = fileparts(saveto);
+    saveto = [tempdir fn ext1];
     disp(['No write access, writing here instead: ' saveto]);
 end
 

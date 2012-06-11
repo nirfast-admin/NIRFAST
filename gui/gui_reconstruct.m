@@ -512,8 +512,8 @@ end
 %check write access
 saveto = get(handles.savesolutionto,'String');
 if ~canwrite(saveto)
-    [junk fn] = fileparts(saveto);
-    saveto = [tempdir fn];
+    [junk fn ext1] = fileparts(saveto);
+    saveto = [tempdir fn ext1];
     disp(['No write access, writing here instead: ' saveto]);
     set(handles.savesolutionto,'String',saveto);
 end

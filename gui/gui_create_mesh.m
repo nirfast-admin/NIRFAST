@@ -509,11 +509,19 @@ if ~batch
 end
 
 savemeshto = get(handles.savemeshto,'String');
+if isempty(savemeshto)
+    savemeshto = [shape '-' handles.type '-mesh'];
+    set(handles.savemeshto,'String',savemeshto);
+    drawnow;
+end
+
 if ~canwrite(savemeshto)
-    [junk fn] = fileparts(savemeshto);
-    savemeshto = [tempdir fn];
+    [junk fn ext1] = fileparts(savemeshto);
+    savemeshto = [tempdir fn ext1];
     disp(['No write access, writing here instead: ' savemeshto]);
 end
+
+savemeshto = getfullpath(savemeshto);
 
 content{end+1} = strcat('create_mesh(''',...
     savemeshto,''',''',...

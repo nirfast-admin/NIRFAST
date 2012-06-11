@@ -174,9 +174,16 @@ batch = get(mainGUIdata.batch_mode,'Value');
 meshloc = get_pathloc(get(handles.mesh,'String'));
 
 saveto = get(handles.vtk,'String');
+if isempty(saveto)
+    [junk1 fn1] = fileparts(meshloc);
+    saveto = [fn1 '-2-vtk'];
+end
+
+savemeshto = getfullpath(savemeshto);
+
 if ~canwrite(saveto)
-    [junk fn] = fileparts(saveto);
-    saveto = [tempdir fn];
+    [junk fn ext1] = fileparts(saveto);
+    saveto = [tempdir fn ext1];
     disp(['No write access, writing here instead: ' saveto]);
 end
 

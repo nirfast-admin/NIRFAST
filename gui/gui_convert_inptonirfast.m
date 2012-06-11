@@ -149,9 +149,15 @@ inploc = strcat('''',get(handles.inp,'String'),'''');
 handles.gradingmesh = get(handles.gradingmesh_checkbox,'Value');
 
 savemeshto = get(handles.savemeshto,'String');
+if isempty(savemeshto)
+    savemeshto = ['nirfast-' handles.type];
+end
+
+savemeshto = getfullpath(savemeshto);
+
 if ~canwrite(savemeshto)
-    [junk fn] = fileparts(savemeshto);
-    savemeshto = [tempdir fn];
+    [junk fn ext1] = fileparts(savemeshto);
+    savemeshto = [tempdir fn ext1];
     disp(['No write access, writing here instead: ' savemeshto]);
 end
 
