@@ -87,6 +87,7 @@ else
     writenodelm_nod_elm([outputdir filesep 'test_node_ele'],mesh.elements,mesh.nodes);
     waitbar(0.6,h,'Creating volume');
     mesh = checkerboard3d_mm([outputdir filesep 'test_node_ele.ele'],'stnd',[],[],outputfn);
+    delete([outputdir filesep 'test_node_ele.node'],[outputdir filesep 'test_node_ele.ele']);
 end
 
 waitbar(1.0,h,'Done');
