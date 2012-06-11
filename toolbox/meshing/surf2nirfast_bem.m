@@ -1,4 +1,4 @@
-function mesh = surf2nirfast_bem(filename,saveloc,type)
+function mesh = surf2nirfast_bem(filename,savefn,type)
 
 % surf2nirfast_bem(filename,saveloc,type)
 %
@@ -8,8 +8,18 @@ function mesh = surf2nirfast_bem(filename,saveloc,type)
 % saveloc is the location to save the mesh to
 % type is the mesh type ('stnd', 'fluor', etc)
 
+[saveloc savefn saveext] = fileparts(savefn);
+outfnprefix = [savefn saveext];
+
+if isempty(saveloc)
+    saveloc = pwd;
+end
 
 %% find inp files
+% if isempty(fileparts(filename))
+%     filename = [saveloc filesep filename];
+% end
+
 [path fnprefix num_flag myext] = GetFilenameNumbering(filename);
 fnprefix=fullfile(path,fnprefix);
 
@@ -33,12 +43,13 @@ end
 % basically the numbers that are found in .inp file names.
 region_map =[]; newmatc=1;
 newfn_suffix = '_separated';
+
 while true
     fid = fopen(fn,'rt');
     if fid < 0, break; end
     fclose(fid);
     if strcmpi(myext,'.inp')
-        [celem,cnode] = abaqus2nodele_surface(fn);
+        [celem,cnode] = abaqus2nodele_surface(fn,saveloc);
     elseif strcmpi(myext,'.ele')
         [celem,cnode] = read_nod_elm(fn);
     else
@@ -47,7 +58,7 @@ while true
     end
     output = SeparateSubVolumes(celem,cnode);
     for i=1:length(output.all_regions)
-        newfn = sprintf('%s%s%d',fnprefix,newfn_suffix,newmatc);
+        newfn = sprintf('%s%s%d',[saveloc filesep outfnprefix],newfn_suffix,newmatc);
         foo_ele = output.retelem(output.all_regions{i},1:3);
         foo_nodes = unique(foo_ele(:));
         foo_coords = cnode(foo_nodes,:);
@@ -72,7 +83,7 @@ if (fcounter-num_flag)~=newmatc-1% We have separated disjoint regions within the
 end
 
 %% Compute surface relations
-mesh = ExtractSurfaceRelations([fnprefix newfn_suffix], newmatc-1);
+mesh = ExtractSurfaceRelations([saveloc filesep outfnprefix newfn_suffix], newmatc-1);
 
 %% write nirfast mesh
 if nargin >=3
@@ -84,7 +95,7 @@ if nargin >=3
     mesh = set_mesh_type(mesh,type);
     mesh.region_map = region_map;
 
-    save_mesh(mesh,saveloc);
+    save_mesh(mesh,[saveloc filesep outfnprefix]);
 end
 
 

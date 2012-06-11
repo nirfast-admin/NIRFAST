@@ -26,7 +26,7 @@ else
     elseif strcmpi(ext,'.vtk')
         [mesh.elements mesh.nodes nnpe]= readVTK(fn);
     elseif strcmpi(ext,'.inp')
-        [mesh.elements, mesh.points, surf_elem nnpe] = read_abaqus_inp_3D(fn);
+        [mesh.elements, mesh.nodes, surf_elem nnpe] = read_abaqus_inp_3D(fn);
         if isempty(mesh.elements)
             error('solidmesh2nirfast: input mesh is not a solid/volume mesh.');
         end

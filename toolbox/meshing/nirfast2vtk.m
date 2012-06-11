@@ -118,6 +118,12 @@ elems = mesh.elements;
 numelems = length(elems);
 
 outfname = add_extension(outfname,'.vtk');
+
+if ~canwrite(outfname)
+    [junk fn ext1] = fileparts(outfname);
+    outfname = [tempdir fn ext1];
+    disp(['No write access, writing here instead: ' outfname]);
+end
 fid = fopen(outfname,'w');
 
 %define an VTK header for FEM mesh representation
