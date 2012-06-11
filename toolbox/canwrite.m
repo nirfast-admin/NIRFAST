@@ -34,14 +34,17 @@ end
 %     loc = fileparts(loc);
 % end
 
-testDir = 'temp_nirfast_dircheck';
-
+[foo1 testFile ext] = fileparts(tempname);
 loc = fooloc;
 
 if exist(loc, 'dir') == 7
-    flag = mkdir(loc, testDir);
-    if flag == 1
-        rmdir(fullfile(loc, testDir));
+    [fid message] = fopen([loc filesep testFile ext],'wt');
+    if fid ~= -1 && isempty(message)
+        fclose(fid);
+        delete([loc filesep testFile ext]);
+        flag = 1;
+    else
+        flag = 0;
     end
 else
     % loc doesn't exist
