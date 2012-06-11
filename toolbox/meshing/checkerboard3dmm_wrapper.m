@@ -1,4 +1,4 @@
-function checkerboard3dmm_wrapper(fnprefix,saveloc,type,edgesize,gradingflag)
+function checkerboard3dmm_wrapper(fnprefix,savefn,type,edgesize,gradingflag)
 
 % checkerboard3dmm_wrapper(fnprefix,saveloc,type,edgesize)
 %
@@ -17,9 +17,9 @@ end
 if nargin<5 || (nargin>=5 && isempty(gradingflag))
     gradingflag = 0;
 end
-mesh = checkerboard3d_mm(fnprefix,type,edgesize,gradingflag);
+mesh = checkerboard3d_mm(fnprefix,type,edgesize,gradingflag,savefn);
 
 %% optical properties
 mesh = set_mesh_type(mesh,type);
 
-save_mesh(mesh,saveloc);
+save_mesh(mesh,savefn);
