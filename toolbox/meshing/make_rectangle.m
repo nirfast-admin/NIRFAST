@@ -54,6 +54,7 @@ mesh.bndvtx(ind) = 1;
 waitbar(0.1,h,'Creating elements');
 
 mesh.elements = delaunayn(mesh.nodes);
+[mesh.elements mesh.nodes] = remove_unused_nodes(mesh.elements, mesh.nodes);
 
 mesh.nodes(:,3) = zeros(size(mesh.nodes(:,1)));
 
