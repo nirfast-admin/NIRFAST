@@ -111,7 +111,7 @@ if isfield(mesh,'source') == 1
     [nrow,ncol] = size(data);
     for i = 1 : nrow
         for j = 1 : ncol
-            fprintf(fid,'%g ',data(i,j));
+            fprintf(fid,'%.12g ',data(i,j));
         end
         fprintf(fid,'\n',data(i,j));
     end
@@ -135,7 +135,7 @@ if isfield(mesh,'meas') == 1
     [nrow,ncol] = size(data);
     for i = 1 : nrow
         for j = 1 : ncol
-            fprintf(fid,'%g ',data(i,j));
+            fprintf(fid,'%.12g ',data(i,j));
         end
         fprintf(fid,'\n',data(i,j));
     end
