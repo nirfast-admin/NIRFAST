@@ -12,7 +12,7 @@ if ischar(mesh)
   mesh = load_mesh(mesh);
 end
 if ~isfield(mesh,'meas') || ~isfield(mesh.meas,'coord')
-    errordlg('No detectors present','NIRFAST Error');
+    errordlg('No detectors present','Nirfast Error');
     error('No detectors present');
 end
 

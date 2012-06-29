@@ -7,13 +7,15 @@ function mesh = move_source(mesh,mus_eff,w)
 % mesh is the mesh location or variable
 % mus_eff is the mus to use for computing scattering distance
 
+failed = 0;
+
 
 %% load mesh
 if ischar(mesh)
   mesh = load_mesh(mesh);
 end
 if ~isfield(mesh,'source') || ~isfield(mesh.source,'coord')
-    errordlg('No sources present','NIRFAST Error');
+    errordlg('No sources present','Nirfast Error');
     error('No sources present');
 end
 
@@ -29,7 +31,7 @@ xd = max(mesh.nodes(:,1)) - min(mesh.nodes(:,1));
 yd = max(mesh.nodes(:,2)) - min(mesh.nodes(:,2));
 if scatt_dist*10 > min(xd,yd)
     scatt_dist = 1;
-    errordlg('Mesh is too small for the scattering coefficient given, 1mm will be used for scattering distance. You might want to ensure that the scale of your mesh is in mm.','NIRFAST Warning');
+    errordlg('Mesh is too small for the scattering coefficient given, 1mm will be used for scattering distance. You might want to ensure that the scale of your mesh is in mm.','Nirfast Warning');
 end
 
 %% get list of boundary faces
@@ -95,7 +97,7 @@ for i=1:size(mesh.source.coord,1)
             mesh.source.coord(i,1) = pos2(1);
             mesh.source.coord(i,2) = pos2(2);
         else
-            errordlg('The source(s) could not be moved. The mesh structure may be poor.','NIRFAST Warning');
+            failed = 1;
         end
         
     elseif mesh.dimension == 3
@@ -139,12 +141,15 @@ for i=1:size(mesh.source.coord,1)
             mesh.source.coord(i,2) = pos2(2);
             mesh.source.coord(i,3) = pos2(3);
         else
-            errordlg('The mesh structure is poor, smoothing the mesh may help','NIRFAST Error');
-            error('The mesh structure is poor, smoothing the mesh may help');
+            failed = 1;
         end
     
     end
         
+end
+
+if failed == 1
+    errordlg('Source(s) could not be moved. The mesh structure may be poor.','Nirfast Warning');
 end
 
 if remove_last
