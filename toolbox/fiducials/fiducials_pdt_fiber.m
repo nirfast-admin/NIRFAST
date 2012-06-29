@@ -7,7 +7,6 @@ function [sources,detectors] = fiducials_pdt_fiber(fiducials,mesh)
 
 
 dist = 1; % node distance (mm)
-len = 20; % fiber length (mm)
 
 x1 = fiducials(1,1);
 y1 = fiducials(1,2);
@@ -16,6 +15,8 @@ z1 = fiducials(1,3);
 x2 = fiducials(2,1);
 y2 = fiducials(2,2);
 z2 = fiducials(2,3);
+
+len = sqrt((x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2); % fiber length (mm)
 
 xc = (x2+x1)/2;
 yc = (y2+y1)/2;
