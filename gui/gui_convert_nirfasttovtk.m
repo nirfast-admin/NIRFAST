@@ -179,7 +179,7 @@ if isempty(saveto)
     saveto = [fn1 '-2-vtk'];
 end
 
-savemeshto = getfullpath(savemeshto);
+saveto = getfullpath(saveto);
 
 if ~canwrite(saveto)
     [junk fn ext1] = fileparts(saveto);
