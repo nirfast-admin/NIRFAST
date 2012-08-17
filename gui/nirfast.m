@@ -54,7 +54,7 @@ function nirfast_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for nirfast
 handles.output = hObject;
-set(hObject,'Name','Nirfast 7.1');
+set(hObject,'Name','Nirfast 7.2');
 
 if ismac
     set(handles.script,'FontSize',12)
