@@ -3,3 +3,5 @@ meshing_test.m
 plot_lnri.m
 7013\ dicom
 masks
+toolbox/visualization/bin/osx/nirviz.app/Contents/Resources/site.pyc
+*.m~

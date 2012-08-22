@@ -7,11 +7,24 @@ function test_nirfast(loc)
 % loc is the location of the nirfast folder
 %   ie: test_nirfast('C:\Nirfast');
 
-
+% If no input argument, detect the root of nirfast
+if nargin == 0
+    foo = which('nirfast');
+    if isempty(foo)
+        error(' Can''t find nirfast main script.')
+    end
+    foo = regexp(fileparts(foo),filesep,'split');
+    nirfastroot = fullfile(foo{1:end-1});
+    if ~ispc
+        nirfastroot = [filesep nirfastroot];
+    end
+    loc = nirfastroot;
+end
+    
 %% standard 2d simulation
 disp('TEST_NIRFAST: standard 2d simulation');
 
-circle2000_86_stnd = load_mesh([loc '\meshes\standard\circle2000_86_stnd']);
+circle2000_86_stnd = load_mesh(fullfile(loc,'meshes','standard','circle2000_86_stnd'));
 blob.x=-14;
 blob.y=14;
 blob.r=12;
@@ -56,7 +69,7 @@ close all
 %% fluorescence 3d simulation cw
 disp('TEST_NIRFAST: fluorescence 3d simulation cw');
 
-cylinder_fl = load_mesh([loc '\meshes\fl\cylinder_fl']);
+cylinder_fl = load_mesh(fullfile(loc,'meshes','fl','cylinder_fl'));
 blob.x=0;
 blob.y=-10;
 blob.r=12;
@@ -79,9 +92,9 @@ close all
 %% spectral 2d real
 disp('TEST_NIRFAST: spectral 2d real');
 
-[data_cal,mesh_cal]=calibrate_spectral([loc '\data\circle_spec\homog.paa'],...
-    [loc '\data\circle_spec\anom.paa'],[loc '\data\circle_spec\circle_spec'],...
-    [loc '\data\circle_spec\circle_spec'],100,5);
+[data_cal,mesh_cal]=calibrate_spectral(fullfile(loc,'data','circle_spec','homog.paa'),...
+    fullfile(loc,'data','circle_spec','anom.paa'),fullfile(loc,'data','circle_spec','circle_spec'),...
+    fullfile(loc,'data','circle_spec','circle_spec'),100,5);
 lambda.type='Automatic';
 lambda.value=10;
 [mesh,pj] = reconstruct(mesh_cal,[30 30],100,data_cal,40,lambda,'',0);
@@ -117,9 +130,9 @@ close all
 %% create mesh from surface
 disp('TEST_NIRFAST: create mesh from surface');
 
-checkerboard3dmm_wrapper([loc '\meshes\meshing examples\p1915_1.inp'],'','stnd');
+checkerboard3dmm_wrapper(fullfile(loc,'meshes','meshing examples','p1915_1.inp'),fullfile('stnd'),'stnd');
 
-surf2nirfast_bem([loc '\meshes\meshing examples\3026_1.inp'],'','stnd_bem');
+surf2nirfast_bem(fullfile(loc,'meshes','meshing examples','3026_1.inp'),fullfile('stnd_bem'));
 
 disp('TEST_NIRFAST: complete');
 clearvars -except loc
@@ -128,7 +141,7 @@ close all
 %% vtk export
 disp('TEST_NIRFAST: vtk export');
 
-circle2000_86_stnd = load_mesh([loc '\meshes\standard\circle2000_86_stnd']);
+circle2000_86_stnd = load_mesh(fullfile(loc,'meshes','standard','circle2000_86_stnd'));
 nirfast2vtk(circle2000_86_stnd,'test.vtk');
 
 disp('TEST_NIRFAST: complete');
