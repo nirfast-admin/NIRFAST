@@ -22,7 +22,7 @@ function varargout = nirfast(varargin)
 
 % Edit the above text to modify the response to help_main nirfast
 
-% Last Modified by GUIDE v2.5 17-May-2012 16:04:39
+% Last Modified by GUIDE v2.5 24-Aug-2012 13:32:39
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -873,6 +873,7 @@ function create_mesh_3D_mask_Callback(hObject, eventdata, handles)
 % hObject    handle to create_mesh_3D_mask (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+image2mesh_gui();
 
 
 % --------------------------------------------------------------------
@@ -914,61 +915,6 @@ function create_mesh_3D_surface_spn_Callback(hObject, eventdata, handles)
 gui_convert_inptonirfast('type','stnd_spn','structure','surface');
 
 
-% --------------------------------------------------------------------
-function create_mesh_3D_mask_stnd_Callback(hObject, eventdata, handles)
-% hObject    handle to create_mesh_3D_mask_stnd (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-gui_create_mesh_3D_mask('type','stnd');
-
-
-% --------------------------------------------------------------------
-function create_mesh_3D_mask_fluor_Callback(hObject, eventdata, handles)
-% hObject    handle to create_mesh_3D_mask_fluor (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-gui_create_mesh_3D_mask('type','fluor');
-
-
-% --------------------------------------------------------------------
-function create_mesh_3D_mask_spec_Callback(hObject, eventdata, handles)
-% hObject    handle to create_mesh_3D_mask_spec (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-gui_create_mesh_3D_mask('type','spec');
-
-
-% --------------------------------------------------------------------
-function create_mesh_3D_mask_spn_Callback(hObject, eventdata, handles)
-% hObject    handle to create_mesh_3D_mask_spn (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-gui_create_mesh_3D_mask('type','stnd_spn');
-
-
-% --------------------------------------------------------------------
-function create_mesh_3D_mask_stnd_bem_Callback(hObject, eventdata, handles)
-% hObject    handle to create_mesh_3D_mask_stnd_bem (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-gui_create_mesh_3D_mask('type','stnd_bem');
-
-
-% --------------------------------------------------------------------
-function create_mesh_3D_mask_fluor_bem_Callback(hObject, eventdata, handles)
-% hObject    handle to create_mesh_3D_mask_fluor_bem (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-gui_create_mesh_3D_mask('type','fluor_bem');
-
-
-% --------------------------------------------------------------------
-function create_mesh_3D_mask_spec_bem_Callback(hObject, eventdata, handles)
-% hObject    handle to create_mesh_3D_mask_spec_bem (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-gui_create_mesh_3D_mask('type','spec_bem');
-
 
 % --------------------------------------------------------------------
 function set_mesh_type_Callback(hObject, eventdata, handles)
@@ -984,13 +930,6 @@ function reconstruct_menu_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
-% --------------------------------------------------------------------
-function optimize_mesh_Callback(hObject, eventdata, handles)
-% hObject    handle to optimize_mesh (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-gui_optimize_mesh();
 
 
 % --------------------------------------------------------------------
@@ -1037,13 +976,3 @@ function script_DeleteFcn(hObject, eventdata, handles)
 % hObject    handle to script (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-
-% --------------------------------------------------------------------
-function cite_Callback(hObject, eventdata, handles)
-% hObject    handle to cite (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-msgbox({'Please reference these if you use Nirfast for a publication: ','', ...
-    'H. Dehghani, M.E. Eames, P.K. Yalavarthy, S.C. Davis, S. Srinivasan, C.M. Carpenter, B.W. Pogue, and K.D. Paulsen, "Near infrared optical tomography using NIRFAST: Algorithm for numerical model and image reconstruction," Communications in Numerical Methods in Engineering, vol. 25, 2009, pp. 711-732.','', ...
-    'Michael Jermyn et al. "A Seamless User-Enabling Workflow for Modeling Near-Infrared Light Transport in Tissue," OSA Biomed 2012.'},'Cite');
