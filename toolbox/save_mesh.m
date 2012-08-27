@@ -16,6 +16,8 @@ if ischar(mesh)
     fn = temp;
 end
 
+warning('off','MATLAB:DELETE:FileNotFound');
+
 % saving fn.node file
 mysave([fn '.node'],[mesh.bndvtx mesh.nodes]);
 
@@ -55,12 +57,10 @@ if strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')
         fprintf(fid,'%s\n',char(mesh.chromscattlist(i)));
     end
 end
-for i = 1 : nrow
-    for j = 1 : ncol
-        fprintf(fid,'%g ',data(i,j));
-    end
-    fprintf(fid,'\n',data(i,j));
-end
+
+fmtstr = repmat('%g ',1,ncol);
+fmtstr(end) = []; fmtstr = strcat(fmtstr,'\n');
+fprintf(fid,fmtstr,data');
 fclose(fid);
 clear data
 
@@ -78,18 +78,17 @@ if strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')
     for i = 1 : length(mesh.chromscattlist)
         fprintf(fid,'%s\n',char(mesh.chromscattlist(i)));
     end
-    for i = 1 : nrow
-        for j = 1 : ncol
-            fprintf(fid,'%g ',data(i,j));
-        end
-        fprintf(fid,'\n',data(i,j));
-    end
+    fmtstr = repmat('%g ',1,ncol);
+    fmtstr(end) = []; fmtstr = strcat(fmtstr,'\n');
+    fprintf(fid,fmtstr,data');
     fclose(fid);
 end
 
 % saving fn.region file
 if isfield(mesh,'region') == 1
     mysave([fn '.region'],mesh.region);
+else
+    delete([fn '.region']);
 end
 
 % saving fn.source file
@@ -109,14 +108,13 @@ if isfield(mesh,'source') == 1
     end
     data = [mesh.source.num, mesh.source.coord, mesh.source.fwhm];
     [nrow,ncol] = size(data);
-    for i = 1 : nrow
-        for j = 1 : ncol
-            fprintf(fid,'%.12g ',data(i,j));
-        end
-        fprintf(fid,'\n',data(i,j));
-    end
+    fmtstr = repmat('%.12g ',1,ncol);
+    fmtstr(end) = []; fmtstr = strcat(fmtstr,'\n');
+    fprintf(fid,fmtstr,data');
     fclose(fid);
     clear data
+else
+    delete([fn '.source']);
 end
 
 % saving fn.meas file
@@ -133,14 +131,13 @@ if isfield(mesh,'meas') == 1
     end
     data = [mesh.meas.num, mesh.meas.coord];
     [nrow,ncol] = size(data);
-    for i = 1 : nrow
-        for j = 1 : ncol
-            fprintf(fid,'%.12g ',data(i,j));
-        end
-        fprintf(fid,'\n',data(i,j));
-    end
+    fmtstr = repmat('%.12g ',1,ncol);
+    fmtstr(end) = []; fmtstr = strcat(fmtstr,'\n');
+    fprintf(fid,fmtstr,data');
     fclose(fid);
     clear data
+else
+    delete([fn '.meas']);
 end
 
 % saving fn.link file
@@ -149,17 +146,20 @@ if isfield(mesh,'link') == 1
     [nrow,ncol]=size(data);
     fid = fopen([fn '.link'],'w');
     fprintf(fid,'%s\n','source detector active');
-    for i = 1 : nrow
-        for j = 1 : ncol
-            fprintf(fid,'%g ',data(i,j));
-        end
-        fprintf(fid,'\n',data(i,j));
-    end
+    fmtstr = repmat('%g ',1,ncol);
+    fmtstr(end) = []; fmtstr = strcat(fmtstr,'\n');
+    fprintf(fid,fmtstr,data');
     fclose(fid);
     clear data
+else
+    delete([fn '.link']);
 end
 
 % saving fn.ident file
 if isfield(mesh,'ident') == 1
     mysave([fn '.ident'],mesh.ident);
+else
+    delete([fn '.ident']);
 end
+
+warning('on','MATLAB:DELETE:FileNotFound');

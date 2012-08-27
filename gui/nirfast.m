@@ -57,7 +57,8 @@ handles.output = hObject;
 set(hObject,'Name','Nirfast 7.2');
 
 if ismac
-    set(handles.script,'FontSize',12)
+    set(handles.script,'FontSize',13);
+    set(handles.script,'FontName','Consolas');
 end
 
 % Update handles structure
@@ -128,7 +129,6 @@ function script_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
 
 % --- Executes on button press in run.
 function run_Callback(hObject, eventdata, handles)

@@ -88,10 +88,13 @@ if exist('surf','var') && surf == 1
     mesh.elements = FixPatchOrientation(mesh.nodes,mesh.elements,[],1);
 else
     mesh.elements = MyRobustCrust(mesh.nodes);
-    writenodelm_nod_elm([outputdir filesep 'test_node_ele'],mesh.elements,mesh.nodes);
+    writenodelm_nod_elm(fullfile(outputdir,'test_node_ele'),...
+        mesh.elements,mesh.nodes);
     waitbar(0.6,hf,'Creating volume');
-    mesh = checkerboard3d_mm([outputdir filesep 'test_node_ele.ele'],'stnd');
-    delete([outputdir filesep 'test_node_ele.node'],[outputdir filesep 'test_node_ele.ele']);
+    mesh = checkerboard3d_mm(fullfile(outputdir,...
+        'test_node_ele.ele'),'stnd');
+    delete(fullfile(outputdir,'test_node_ele.node'),...
+        fullfile(outputdir,'test_node_ele.ele'));
 end
 
 waitbar(1.0,hf,'Done');

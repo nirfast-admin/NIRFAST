@@ -529,10 +529,70 @@ content{end+1} = strcat('create_mesh(''',...
     'sizevar,''',...
     handles.type,''');');
 if ~batch
-    evalin('base',content{end});
+    mesh = evalin('base',content{end});
 end
 
-content{end+1} = 'clear sizevar';
+%% Optimize?
+if ~(strcmp(handles.type,'stnd_bem') || strcmp(handles.type,'fluor_bem')...
+        || strcmp(handles.type,'spec_bem')) && mesh.dimension == 3
+    if ~isfield(mesh,'optimize_my_mesh')
+        [junk optimize_flag] = optimize_mesh_gui;
+    else
+        if mesh.optimize_my_mesh == 1
+            optimize_flag = 1;
+        else
+            optimize_flag = 0;
+        end
+    end
+    if optimize_flag
+        content{end+1} = 'clear mesh;';
+        if ~batch, evalin('base', content{end}); end
+        content{end+1} = sprintf('foomesh = load_mesh(''%s'');',...
+            savemeshto);
+        if ~batch, evalin('base', content{end}); end
+        content{end+1} = sprintf('foomesh.optimize_my_mesh = 1;');
+        if ~batch, evalin('base', content{end}); end
+        content{end+1} = sprintf('%s\n%s\n%s\n%s\n%s',...
+            'opt_params.qualmeasure = 0;',...
+            'opt_params.facetsmooth = 0;',...
+            'opt_params.usequadrics = 0;',...
+            'opt_params.opt_params = [];');
+        if ~batch, evalin('base', content{end}); end
+        content{end+1} = sprintf('%s = %s%s;',...
+        '[mesh.elements, mesh.nodes, optimize_status]',...
+        'improve_mesh_use_stellar(',...
+        'foomesh.elements, foomesh.nodes, opt_params)');
+        if ~batch, evalin('base', content{end}); end
+        content{end+1} = 'clear foomesh;';
+        if ~batch, evalin('base', content{end}); end
+        content{end+1} = sprintf('%s;',...
+            'ffaces = boundfaces(mesh.nodes, mesh.elements, 0)');
+        if ~batch, evalin('base', content{end}); end
+        content{end+1} = sprintf('%s;',...
+            'mesh.bndvtx = zeros(size(mesh.nodes,1),1)');
+        if ~batch, evalin('base', content{end}); end
+        content{end+1} = sprintf('%s;',...
+            'mesh.bndvtx(unique(ffaces(:))) = 1');
+        if ~batch, evalin('base', content{end}); end
+        content{end+1} = sprintf('%s ''%s'');',...
+            'mesh = set_mesh_type(mesh,',handles.type);
+        if ~batch, evalin('base', content{end}); end
+        content{end+1} = sprintf('%s ''%s'');',...
+            'save_mesh(mesh,',savemeshto);
+        if ~batch, evalin('base', content{end}); end
+        content{end+1} = sprintf('mesh.optimize_my_mesh = 0;');
+        if ~batch, evalin('base', content{end}); end
+    end
+end
+
+% delete temp variables
+tempvar = {'sizevar', 'ffaces', 'opt_params', 'optimize_status'};
+foo= 'clear';
+for i_=1:length(tempvar)
+    foo = horzcat(foo,' ',tempvar{i_});
+end
+content{end+1} = foo;
+
 if ~batch
     evalin('base',content{end});
 end

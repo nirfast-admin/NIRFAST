@@ -17,7 +17,7 @@ end
 
 %% find inp files
 % if isempty(fileparts(filename))
-%     filename = [saveloc filesep filename];
+%     filename = fullfile(saveloc,filename);
 % end
 
 [path fnprefix num_flag myext] = GetFilenameNumbering(filename);
@@ -51,14 +51,14 @@ while true
     if strcmpi(myext,'.inp')
         [celem,cnode] = abaqus2nodele_surface(fn,saveloc);
     elseif strcmpi(myext,'.ele')
-        [celem,cnode] = read_nod_elm(fn);
+        [celem,cnode] = read_nod_elm(fn,1);
     else
         errordlg([myext ' type for input surface is not supported!']);
         error([myext ' type for input surface is not supported!']);
     end
     output = SeparateSubVolumes(celem,cnode);
     for i=1:length(output.all_regions)
-        newfn = sprintf('%s%s%d',[saveloc filesep outfnprefix],newfn_suffix,newmatc);
+        newfn = sprintf('%s%s%d',fullfile(saveloc,outfnprefix),newfn_suffix,newmatc);
         foo_ele = output.retelem(output.all_regions{i},1:3);
         foo_nodes = unique(foo_ele(:));
         foo_coords = cnode(foo_nodes,:);
@@ -83,7 +83,7 @@ if (fcounter-num_flag)~=newmatc-1% We have separated disjoint regions within the
 end
 
 %% Compute surface relations
-mesh = ExtractSurfaceRelations([saveloc filesep outfnprefix newfn_suffix], newmatc-1);
+mesh = ExtractSurfaceRelations(fullfile(saveloc,[outfnprefix newfn_suffix]), newmatc-1);
 
 %% write nirfast mesh
 if nargin >=3
@@ -95,7 +95,7 @@ if nargin >=3
     mesh = set_mesh_type(mesh,type);
     mesh.region_map = region_map;
 
-    save_mesh(mesh,[saveloc filesep outfnprefix]);
+    save_mesh(mesh,fullfile(saveloc,outfnprefix));
 end
 
 

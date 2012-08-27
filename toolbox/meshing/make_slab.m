@@ -70,7 +70,7 @@ if isfield(sizevar,'outputfn') && ~isempty(sizevar.outputfn)
     outputfn = sizevar.outputfn;
 else
     outputdir = pwd;
-    outputfn = [outputdir filesep '_slab_'];
+    outputfn = fullfile(outputdir,'_slab_');
 end
 
 waitbar(0.1,h,'Creating surface');
@@ -84,10 +84,12 @@ else
     mesh.nodes = mesh.nodes(mesh.bndvtx==1,:);
     mesh.elements = MyRobustCrust(mesh.nodes);
     
-    writenodelm_nod_elm([outputdir filesep 'test_node_ele'],mesh.elements,mesh.nodes);
+    writenodelm_nod_elm(fullfile(outputdir,'test_node_ele'),mesh.elements,mesh.nodes);
     waitbar(0.6,h,'Creating volume');
-    mesh = checkerboard3d_mm([outputdir filesep 'test_node_ele.ele'],'stnd',[],[],outputfn);
-    delete([outputdir filesep 'test_node_ele.node'],[outputdir filesep 'test_node_ele.ele']);
+    mesh = checkerboard3d_mm(fullfile(outputdir,'test_node_ele.ele'),...
+        'stnd',[],[],outputfn);
+    delete(fullfile(outputdir,'test_node_ele.node'),...
+        fullfile(outputdir,'test_node_ele.ele'));
 end
 
 waitbar(1.0,h,'Done');

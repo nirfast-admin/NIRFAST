@@ -1,4 +1,4 @@
-function create_mesh(outputfn,shape,sizevar,type)
+function mesh = create_mesh(outputfn,shape,sizevar,type)
 
 % create_mesh(outputfn,shape,sizevar,type,link,source,meas)
 %
