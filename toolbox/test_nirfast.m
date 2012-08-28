@@ -146,5 +146,4 @@ nirfast2vtk(circle2000_86_stnd,'test.vtk');
 
 disp('TEST_NIRFAST: complete');
 clearvars -except loc
-close all
-
+close all;
