@@ -514,9 +514,9 @@ try
     sizevar.r=10;
     sizevar.height=25;
     sizevar.dist=2.4;
-    create_mesh('/Volumes/Home/hamid/Documents/MATLAB/Cylinder-spec-mesh','Cylinder',sizevar,'spec');
+    create_mesh(fullfile(tempdir,'Cylinder-spec-mesh'),'Cylinder',sizevar,'spec');
     clear mesh;
-    foomesh = load_mesh('/Volumes/Home/hamid/Documents/MATLAB/Cylinder-spec-mesh');
+    foomesh = load_mesh(fullfile(tempdir,'Cylinder-spec-mesh'));
     foomesh.optimize_my_mesh = 1;
     opt_params.qualmeasure = 0;
     opt_params.facetsmooth = 0;
@@ -529,10 +529,10 @@ try
     mesh.bndvtx = zeros(size(mesh.nodes,1),1);
     mesh.bndvtx(unique(ffaces(:))) = 1;
     mesh = set_mesh_type(mesh, 'spec');
-    save_mesh(mesh, '/Volumes/Home/hamid/Documents/MATLAB/Cylinder-spec-mesh');
+    save_mesh(mesh,fullfile(tempdir,'Cylinder-spec-mesh'));
     mesh.optimize_my_mesh = 0;
     clear sizevar ffaces opt_params optimize_status
-    mesh_tmp = load_mesh('/Volumes/Home/hamid/Documents/MATLAB/Cylinder-spec-mesh');
+    mesh_tmp = load_mesh(fullfile(tempdir,'Cylinder-spec-mesh'));
     mesh_tmp.link =[ 1 1 1; 1 2 1; 1 3 1; 1 4 1; 2 1 1; 2 2 1; 2 3 1; 2 4 1; 3 1 1; 3 2 1; 3 3 1; 3 4 1; 4 1 1; 4 2 1; 4 3 1; 4 4 1;];
     mesh_tmp.source.coord =[-1.5405 -1.4855 11.5;-0.65198 -6.9872 11.5;1.1935 -9.9273 5.1039;-0.24781 -9.9271 -1.6531];
     mesh_tmp.source.num = (1:size([-1.5405 -1.4855 11.5;-0.65198 -6.9872 11.5;1.1935 -9.9273 5.1039;-0.24781 -9.9271 -1.6531],1))';
@@ -543,11 +543,11 @@ try
     mesh_tmp.meas.num = (1:size([5.8808 -8.0524 -3.4291;9.9691 -0.25421 -3.6332;7.5712 6.5065 -2.2674;9.0267 -3.8854 -10.7778],1))';
     mesh_tmp.meas.fixed =0;
     mesh_tmp = minband_opt(mesh_tmp);
-    save_mesh(mesh_tmp,'/Volumes/Home/hamid/Documents/MATLAB/Cylinder-spec-mesh');
+    save_mesh(mesh_tmp,fullfile(tempdir,'Cylinder-spec-mesh'));
     clear mesh_tmp
-    load_mesh('/Volumes/Home/hamid/Documents/MATLAB/Cylinder-spec-mesh');
-    set_chromophores('/Volumes/Home/hamid/Documents/MATLAB/Cylinder-spec-mesh',{'HbO';'deoxyHb';'Water';},[661 761]);
-    mesh = load_mesh('/Volumes/Home/hamid/Documents/MATLAB/Cylinder-spec-mesh');
+    mesh = load_mesh(fullfile(tempdir,'Cylinder-spec-mesh'));
+    set_chromophores(fullfile(tempdir,'Cylinder-spec-mesh'),{'HbO';'deoxyHb';'Water';},[661 761]);
+    mesh = load_mesh(fullfile(tempdir,'Cylinder-spec-mesh'));
     blob.x=0;
     blob.y=0;
     blob.r=5;
