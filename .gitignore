@@ -5,3 +5,4 @@ plot_lnri.m
 masks
 toolbox/visualization/bin/osx/nirviz.app/Contents/Resources/site.pyc
 *.m~
+*.lnk
