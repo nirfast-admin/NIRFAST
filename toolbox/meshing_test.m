@@ -647,3 +647,73 @@ if ~exist('err','var')
     cprintf('green','passed.\n');
 end
 clear err mesh sizevar mesh_tmp mesh_data; close all
+% 13
+
+% param.medfilter=1;
+% [mask info] = GetImageStack('/Volumes/Home/hamid/Desktop/Incoming/fresh-nirfast/meshes/meshing examples/Masks/double.mha',param);
+% 
+% param.facet_angle = (25.0);
+% param.facet_distance = (3.0);
+% param.facet_size = (9);
+% 
+% param.medfilter = 0;
+% param.pad = 0;
+% param.cell_size = (9);
+% param.cell_radius_edge = (3.0);
+% param.special_subdomain_label = (2);
+% param.special_subdomain_size  = (7);
+% 
+% sx=(0.70833);
+% sy=(0.70833);
+% sz=(0.99999);
+% 
+% param.PixelDimensions(1) = sx;
+% param.PixelDimensions(2) = sy;
+% param.PixelDimensions(3) = sz;
+% param.PixelSpacing(1) = sx;
+% param.PixelSpacing(2) = sy;
+% param.SliceThickness  = sz;
+% 
+% outfn = '/Volumes/Home/hamid/tmp/doubled.ele';
+% param.tmppath = fileparts(outfn);
+% if isempty(param.tmppath), param.tmppath = getuserdir(); end
+% param.delmedit = 0;
+% 
+% [e p] = RunCGALMeshGenerator(mask,param);
+% [genmesh.ele genmesh.node mat] = call_improve_mesh_use_stellar(e, p);
+% genmesh.ele(:,5) = mat;
+% genmesh.nnpe = 4;
+% genmesh.dim = 3;
+% 
+% [f1 f2] = fileparts(outfn);
+% if isempty(f1), savefn_ = f2; else, savefn_ = fullfile(f1,f2); end
+% solidmesh2nirfast(genmesh,'/Volumes/Home/hamid/tmp/doubled_nirfast_mesh','stnd');
+% fprintf('done.\n');
+% 
+% mesh = load_mesh('/Volumes/Home/hamid/tmp/doubled_nirfast_mesh');
+% clear e f1 f2 genmesh info mask mat e p sx sy sz
+% clear save_fn
+% %--------------------%
+% 
+% mesh_tmp = load_mesh('/Volumes/Home/hamid/tmp/doubled_nirfast_mesh');
+% mesh_tmp.link =[ 1 1 1; 1 2 1; 1 3 1; 1 4 1; 2 1 1; 2 2 1; 2 3 1; 2 4 1; 3 1 1; 3 2 1; 3 3 1; 3 4 1; 4 1 1; 4 2 1; 4 3 1; 4 4 1;];
+% mesh_tmp.source.coord =[85.6151 180.9756 81.4955;109.0453 164.4367 81.5164;92.3095 140.8096 84.4465;120.046 162.3996 73.7943];
+% mesh_tmp.source.num = (1:size([85.6151 180.9756 81.4955;109.0453 164.4367 81.5164;92.3095 140.8096 84.4465;120.046 162.3996 73.7943],1))';
+% mesh_tmp.source.fwhm = zeros(size([85.6151 180.9756 81.4955;109.0453 164.4367 81.5164;92.3095 140.8096 84.4465;120.046 162.3996 73.7943],1),1);
+% mesh_tmp.source.fixed =0;
+% mesh_tmp.source.distributed =0;
+% mesh_tmp.meas.coord =[99.5652 134.6113 69.4722;113.2431 166.3834 69.644;110.3335 184.9054 69.5186;89.4537 175.6003 69.4787];
+% mesh_tmp.meas.num = (1:size([99.5652 134.6113 69.4722;113.2431 166.3834 69.644;110.3335 184.9054 69.5186;89.4537 175.6003 69.4787],1))';
+% mesh_tmp.meas.fixed =0;
+% mesh_tmp = minband_opt(mesh_tmp);
+% save_mesh(mesh_tmp,'/Volumes/Home/hamid/tmp/doubled_nirfast_mesh');
+% clear mesh_tmp
+% mesh = load_mesh('/Volumes/Home/hamid/tmp/doubled_nirfast_mesh');
+% mesh_data = femdata(mesh,100);
+% save_data(mesh_data,'/Volumes/Home/hamid/tmp/doubled.paa');
+% mesh =mesh;
+% plotimage(mesh,log(mesh_data.phi(:,1))); pause(0.2);
+% plotimage(mesh,log(mesh_data.phi(:,2))); pause(0.2);
+% plotimage(mesh,log(mesh_data.phi(:,3))); pause(0.2);
+% plotimage(mesh,log(mesh_data.phi(:,4))); pause(0.2);
+% plot_data(mesh_data);
