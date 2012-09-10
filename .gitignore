@@ -7,3 +7,7 @@ toolbox/visualization/bin/osx/nirviz.app/Contents/Resources/site.pyc
 *.m~
 *.lnk
 *.pyc
+nirviz-mac
+nirviz-linux
+nirviz-win32
+nirviz-win64

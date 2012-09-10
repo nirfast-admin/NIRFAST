@@ -26,15 +26,8 @@ function result = meshing_test(testnumber)
 global totntests nirfastroot bmpmaskfolder
 
 % find nirfast top folder
-foo = which('nirfast');
-if isempty(foo)
-    error(' Can''t find nirfast main script.')
-end
-foo = regexp(fileparts(foo),filesep,'split');
-nirfastroot = fullfile(foo{1:end-1});
-if ~ispc
-    nirfastroot = [filesep nirfastroot];
-end
+nirfastroot = get_nirfast_root();
+
 % Create a temp folder for the test
 if ~exist([tempdir 'nirfast'],'dir')
     mkdir([tempdir 'nirfast']);
@@ -53,7 +46,15 @@ end
 totntests = 13;
 f = 1:totntests;
 if nargin ~= 0
-    if testnumber <= totntests
+    if length(testnumber) > 1
+        try
+            f = intersect(1:totntests, testnumber);
+        catch err
+            cprintf('Red',...
+                ' Don''t understand your test numbers:\n%s\n', err.message);
+        end
+    elseif length(testnumber)==1 && ...
+            testnumber <= totntests && testnumber >= 1
         f = testnumber:testnumber;
     end
 end
