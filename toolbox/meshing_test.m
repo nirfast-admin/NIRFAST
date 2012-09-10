@@ -725,7 +725,7 @@ clear err mesh sizevar mesh_tmp mesh_data; close all
 function result = test_no_13()
 %% 
 testname = 'DICOM to 3D mesh + Optimization';
-test_no = 12;
+test_no = 13;
 global totntests nirfastroot bmpmaskfolder;
 try
     fprintf(' .. (%d/%d) Performing test: %s : ',...
