@@ -2,13 +2,18 @@
 
 import sys
 import vtk
-from vtk.qt4.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
+try:
+    from PySide import QtCore, QtGui
+except ImportError:
+    try:
+        from PyQt4 import QtCore, QtGui
+    except ImportError as err:
+        raise ImportError("Cannot load either PySide or PyQt")
 
 # VOLUME VIEW
-class VTK_Widget1(QWidget):
+class VTK_Widget1(QtGui.QWidget):
 
     def __init__(self, parent=None):
 
@@ -53,17 +58,17 @@ class VTK_Widget1(QWidget):
         self.style = vtk.vtkInteractorStyleTrackballCamera()
         self.vtkw.SetInteractorStyle(self.style)
 
-        self.alphaSlider = QSlider(Qt.Horizontal)
+        self.alphaSlider = QtGui.QSlider(QtCore.Qt.Horizontal)
         self.alphaSlider.setValue(50)
         self.alphaSlider.setRange(0, 100)
-        self.alphaSlider.setTickPosition(QSlider.NoTicks)
-        self.connect(self.alphaSlider, SIGNAL("valueChanged(int)"), self.AdjustAlpha)
+        self.alphaSlider.setTickPosition(QtGui.QSlider.NoTicks)
+        self.connect(self.alphaSlider, QtCore.SIGNAL("valueChanged(int)"), self.AdjustAlpha)
 
-        self.alphaLabel = QLabel("alpha: ")
+        self.alphaLabel = QtGui.QLabel("alpha: ")
 
         # layout manager
-        self.layout = QVBoxLayout()
-        self.layout2 = QHBoxLayout()
+        self.layout = QtGui.QVBoxLayout()
+        self.layout2 = QtGui.QHBoxLayout()
         self.layout2.addWidget(self.alphaLabel)
         self.layout2.addWidget(self.alphaSlider)
         self.layout.addWidget(self.vtkw)
@@ -118,7 +123,7 @@ class VTK_Widget1(QWidget):
 
 
 # ORTHOGONAL VIEW
-class VTK_Widget2(QWidget):
+class VTK_Widget2(QtGui.QWidget):
     def __init__(self, axis, pos, parent=None):
 
         super(VTK_Widget2, self).__init__(parent)
@@ -204,23 +209,23 @@ class VTK_Widget2(QWidget):
 
         self.cutterActor.VisibilityOff()
 
-        self.cutPlaneSlider = QSlider(Qt.Vertical)
+        self.cutPlaneSlider = QtGui.QSlider(QtCore.Qt.Vertical)
         self.cutPlaneSlider.setValue(50)
         self.cutPlaneSlider.setRange(0, 100)
-        self.cutPlaneSlider.setTickPosition(QSlider.NoTicks)
-        self.connect(self.cutPlaneSlider, SIGNAL("valueChanged(int)"), self.AdjustCutPlane)
+        self.cutPlaneSlider.setTickPosition(QtGui.QSlider.NoTicks)
+        self.connect(self.cutPlaneSlider, QtCore.SIGNAL("valueChanged(int)"), self.AdjustCutPlane)
 
-        self.thSlider = QSlider(Qt.Horizontal)
+        self.thSlider = QtGui.QSlider(QtCore.Qt.Horizontal)
         self.thSlider.setValue(0)
         self.thSlider.setRange(0, 100)
-        self.thSlider.setTickPosition(QSlider.NoTicks)
-        self.connect(self.thSlider, SIGNAL("valueChanged(int)"), self.AdjustTh)
+        self.thSlider.setTickPosition(QtGui.QSlider.NoTicks)
+        self.connect(self.thSlider, QtCore.SIGNAL("valueChanged(int)"), self.AdjustTh)
 
-        self.thLabel = QLabel("threshold: ")
+        self.thLabel = QtGui.QLabel("threshold: ")
 
-        self.layout = QVBoxLayout()
-        self.layout2 = QHBoxLayout()
-        self.layout3 = QHBoxLayout()
+        self.layout = QtGui.QVBoxLayout()
+        self.layout2 = QtGui.QHBoxLayout()
+        self.layout3 = QtGui.QHBoxLayout()
         self.layout2.addWidget(self.vtkw)
         self.layout2.addSpacing(13)
         self.layout2.addWidget(self.cutPlaneSlider)
@@ -336,26 +341,26 @@ class VTK_Widget2(QWidget):
 
 
 # MAIN WINDOW
-class MainVizWindow(QMainWindow):
+class MainVizWindow(QtGui.QMainWindow):
     def __init__(self, parent=None):
 
-        QMainWindow.__init__(self, parent)
+        QtGui.QMainWindow.__init__(self, parent)
 
         self.setWindowTitle(self.tr("Nirfast"))
 
          # splitters are used for generating the four views
-        self.VSplitter = QSplitter(Qt.Vertical)
-        self.HSplitterTop = QSplitter(Qt.Horizontal)
-        self.HSplitterBottom = QSplitter(Qt.Horizontal)
+        self.VSplitter = QtGui.QSplitter(QtCore.Qt.Vertical)
+        self.HSplitterTop = QtGui.QSplitter(QtCore.Qt.Horizontal)
+        self.HSplitterBottom = QtGui.QSplitter(QtCore.Qt.Horizontal)
 
         # pos labels
-        self.label_pos1 = QLabel("        Position: (")
-        self.label_posx = QLabel("0")
-        self.label_pos2 = QLabel(",")
-        self.label_posy = QLabel("0")
-        self.label_pos3 = QLabel(",")
-        self.label_posz = QLabel("0")
-        self.label_pos4 = QLabel(")")
+        self.label_pos1 = QtGui.QLabel("        Position: (")
+        self.label_posx = QtGui.QLabel("0")
+        self.label_pos2 = QtGui.QLabel(",")
+        self.label_posy = QtGui.QLabel("0")
+        self.label_pos3 = QtGui.QLabel(",")
+        self.label_posz = QtGui.QLabel("0")
+        self.label_pos4 = QtGui.QLabel(")")
 
         # one instance of each of the VTK_Widget classes
         self.vtk_widget_2 = VTK_Widget2(0, self.label_posx)
@@ -383,23 +388,23 @@ class MainVizWindow(QMainWindow):
         self.reader2.SetFileName('')
 
         # we declare a file open action
-        self.fileOpenAction = QAction("&Open Solution", self)
+        self.fileOpenAction = QtGui.QAction("&Open Solution", self)
         self.fileOpenAction.setShortcut("Ctrl+O")
         self.fileOpenAction.setToolTip("Opens a VTK volume file")
         self.fileOpenAction.setStatusTip("Opens a VTK volume file")
 
-        self.fileOpenAction2 = QAction("&Open DICOMs", self)
+        self.fileOpenAction2 = QtGui.QAction("&Open DICOMs", self)
         self.fileOpenAction2.setShortcut("Ctrl+D")
         self.fileOpenAction2.setToolTip("Opens a set of DICOMs")
         self.fileOpenAction2.setStatusTip("Opens a set of DICOMs")
 
-        self.fileLoadDefaults = QAction("&Load Defaults", self)
+        self.fileLoadDefaults = QtGui.QAction("&Load Defaults", self)
         self.fileLoadDefaults.setToolTip("Loads default values for range/threshold/etc")
         self.fileLoadDefaults.setStatusTip("Loads default values for range/threshold/etc")
 
-        self.connect(self.fileOpenAction, SIGNAL("triggered()"), self.fileOpen)
-        self.connect(self.fileOpenAction2, SIGNAL("triggered()"), self.fileOpen2)
-        self.connect(self.fileLoadDefaults, SIGNAL("triggered()"), self.fileLoad)
+        self.connect(self.fileOpenAction, QtCore.SIGNAL("triggered()"), self.fileOpen)
+        self.connect(self.fileOpenAction2, QtCore.SIGNAL("triggered()"), self.fileOpen2)
+        self.connect(self.fileLoadDefaults, QtCore.SIGNAL("triggered()"), self.fileLoad)
 
         self.fileMenu = self.menuBar().addMenu("&File")
         self.fileMenu.addAction(self.fileOpenAction)
@@ -407,10 +412,10 @@ class MainVizWindow(QMainWindow):
         self.fileMenu.addAction(self.fileLoadDefaults)
 
         # property label
-        self.label_property = QLabel("Property: ")
+        self.label_property = QtGui.QLabel("Property: ")
 
         # property dropdown
-        self.dropdown_property = QComboBox()
+        self.dropdown_property = QtGui.QComboBox()
 
         # toolbar
         self.viewToolbar = self.addToolBar("View")
@@ -425,7 +430,7 @@ class MainVizWindow(QMainWindow):
         self.viewToolbar.addWidget(self.label_posz)
         self.viewToolbar.addWidget(self.label_pos4)
 
-        self.connect(self.dropdown_property, SIGNAL("currentIndexChanged(int)"), self.SetProperty)
+        self.connect(self.dropdown_property, QtCore.SIGNAL("currentIndexChanged(int)"), self.SetProperty)
 
     def setSource(self, source):
 
@@ -539,13 +544,15 @@ class MainVizWindow(QMainWindow):
             self.vtk_widget_4.SetSource2(self.reader2)
 
 # START APPLICATION
-app = QApplication(sys.argv)
+app = QtGui.QApplication(sys.argv)
 
 ow = vtk.vtkOutputWindow()
 ow.SetGlobalWarningDisplay(0)
 
 mainwindow = MainVizWindow()
 mainwindow.show()
+if sys.platform == "darwin":
+    mainwindow.raise_()
 if sys.argv.__len__() > 1:
     source = sys.argv[1]
     mainwindow.setSource(source)

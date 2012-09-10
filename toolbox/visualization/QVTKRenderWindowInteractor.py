@@ -31,19 +31,38 @@ Changes by Stou Sandalski, July. 2009
 """
 import sys
 import logging
-from PySide import QtCore, QtGui, QtOpenGL
+# from PySide import QtCore, QtGui, QtOpenGL
+
+try:
+    from PySide import QtCore, QtGui
+    pyqt_flag = False
+except ImportError:
+    try:
+        from PyQt4 import QtCore, QtGui
+        pyqt_flag = True
+        # import PyQt4 as PySide
+    except ImportError as err:
+        raise ImportError("Cannot load either PySide or PyQt")
+
 import vtk
 
 if sys.platform == "win32":
     from ctypes import pythonapi, c_void_p, py_object
     pythonapi.PyCObject_AsVoidPtr.restype = c_void_p
-    pythonapi.PyCObject_AsVoidPtr.argtypes = [ py_object ]
+    pythonapi.PyCObject_AsVoidPtr.argtypes = [py_object]
 
 # Fix bug in Mac OSX
 if sys.platform == "darwin":
-    from PySide.QtGui import QWidget as MSWidget
+    if pyqt_flag:
+        from PyQt4.QtGui import QWidget as MSWidget
+    else:
+        from PySide.QtGui import QWidget as MSWidget
 else:
-    from PySide.QtOpenGL import QGLWidget as MSWidget
+    if pyqt_flag:
+        from PyQt4.QtOpenGL import QGLWidget as MSWidget
+    else:
+        from PySide.QtOpenGL import QGLWidget as MSWidget
+
 
 class QVTKRenderWindowInteractor(MSWidget):
 
@@ -160,7 +179,7 @@ class QVTKRenderWindowInteractor(MSWidget):
         #QtOpenGL.QGLWidget.__init__(self, parent)
         super(QVTKRenderWindowInteractor, self).__init__(parent)
 
-        if rw: # user-supplied render window
+        if rw:  # user-supplied render window
             self._RenderWindow = rw
         else:
             self._RenderWindow = vtk.vtkRenderWindow()
@@ -170,7 +189,7 @@ class QVTKRenderWindowInteractor(MSWidget):
             self._RenderWindow.SetWindowInfo(str(int(self.winId())))
         self._should_set_parent_info = (sys.platform == 'win32')
 
-        if stereo: # stereo mode
+        if stereo:  # stereo mode
             self._RenderWindow.StereoCapableWindowOn()
             self._RenderWindow.SetStereoTypeToCrystalEyes()
 
@@ -180,7 +199,7 @@ class QVTKRenderWindowInteractor(MSWidget):
         # do all the necessary qt setup
         self.setAttribute(QtCore.Qt.WA_OpaquePaintEvent)
         self.setAttribute(QtCore.Qt.WA_PaintOnScreen)
-        self.setMouseTracking(True) # get all mouse events
+        self.setMouseTracking(True)  # get all mouse events
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
         self.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding))
 
@@ -216,8 +235,6 @@ class QVTKRenderWindowInteractor(MSWidget):
         self._Iren.SetRenderWindow(None)
         self._Iren = None
         self._RenderWindow = None
-
-
 
     def DestroyTimer(self, obj, evt):
         logging.debug("In QVTKRenderWindowInteractor::DestroyTimer()")
