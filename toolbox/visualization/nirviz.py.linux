@@ -2,9 +2,9 @@
 
 import sys
 import vtk
-# from vtk.qt4.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+from PySide.QtCore import *
+from PySide.QtGui import *
 
 
 # VOLUME VIEW
@@ -45,9 +45,7 @@ class VTK_Widget1(QWidget):
         self.volume.VisibilityOff()
 
         # create the VTK widget for rendering
-        # self.vtkw = QVTKRenderWindowInteractor(self)
-        self.qvtkwidget = vtk.QVTKWidget()
-        self.vtkw = self.qvtkwidget.GetRenderWindow().GetInteractor()
+        self.vtkw = QVTKRenderWindowInteractor(self)
         self.ren = vtk.vtkRenderer()
         self.vtkw.GetRenderWindow().AddRenderer(self.ren)
         self.ren.AddVolume(self.volume)
@@ -68,7 +66,7 @@ class VTK_Widget1(QWidget):
         self.layout2 = QHBoxLayout()
         self.layout2.addWidget(self.alphaLabel)
         self.layout2.addWidget(self.alphaSlider)
-        self.layout.addWidget(self.qvtkwidget)
+        self.layout.addWidget(self.vtkw)
         self.layout.addSpacing(34)
         self.layout.addLayout(self.layout2)
 
@@ -194,9 +192,7 @@ class VTK_Widget2(QWidget):
         self.cutterActor.SetMapper(self.cutterMapper)
 
         # ---WIDGETS & RENDERER---
-        # self.vtkw = QVTKRenderWindowInteractor(self)
-        self.qvtkwidget = vtk.QVTKWidget()
-        self.vtkw = self.qvtkwidget.GetRenderWindow().GetInteractor()
+        self.vtkw = QVTKRenderWindowInteractor(self)
         self.style = vtk.vtkInteractorStyleTrackballCamera()
         self.vtkw.SetInteractorStyle(self.style)
 
@@ -225,7 +221,7 @@ class VTK_Widget2(QWidget):
         self.layout = QVBoxLayout()
         self.layout2 = QHBoxLayout()
         self.layout3 = QHBoxLayout()
-        self.layout2.addWidget(self.qvtkwidget)
+        self.layout2.addWidget(self.vtkw)
         self.layout2.addSpacing(13)
         self.layout2.addWidget(self.cutPlaneSlider)
         self.layout3.addWidget(self.thLabel)
@@ -550,8 +546,6 @@ ow.SetGlobalWarningDisplay(0)
 
 mainwindow = MainVizWindow()
 mainwindow.show()
-mainwindow.raise_()
-
 if sys.argv.__len__() > 1:
     source = sys.argv[1]
     mainwindow.setSource(source)
