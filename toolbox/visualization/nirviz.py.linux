@@ -47,18 +47,13 @@ class VTK_Widget1(QWidget):
         # create the VTK widget for rendering
         # self.vtkw = QVTKRenderWindowInteractor(self)
         self.qvtkwidget = vtk.QVTKWidget()
-        self.ren = vtk.vtkRenderer()
-        self.mywindow = vtk.vtkRenderWindow()
-        self.mywindow.AddRenderer(self.ren)
-        self.qvtkwidget.GetRenderWindow().AddRenderer(self.ren)
         self.vtkw = self.qvtkwidget.GetRenderWindow().GetInteractor()
-
+        self.ren = vtk.vtkRenderer()
+        self.vtkw.GetRenderWindow().AddRenderer(self.ren)
         self.ren.AddVolume(self.volume)
 
-        self.iren = vtk.vtkRenderWindowInteractor()
-        self.iren.SetRenderWindow(self.mywindow)
         self.style = vtk.vtkInteractorStyleTrackballCamera()
-        self.iren.SetInteractorStyle(self.style)
+        self.vtkw.SetInteractorStyle(self.style)
 
         self.alphaSlider = QSlider(Qt.Horizontal)
         self.alphaSlider.setValue(50)
@@ -201,17 +196,12 @@ class VTK_Widget2(QWidget):
         # ---WIDGETS & RENDERER---
         # self.vtkw = QVTKRenderWindowInteractor(self)
         self.qvtkwidget = vtk.QVTKWidget()
-        self.ren = vtk.vtkRenderer()
-        self.mywindow = vtk.vtkRenderWindow()
-        self.mywindow.AddRenderer(self.ren)
-        self.qvtkwidget.GetRenderWindow().AddRenderer(self.ren)
         self.vtkw = self.qvtkwidget.GetRenderWindow().GetInteractor()
-
-        self.iren = vtk.vtkRenderWindowInteractor()
-        self.iren.SetRenderWindow(self.mywindow)
         self.style = vtk.vtkInteractorStyleTrackballCamera()
-        self.iren.SetInteractorStyle(self.style)
+        self.vtkw.SetInteractorStyle(self.style)
 
+        self.ren = vtk.vtkRenderer()
+        self.vtkw.GetRenderWindow().AddRenderer(self.ren)
         self.ren.AddActor(self.cutterActor2)
         self.ren.AddActor(self.cutterActor)
         self.ren.AddActor2D(self.colorbar)
@@ -560,7 +550,7 @@ ow.SetGlobalWarningDisplay(0)
 
 mainwindow = MainVizWindow()
 mainwindow.show()
-# mainwindow.raise_()
+mainwindow.raise_()
 
 if sys.argv.__len__() > 1:
     source = sys.argv[1]
