@@ -102,6 +102,8 @@ if mesh.dimension == 3 ...
     
     fpath = [tempdir 'temp_nirfast.vtk'];
     disp(['Saving vtk file to: ' fpath]);
+    cpwd = pwd;
+    cd(fullfile(get_nirfast_root(),'toolbox/visualization/bin'))
     
     nirfast2vtk(mesh,fpath);
     if strcmpi(os,'PCWIN64')
@@ -109,14 +111,37 @@ if mesh.dimension == 3 ...
     elseif strcmpi(os,'PCWIN')
         systemcall = ['"' which('nirviz.exe') '" ' fpath];
     elseif strcmpi(os,'maci64')
-        systemcall = ['DYLD_FRAMEWORK_PATH=; "' GetSystemCommand('nirviz')...
-             '" ' fpath ' &'];
+        nirvizcmd = which('nirviz.');
+        if isempty(nirvizcmd) || ...
+                isempty(regexp(nirvizcmd,'nirviz-mac', 'once'))
+            cprintf([1 0.5 0.1],...
+                ' Extracting nirviz executable!\n Please wait...\n');
+            nirvizcmd = GetSystemCommand('nirviz');
+            if ~isempty(nirvizcmd)
+                addpath(fullfile(fileparts(nirvizcmd),'nirviz-mac'))
+                savepath
+            end
+        end
+        systemcall = ['DYLD_FRAMEWORK_PATH=; "' nirvizcmd '" ' fpath ...
+            ' > /dev/null 2>&1 &'];
     elseif strcmpi(os,'glnxa64')
-        systemcall = ['"' GetSystemCommand('nirviz') '" ' fpath ' &'];
+        nirvizcmd = which('nirviz.');
+        if isempty(nirvizcmd) || ...
+                isempty(regexp(nirvizcmd,'nirviz-linux', 'once'))
+            cprintf([1 0.5 0.1],...
+                ' Extracting nirviz executable!\n Please wait...\n');
+            nirvizcmd = GetSystemCommand('nirviz');
+            if ~isempty(nirvizcmd)
+                addpath(fullfile(fileparts(nirvizcmd),'nirviz-linux'))
+                savepath
+            end
+        end
+        systemcall = ['"' nirvizcmd '" ' fpath ' > /dev/null 2>&1 &'];
     else
         error(['OS is not supported for 3D visualization: ' computer]);
     end
     system(systemcall);
+    cd(cpwd);
 else
 
     figure;
