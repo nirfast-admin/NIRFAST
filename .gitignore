@@ -6,3 +6,4 @@ masks
 toolbox/visualization/bin/osx/nirviz.app/Contents/Resources/site.pyc
 *.m~
 *.lnk
+*.pyc
