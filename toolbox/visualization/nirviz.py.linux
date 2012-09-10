@@ -46,11 +46,11 @@ class VTK_Widget1(QWidget):
 
         # create the VTK widget for rendering
         # self.vtkw = QVTKRenderWindowInteractor(self)
-        self.vtkw = vtk.QVTKWidget()
+        self.qvtkwidget = vtk.QVTKWidget()
         self.ren = vtk.vtkRenderer()
         self.mywindow = vtk.vtkRenderWindow()
         self.mywindow.AddRenderer(self.ren)
-        self.vtkw.SetRenderWindow(self.mywindow)
+        self.qvtkwidget.GetRenderWindow().AddRenderer(self.ren)
 
         self.ren.AddVolume(self.volume)
 
@@ -72,7 +72,7 @@ class VTK_Widget1(QWidget):
         self.layout2 = QHBoxLayout()
         self.layout2.addWidget(self.alphaLabel)
         self.layout2.addWidget(self.alphaSlider)
-        self.layout.addWidget(self.vtkw)
+        self.layout.addWidget(self.qvtkwidget)
         self.layout.addSpacing(34)
         self.layout.addLayout(self.layout2)
 
@@ -103,7 +103,7 @@ class VTK_Widget1(QWidget):
         self.colorTransferFunction.AddRGBPoint(hundred_pc, 1.0, 0.0, 0.0)
 
         self.ren.ResetCamera()
-        self.vtkw.GetRenderWindow().Render()
+        self.qvtkwidget.GetRenderWindow().Render()
         self.source_is_connected = True
 
     def AdjustAlpha(self):
@@ -120,7 +120,7 @@ class VTK_Widget1(QWidget):
             self.opacityTransferFunction.AddPoint(zero_pc, slider_pos * 0.0016)
             self.opacityTransferFunction.AddPoint(fifty_pc, slider_pos * 0.0016)
             self.opacityTransferFunction.AddPoint(fifty_pc + 1e-6, 0.2)  # anything > 65% is transparent
-            self.vtkw.GetRenderWindow().Render()
+            self.qvtkwidget.GetRenderWindow().Render()
 
 
 # ORTHOGONAL VIEW
@@ -199,11 +199,11 @@ class VTK_Widget2(QWidget):
 
         # ---WIDGETS & RENDERER---
         # self.vtkw = QVTKRenderWindowInteractor(self)
-        self.vtkw = vtk.QVTKWidget()
+        self.qvtkwidget = vtk.QVTKWidget()
         self.ren = vtk.vtkRenderer()
         self.mywindow = vtk.vtkRenderWindow()
         self.mywindow.AddRenderer(self.ren)
-        self.vtkw.SetRenderWindow(self.mywindow)
+        self.qvtkwidget.GetRenderWindow().AddRenderer(self.ren)
 
         self.iren = vtk.vtkRenderWindowInteractor()
         self.iren.SetRenderWindow(self.mywindow)
@@ -233,7 +233,7 @@ class VTK_Widget2(QWidget):
         self.layout = QVBoxLayout()
         self.layout2 = QHBoxLayout()
         self.layout3 = QHBoxLayout()
-        self.layout2.addWidget(self.vtkw)
+        self.layout2.addWidget(self.qvtkwidget)
         self.layout2.addSpacing(13)
         self.layout2.addWidget(self.cutPlaneSlider)
         self.layout3.addWidget(self.thLabel)
@@ -291,7 +291,7 @@ class VTK_Widget2(QWidget):
             clip_far = cam_pos[2] - bounds[4]
         self.ren.GetActiveCamera().SetClippingRange(clip_near, clip_far)
 
-        self.vtkw.GetRenderWindow().Render()
+        self.qvtkwidget.GetRenderWindow().Render()
         self.source_is_connected = True
 
         self.AdjustCutPlane()
@@ -304,7 +304,7 @@ class VTK_Widget2(QWidget):
         self.cutterActor2.VisibilityOn()
         self.cutterMapper2.SetScalarRange(self.source2.GetScalarRange())
 
-        self.vtkw.GetRenderWindow().Render()
+        self.qvtkwidget.GetRenderWindow().Render()
 
     def AdjustTh(self):
 
@@ -322,7 +322,7 @@ class VTK_Widget2(QWidget):
                 a = 0.0
             self.lookupTable.SetTableValue(i, (1.0, 1.0, (i - 128.0) / 128.0, a))
 
-        self.vtkw.GetRenderWindow().Render()
+        self.qvtkwidget.GetRenderWindow().Render()
 
     def AdjustCutPlane(self):
 
@@ -342,7 +342,7 @@ class VTK_Widget2(QWidget):
                 cut_pos = bounds[4] + (bounds[5] - bounds[4]) * (slider_pos / 100.0)
                 self.cutPlane.SetOrigin(center[0], center[1], cut_pos)
 
-            self.vtkw.GetRenderWindow().Render()
+            self.qvtkwidget.GetRenderWindow().Render()
 
             self.pos.setText(str(round(cut_pos, 3)))
 
