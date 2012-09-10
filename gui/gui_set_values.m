@@ -629,8 +629,27 @@ end
 
 meshloc = get_pathloc(get(handles.mesh,'String'));
 
+if  evalin('base',['ischar(' meshloc ')'])
+    foo = evalin('base',['load_mesh(' meshloc ')']);
+else
+    foo = evalin('base',meshloc);
+end
+nregions = unique(foo.region(:));
+
+foo = get(handles.region,'String');
+if isempty(foo) || isnan(str2double(foo)) || ...
+        int16(str2double(foo)) ~= str2double(foo) || ...
+        int16(str2double(foo)) < min(nregions) || ...
+        int16(str2double(foo)) > max(nregions)
+    errordlg(' You need to specify a valid region number!',...
+        'Invalid Region Number')
+    error(' You need to specify a region number!')
+else
+    rid_ = num2str(int16(str2double(foo)));
+end
+
 content{end+1} = strcat(varname,' = set_mesh(',meshloc,',',...
-    get(handles.region,'String'),',val);');
+    rid_,',val);');
 if ~batch
     evalin('base',content{end});
 end

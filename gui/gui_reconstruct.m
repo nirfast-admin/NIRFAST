@@ -474,12 +474,33 @@ content = get(mainGUIdata.script,'String');
 batch = get(mainGUIdata.batch_mode,'Value');
 
 recbasis = get(handles.pixel_basis,'String');
-if isempty(recbasis)
-    recbasis = get_pathloc(get(handles.mesh_basis,'String'));
-end
-
 meshloc = get_pathloc(get(handles.mesh,'String'));
 dataloc = get_pathloc(get(handles.data,'String'));
+
+if isempty(recbasis)
+    if isempty(get(handles.mesh_basis,'String'))
+        error('\nYou need to specify a form of reconstruction basis.');
+    end
+    recbasis = get_pathloc(get(handles.mesh_basis,'String'));
+else
+    if  evalin('base',['ischar(' meshloc ')'])
+        foo = evalin('base',['load_mesh(' meshloc ')']);
+    else
+        foo = evalin('base',meshloc);
+    end
+    if foo.dimension ~= length(evalin('base',recbasis))
+        msg = sprintf('\n%s\nMesh dimension: %d\nRecon basis length: %d',...
+            'Recon basis needs to match dimensionality of the mesh!', ...
+            foo.dimension, length(evalin('base',recbasis)));
+        errordlg(msg, 'Bad Reconstruction Basis');
+        error(msg);
+    end
+    if ~isempty(get(handles.mesh_basis,'String'))
+        warndlg({'Both type of mesh basis are specified!',...
+            'nirfast will use ''pixel basis''!'},'Pixel Bais dilemma!');
+    end
+    clear foo;
+end
 
 %solver
 solvers = get(handles.solver,'String');
