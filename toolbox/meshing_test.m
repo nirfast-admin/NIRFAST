@@ -1,4 +1,4 @@
-function result = meshing_test()
+function result = meshing_test(testnumber)
 % function result = meshing_test()
 % Performs mesh creation, forward solution, reconstruction and mesh
 % optimization on variety of mesh types.
@@ -22,6 +22,8 @@ function result = meshing_test()
 % hamidreza.ghadyani@dartmouth.edu
 % Updated on Aug 2012
 % 
+
+global totntests nirfastroot bmpmaskfolder
 
 % find nirfast top folder
 foo = which('nirfast');
@@ -48,15 +50,30 @@ if ~exist(fullfile(nirfastroot,...
 end
 
 % total number of tests
-totntests = 12;
+totntests = 13;
+f = 1:totntests;
+if nargin ~= 0
+    if testnumber <= totntests
+        f = testnumber:testnumber;
+    end
+end
 
+for i=f
+    mf = sprintf('result{%d} = test_no_%d();',i,i);
+    eval(mf);
+end
 %%
 fprintf('\nRunning meshing tests:\n');
 fprintf(' (using tools from <a href="http://nirfast-meshing.googlecode.com">Meshing Tools</a>.)\n\n');
-%% Stnd circle; 
+
+
+function result = test_no_1()
+%% Stnd circle;
 testname = 'Stnd circle';
 test_no = 1;
+global totntests nirfastroot bmpmaskfolder
 try
+
     fprintf(' .. (%d/%d) Performing test: %s : ',test_no,totntests,testname);
     xx = {'sizevar.xc=0;', ...
     'sizevar.yc=0;', ...
@@ -98,10 +115,15 @@ if ~exist('err','var')
     cprintf('green','passed.\n');
 end
 clear err mesh sizevar mesh_tmp mesh_data; close all
+
+
+function result = test_no_2()
 %% fluor slab; 
 testname = 'fluor slab';
 test_no = 2;
+global totntests nirfastroot bmpmaskfolder
 try
+
     fprintf(' .. (%d/%d) Performing test: %s : ',test_no,totntests,testname);
     xx = {'sizevar.xc=0;', ...
         'sizevar.yc=0;', ...
@@ -145,10 +167,15 @@ if ~exist('err','var')
     cprintf('green','passed.\n');
 end
 clear err mesh sizevar mesh_tmp mesh_data; close all
+
+
+function result = test_no_3()
 %% spn cylinder; 
 testname = 'spn cylinder';
 test_no = 3;
+global totntests nirfastroot bmpmaskfolder
 try
+
     fprintf(' .. (%d/%d) Performing test: %s : ',test_no,totntests,testname);
     xx = {'sizevar.xc=0;', ...
         'sizevar.yc=0;', ...
@@ -191,10 +218,15 @@ if ~exist('err','var')
     cprintf('green','passed.\n');
 end
 clear err mesh sizevar mesh_tmp mesh_data; close all
+
+
+function result = test_no_4()
 %% 2D mask2mesh spec; 
 testname = '2D mask2mesh spec';
 test_no = 4;
+global totntests nirfastroot bmpmaskfolder
 try
+
     fprintf(' .. (%d/%d) Performing test: %s : ',test_no,totntests,testname);
     xx = {
         'mask2mesh_2D(fullfile(bmpmaskfolder,''3026_42.bmp''),0.5,1,1.5,fullfile(tempdir,''nirfast'',''spec-2D''),''spec'');', ...
@@ -240,10 +272,15 @@ if ~exist('err','var')
     cprintf('green','passed.\n');
 end
 clear err mesh sizevar mesh_tmp mesh_data; close all
+
+
+function result = test_no_5()
 %% 3D mask2mesh stnd; 
 testname = '3D mask2mesh stnd';
 test_no = 5;
+global totntests nirfastroot bmpmaskfolder
 try
+
     fprintf(' .. (%d/%d) Performing test: %s : ',test_no,totntests,testname);
     xx = {'MMC(fullfile(bmpmaskfolder,''3026_1.bmp''),1,1,6,fullfile(tempdir,''nirfast'',''temp_node_ele''));', ...
         'checkerboard3dmm_wrapper(fullfile(tempdir,''nirfast'',''temp_node_ele.ele''),fullfile(tempdir,''nirfast'',''stnd-mesh''),''stnd'',6);', ...
@@ -286,10 +323,15 @@ if ~exist('err','var')
     cprintf('green','passed.\n');
 end
 clear err mesh sizevar mesh_tmp mesh_data; close all
+
+
+function result = test_no_6()
 %% 3D mask2mesh stnd bem; 
 testname = '3D mask2mesh stnd bem';
 test_no = 6;
+global totntests nirfastroot bmpmaskfolder
 try
+
     fprintf(' .. (%d/%d) Performing test: %s : ',test_no,totntests,testname);
     xx = {'MMC(fullfile(bmpmaskfolder,''3026_1.bmp''),1,1,5,fullfile(tempdir,''nirfast'',''temp_node_ele''));', ...
         'surf2nirfast_bem(fullfile(tempdir,''nirfast'',''temp_node_ele.ele''),fullfile(tempdir,''nirfast'',''stnd_bem-mesh''),''stnd_bem'');', ...
@@ -329,10 +371,15 @@ if ~exist('err','var')
     cprintf('green','passed.\n');
 end
 clear err mesh sizevar mesh_tmp mesh_data; close all
+
+
+function result = test_no_7()
 %% 3D mask2mesh spect bem; 
 testname = '3D mask2mesh spect bem';
 test_no = 7;
+global totntests nirfastroot bmpmaskfolder
 try
+
     fprintf(' .. (%d/%d) Performing test: %s : ',test_no,totntests,testname);
     xx = {'MMC(fullfile(bmpmaskfolder,''3026_2.bmp''),1,1,5,fullfile(tempdir,''nirfast'',''temp_node_ele''));', ...
         'surf2nirfast_bem(fullfile(tempdir,''nirfast'',''temp_node_ele.ele''),fullfile(tempdir,''nirfast'',''spec_bem-mesh''),''spec_bem'');', ...
@@ -371,10 +418,15 @@ if ~exist('err','var')
     cprintf('green','passed.\n');
 end
 clear err mesh sizevar mesh_tmp mesh_data; close all
+
+
+function result = test_no_8()
 %% 3D surface to stnd; 
 testname = '3D surface to stnd';
 test_no = 8;
+global totntests nirfastroot bmpmaskfolder
 try
+
     fprintf(' .. (%d/%d) Performing test: %s : ',test_no,totntests,testname);
     xx = {'checkerboard3dmm_wrapper(fullfile(nirfastroot,''meshes/meshing examples/3026_1.inp''),fullfile(tempdir,''nirfast'',''nirfast-stnd''),''stnd'',[],1);', ...
         'mesh_tmp = load_mesh(fullfile(tempdir,''nirfast'',''nirfast-stnd''));', ...
@@ -418,10 +470,15 @@ if ~exist('err','var')
     cprintf('green','passed.\n');
 end
 clear err mesh sizevar mesh_tmp mesh_data; close all
+
+
+function result = test_no_9()
 %% 3D surface spect; 
 testname = '3D surface spect';
 test_no = 9;
+global totntests nirfastroot bmpmaskfolder
 try
+
     fprintf(' .. (%d/%d) Performing test: %s : ',test_no,totntests,testname);
     xx = {'checkerboard3dmm_wrapper(fullfile(nirfastroot,''meshes/meshing examples/p1915_1.inp''),fullfile(tempdir,''nirfast'',''nirfast-spec''),''spec'',[],0);', ...
         'mesh_tmp = load_mesh(fullfile(tempdir,''nirfast'',''nirfast-spec''));', ...
@@ -459,10 +516,15 @@ if ~exist('err','var')
     cprintf('green','passed.\n');
 end
 clear err mesh sizevar mesh_tmp mesh_data; close all
+
+
+function result = test_no_10()
 %% 3D surface BEM spect; 
 testname = '3D surface BEM spect';
 test_no = 10;
+global totntests nirfastroot bmpmaskfolder
 try
+
     fprintf(' .. (%d/%d) Performing test: %s : ',test_no,totntests,testname);
     xx = {'surf2nirfast_bem(fullfile(nirfastroot,''meshes/meshing examples/3d_surface_1.inp''),fullfile(tempdir,''nirfast'',''nirfast-spec_bem''),''spec_bem'');', ...
         'mesh_tmp = load_mesh(fullfile(tempdir,''nirfast'',''nirfast-spec_bem''));', ...
@@ -500,10 +562,15 @@ if ~exist('err','var')
     cprintf('green','passed.\n');
 end
 clear err mesh sizevar mesh_tmp mesh_data; close all
+
+
+function result = test_no_11()
 %% Simple Slab with Mesh Optimizer; 
 testname = 'Simple Slab with Mesh Optimizer';
 test_no = 11;
+global totntests nirfastroot bmpmaskfolder
 try
+
     fprintf(' .. (%d/%d) Performing test: %s : ',test_no,totntests,testname);
     xx = {'sizevar.xc=0;', ...
         'sizevar.yc=0;', ...
@@ -564,10 +631,15 @@ if ~exist('err','var')
     cprintf('green','passed.\n');
 end
 clear err mesh sizevar mesh_tmp mesh_data; close all
+
+
+function result = test_no_12()
 %% Simple Cylinder Spectral with anomoly; 
 testname = 'Simple Cylinder Spectral with anomoly';
 test_no = 12;
+global totntests nirfastroot bmpmaskfolder
 try
+
     fprintf(' .. (%d/%d) Performing test: %s : ',test_no,totntests,testname);
     xx = {'sizevar.xc=0;', ...
         'sizevar.yc=0;', ...
@@ -647,73 +719,115 @@ if ~exist('err','var')
     cprintf('green','passed.\n');
 end
 clear err mesh sizevar mesh_tmp mesh_data; close all
-% 13
 
-% param.medfilter=1;
-% [mask info] = GetImageStack('/Volumes/Home/hamid/Desktop/Incoming/fresh-nirfast/meshes/meshing examples/Masks/double.mha',param);
-% 
-% param.facet_angle = (25.0);
-% param.facet_distance = (3.0);
-% param.facet_size = (9);
-% 
-% param.medfilter = 0;
-% param.pad = 0;
-% param.cell_size = (9);
-% param.cell_radius_edge = (3.0);
-% param.special_subdomain_label = (2);
-% param.special_subdomain_size  = (7);
-% 
-% sx=(0.70833);
-% sy=(0.70833);
-% sz=(0.99999);
-% 
-% param.PixelDimensions(1) = sx;
-% param.PixelDimensions(2) = sy;
-% param.PixelDimensions(3) = sz;
-% param.PixelSpacing(1) = sx;
-% param.PixelSpacing(2) = sy;
-% param.SliceThickness  = sz;
-% 
-% outfn = '/Volumes/Home/hamid/tmp/doubled.ele';
-% param.tmppath = fileparts(outfn);
-% if isempty(param.tmppath), param.tmppath = getuserdir(); end
-% param.delmedit = 0;
-% 
-% [e p] = RunCGALMeshGenerator(mask,param);
-% [genmesh.ele genmesh.node mat] = call_improve_mesh_use_stellar(e, p);
-% genmesh.ele(:,5) = mat;
-% genmesh.nnpe = 4;
-% genmesh.dim = 3;
-% 
-% [f1 f2] = fileparts(outfn);
-% if isempty(f1), savefn_ = f2; else, savefn_ = fullfile(f1,f2); end
-% solidmesh2nirfast(genmesh,'/Volumes/Home/hamid/tmp/doubled_nirfast_mesh','stnd');
-% fprintf('done.\n');
-% 
-% mesh = load_mesh('/Volumes/Home/hamid/tmp/doubled_nirfast_mesh');
-% clear e f1 f2 genmesh info mask mat e p sx sy sz
-% clear save_fn
-% %--------------------%
-% 
-% mesh_tmp = load_mesh('/Volumes/Home/hamid/tmp/doubled_nirfast_mesh');
-% mesh_tmp.link =[ 1 1 1; 1 2 1; 1 3 1; 1 4 1; 2 1 1; 2 2 1; 2 3 1; 2 4 1; 3 1 1; 3 2 1; 3 3 1; 3 4 1; 4 1 1; 4 2 1; 4 3 1; 4 4 1;];
-% mesh_tmp.source.coord =[85.6151 180.9756 81.4955;109.0453 164.4367 81.5164;92.3095 140.8096 84.4465;120.046 162.3996 73.7943];
-% mesh_tmp.source.num = (1:size([85.6151 180.9756 81.4955;109.0453 164.4367 81.5164;92.3095 140.8096 84.4465;120.046 162.3996 73.7943],1))';
-% mesh_tmp.source.fwhm = zeros(size([85.6151 180.9756 81.4955;109.0453 164.4367 81.5164;92.3095 140.8096 84.4465;120.046 162.3996 73.7943],1),1);
-% mesh_tmp.source.fixed =0;
-% mesh_tmp.source.distributed =0;
-% mesh_tmp.meas.coord =[99.5652 134.6113 69.4722;113.2431 166.3834 69.644;110.3335 184.9054 69.5186;89.4537 175.6003 69.4787];
-% mesh_tmp.meas.num = (1:size([99.5652 134.6113 69.4722;113.2431 166.3834 69.644;110.3335 184.9054 69.5186;89.4537 175.6003 69.4787],1))';
-% mesh_tmp.meas.fixed =0;
-% mesh_tmp = minband_opt(mesh_tmp);
-% save_mesh(mesh_tmp,'/Volumes/Home/hamid/tmp/doubled_nirfast_mesh');
-% clear mesh_tmp
-% mesh = load_mesh('/Volumes/Home/hamid/tmp/doubled_nirfast_mesh');
-% mesh_data = femdata(mesh,100);
-% save_data(mesh_data,'/Volumes/Home/hamid/tmp/doubled.paa');
-% mesh =mesh;
-% plotimage(mesh,log(mesh_data.phi(:,1))); pause(0.2);
-% plotimage(mesh,log(mesh_data.phi(:,2))); pause(0.2);
-% plotimage(mesh,log(mesh_data.phi(:,3))); pause(0.2);
-% plotimage(mesh,log(mesh_data.phi(:,4))); pause(0.2);
-% plot_data(mesh_data);
+
+function result = test_no_13()
+%% 
+testname = 'DICOM to 3D mesh + Optimization';
+test_no = 12;
+global totntests nirfastroot bmpmaskfolder;
+try
+    fprintf(' .. (%d/%d) Performing test: %s : ',...
+        test_no,totntests,testname);
+    xx = {'param.medfilter=1;',...
+        '[mask info] = GetImageStack(fullfile(nirfastroot,''meshes/meshing examples/Masks/double.mha''),param);',...
+        'param.facet_angle = (25.0);',...
+        'param.facet_distance = (3.0);',...
+        'param.facet_size = (10);',...
+        'param.medfilter = 0;',...
+        'param.pad = 0;',...
+        'param.cell_size = (10);',...
+        'param.cell_radius_edge = (3.0);',...
+        'param.special_subdomain_label = (0);',...
+        'param.special_subdomain_size  = (0);',...
+        'sx=(0.70833);',...
+        'sy=(0.70833);',...
+        'sz=(0.99999);',...
+        'param.PixelDimensions(1) = sx;',...
+        'param.PixelDimensions(2) = sy;',...
+        'param.PixelDimensions(3) = sz;',...
+        'param.PixelSpacing(1) = sx;',...
+        'param.PixelSpacing(2) = sy;',...
+        'param.SliceThickness  = sz;',...
+        'outfn = fullfile(tempdir,''nirfast/double.ele'');',...
+        'param.tmppath = fileparts(outfn);',...
+        'if isempty(param.tmppath), param.tmppath = getuserdir(); end',...
+        'param.delmedit = 0;',...
+        '[e p] = RunCGALMeshGenerator(mask,param);',...
+        'q1 = simpqual(p, e, ''Min_Sin_Dihedral'');',...
+        '[genmesh.ele genmesh.node mat] = call_improve_mesh_use_stellar(e, p);',...
+        'q2 = simpqual(genmesh.node, genmesh.ele, ''Min_Sin_Dihedral'');',...
+        'genmesh.ele(:,5) = mat; genmesh.nnpe = 4; genmesh.dim = 3;',...
+        'figure; subplot(1,2,1);',...
+        'hist(q1,30);',...
+        'xlabel(''Min sin(dihedral angles)'')',...
+        'h = findobj(gca,''Type'',''patch'');',...
+        'set(h,''FaceColor'',''r'',''EdgeColor'',''w'');',...
+        'grid on; title(''Before Optimization'');',...
+        'cr1 = axis;',...
+        'subplot(1,2,2); hist(q2,30); grid on',...
+        'cr2 = axis; axis([0 1 min(cr1(3),cr2(3)) max(cr1(4),cr2(4))]);',...
+        'h = findobj(gca,''Type'',''patch'');',...
+        'set(h,''FaceColor'',[0.33 0.5 0.17]);',...
+        'xlabel(''Min sin(dihedral angles)'')',...
+        'title(''After Optimization.''); subplot(1,2,1);',...
+        'axis([0 1 min(cr1(3),cr2(3)) max(cr1(4),cr2(4))]);',...
+        'solidmesh2nirfast(genmesh,fullfile(tempdir,''nirfast/double_nirfast_mesh''),''stnd'');',...
+        'fprintf(''done.\n'');',...
+        'mesh = load_mesh(fullfile(tempdir,''nirfast/double_nirfast_mesh''));',...
+        'clear e f1 f2 genmesh info mask mat e p sx sy sz cr1 cr2 genmesh outfn param',...
+        'clear save_fn', ...
+        'mesh_tmp = load_mesh(fullfile(tempdir,''nirfast/double_nirfast_mesh''));',...
+        'mesh_tmp.link =[ 1 1 1; 1 2 1; 1 3 1; 1 4 1; 1 5 1; 1 6 1; 2 1 1; 2 2 1; 2 3 1; 2 4 1; 2 5 1; 2 6 1; 3 1 1; 3 2 1; 3 3 1; 3 4 1; 3 5 1; 3 6 1; 4 1 1; 4 2 1; 4 3 1; 4 4 1; 4 5 1; 4 6 1; 5 1 1; 5 2 1; 5 3 1; 5 4 1; 5 5 1; 5 6 1; 6 1 1; 6 2 1; 6 3 1; 6 4 1; 6 5 1; 6 6 1;];',...
+        'mesh_tmp.source.coord =[113.0056 128.2272 77.9487;106.5866 140.1088 84.4904;100.9483 156.6311 84.4923;95.1136 174.0807 81.453;107.0655 178.3407 81.4789;116.3129 184.4249 81.0469];',...
+        'mesh_tmp.source.num = (1:size([113.0056 128.2272 77.9487;106.5866 140.1088 84.4904;100.9483 156.6311 84.4923;95.1136 174.0807 81.453;107.0655 178.3407 81.4789;116.3129 184.4249 81.0469],1))'';',...
+        'mesh_tmp.source.fwhm = zeros(size([113.0056 128.2272 77.9487;106.5866 140.1088 84.4904;100.9483 156.6311 84.4923;95.1136 174.0807 81.453;107.0655 178.3407 81.4789;116.3129 184.4249 81.0469],1),1);',...
+        'mesh_tmp.source.fixed =0;',...
+        'mesh_tmp.source.distributed =0;',...
+        'mesh_tmp.meas.coord =[119.5568 181.4419 81.106;122.2144 172.8924 77.3628;118.5727 159.8472 76.1035;114.4323 148.3309 84.3074;95.3945 137.7212 84.5568;95.6716 124.0202 81.1042];',...
+        'mesh_tmp.meas.num = (1:size([119.5568 181.4419 81.106;122.2144 172.8924 77.3628;118.5727 159.8472 76.1035;114.4323 148.3309 84.3074;95.3945 137.7212 84.5568;95.6716 124.0202 81.1042],1))'';',...
+        'mesh_tmp.meas.fixed =0;',...
+        'mesh_tmp = minband_opt(mesh_tmp);',...
+        'save_mesh(mesh_tmp,fullfile(tempdir,''nirfast/double_nirfast_mesh''));',...
+        'clear mesh_tmp',...
+        'mesh = load_mesh(fullfile(tempdir,''nirfast/double_nirfast_mesh''));',...
+        'mesh_data = femdata(mesh,100);',...
+        'plotimage(mesh,log(mesh_data.phi(:,1))); pause(0.2);',...
+        'plotimage(mesh,log(mesh_data.phi(:,2))); pause(0.2);',...
+        'plotimage(mesh,log(mesh_data.phi(:,3))); pause(0.2);',...
+        'plotimage(mesh,log(mesh_data.phi(:,4))); pause(0.2);',...
+        'plotimage(mesh,log(mesh_data.phi(:,5))); pause(0.2);',...
+        'plotimage(mesh,log(mesh_data.phi(:,6))); pause(0.2);',...
+        'plot_data(mesh_data);',...
+        'val.mua=0.03;', ...
+        'val.mus=1.1;', ...
+        'mesh = set_mesh(mesh,1,val);', ...
+        'data = femdata(mesh,100);', ...
+        'data_noise = add_noise(data,4,2);', ...
+        'val.mua=0.01;', ...
+        'val.mus=1.;', ...
+        'mesh = set_mesh(mesh,1,val);', ...
+        'save_mesh(mesh,fullfile(tempdir,''nirfast/recon_mesh''));', ...
+        'recon_mesh = load_mesh(fullfile(tempdir,''nirfast/recon_mesh''));', ...
+        'lambda.type=''Automatic'';', ...
+        'lambda.value=10;', ...
+        '[mesh,pj] = reconstruct(recon_mesh,[10 10 10],100,data_noise,40,lambda,'''',0);', ...
+        'plotmesh(mesh);'
+        };
+    cellfun(@evalc,xx,'UniformOutput',false);
+catch err
+    result.passed{test_no} = 0;
+    result.message{test_no}.identifier = err.identifier;
+    result.message{test_no}.message = err.message;
+    result.message{test_no}.cause = err.cause;
+    result.message{test_no}.stack = err.stack;
+    cprintf('Error','FAILED ==> %s\n\n', err.message);
+    result.testname{test_no} = testname;
+end
+if ~exist('err','var')
+    result.passed{test_no} = 1;
+    result.message{test_no} = [];
+    result.testname{test_no} = testname;
+    cprintf('green','passed.\n');
+end
+clear err mesh sizevar mesh_tmp mesh_data; close all
