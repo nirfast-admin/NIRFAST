@@ -2,7 +2,7 @@
 
 import sys
 import vtk
-# from vtk.qt4.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+from vtk.qt4.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
@@ -45,19 +45,13 @@ class VTK_Widget1(QWidget):
         self.volume.VisibilityOff()
 
         # create the VTK widget for rendering
-        # self.vtkw = QVTKRenderWindowInteractor(self)
-        self.vtkw = vtk.QVTKWidget()
+        self.vtkw = QVTKRenderWindowInteractor(self)
         self.ren = vtk.vtkRenderer()
-        self.mywindow = vtk.vtkRenderWindow()
-        self.mywindow.AddRenderer(self.ren)
-        self.vtkw.SetRenderWindow(self.mywindow)
-
+        self.vtkw.GetRenderWindow().AddRenderer(self.ren)
         self.ren.AddVolume(self.volume)
 
-        self.iren = vtk.vtkRenderWindowInteractor()
-        self.iren.SetRenderWindow(self.mywindow)
         self.style = vtk.vtkInteractorStyleTrackballCamera()
-        self.iren.SetInteractorStyle(self.style)
+        self.vtkw.SetInteractorStyle(self.style)
 
         self.alphaSlider = QSlider(Qt.Horizontal)
         self.alphaSlider.setValue(50)
@@ -79,8 +73,8 @@ class VTK_Widget1(QWidget):
         self.setLayout(self.layout)
 
         # initialize the interactor
-        self.mywindow.Initialize()
-        self.mywindow.Start()
+        self.vtkw.Initialize()
+        self.vtkw.Start()
 
     def SetSource(self, source):
 
@@ -198,18 +192,12 @@ class VTK_Widget2(QWidget):
         self.cutterActor.SetMapper(self.cutterMapper)
 
         # ---WIDGETS & RENDERER---
-        # self.vtkw = QVTKRenderWindowInteractor(self)
-        self.vtkw = vtk.QVTKWidget()
-        self.ren = vtk.vtkRenderer()
-        self.mywindow = vtk.vtkRenderWindow()
-        self.mywindow.AddRenderer(self.ren)
-        self.vtkw.SetRenderWindow(self.mywindow)
-
-        self.iren = vtk.vtkRenderWindowInteractor()
-        self.iren.SetRenderWindow(self.mywindow)
+        self.vtkw = QVTKRenderWindowInteractor(self)
         self.style = vtk.vtkInteractorStyleTrackballCamera()
-        self.iren.SetInteractorStyle(self.style)
+        self.vtkw.SetInteractorStyle(self.style)
 
+        self.ren = vtk.vtkRenderer()
+        self.vtkw.GetRenderWindow().AddRenderer(self.ren)
         self.ren.AddActor(self.cutterActor2)
         self.ren.AddActor(self.cutterActor)
         self.ren.AddActor2D(self.colorbar)
@@ -244,8 +232,8 @@ class VTK_Widget2(QWidget):
         self.layout.addLayout(self.layout3)
         self.setLayout(self.layout)
 
-        self.mywindow.Initialize()
-        self.mywindow.Start()
+        self.vtkw.Initialize()
+        self.vtkw.Start()
 
     def SetSource(self, source):
 
@@ -558,8 +546,6 @@ ow.SetGlobalWarningDisplay(0)
 
 mainwindow = MainVizWindow()
 mainwindow.show()
-# mainwindow.raise_()
-
 if sys.argv.__len__() > 1:
     source = sys.argv[1]
     mainwindow.setSource(source)
