@@ -109,11 +109,10 @@ if mesh.dimension == 3 ...
     elseif strcmpi(os,'PCWIN')
         systemcall = ['"' which('nirviz.exe') '" ' fpath];
     elseif strcmpi(os,'maci64')
-%         systemcall = ['DYLD_FRAMEWORK_PATH=; open -a nirviz ' fpath];
         systemcall = ['DYLD_FRAMEWORK_PATH=; "' GetSystemCommand('nirviz')...
-             '" ' fpath];
+             '" ' fpath ' &'];
     elseif strcmpi(os,'glnxa64')
-        systemcall = ['"' GetSystemCommand('nirviz') '" ' fpath];
+        systemcall = ['"' GetSystemCommand('nirviz') '" ' fpath ' &'];
     else
         error(['OS is not supported for 3D visualization: ' computer]);
     end
