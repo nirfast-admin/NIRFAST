@@ -12,6 +12,7 @@ except ImportError:
     except ImportError as err:
         raise ImportError("Cannot load either PySide or PyQt")
 
+
 # VOLUME VIEW
 class VTK_Widget1(QtGui.QWidget):
 
@@ -450,7 +451,7 @@ class MainVizWindow(QtGui.QMainWindow):
 
         dir = "."
         format = "*.vtk"
-        self.fname = unicode(QFileDialog.getOpenFileName(self, "Open VTK File", dir, format))
+        self.fname = unicode(QtGui.QFileDialog.getOpenFileName(self, "Open VTK File", dir, format))
 
         if (len(self.fname) > 0):
             self.setSource(self.fname)
@@ -459,7 +460,7 @@ class MainVizWindow(QtGui.QMainWindow):
 
         dir = "."
         format = "*.mha"
-        fname = unicode(QFileDialog.getOpenFileName(self, "Open MetaImage File", dir, format))
+        fname = unicode(QtGui.QFileDialog.getOpenFileName(self, "Open MetaImage File", dir, format))
 
         if (len(fname) > 0):
             self.dicom_loaded = 1
@@ -474,7 +475,7 @@ class MainVizWindow(QtGui.QMainWindow):
 
         dir = "."
         format = "*.txt"
-        self.fname = unicode(QFileDialog.getOpenFileName(self, "Load Defaults", dir, format))
+        self.fname = unicode(QtGui.QFileDialog.getOpenFileName(self, "Load Defaults", dir, format))
         info_found = 0
 
         if (len(self.fname) > 0):
