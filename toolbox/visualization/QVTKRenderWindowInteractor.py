@@ -184,7 +184,7 @@ class QVTKRenderWindowInteractor(MSWidget):
         else:
             self._RenderWindow = vtk.vtkRenderWindow()
         if sys.platform == "win32":
-            self._RenderWindow.SetWindowInfo(str(int(pythonapi.PyCObject_AsVoidPtr(self.winId()))))
+            self._RenderWindow.SetWindowInfo(str(int(self.winId())))
         else:
             self._RenderWindow.SetWindowInfo(str(int(self.winId())))
         self._should_set_parent_info = (sys.platform == 'win32')
@@ -285,7 +285,7 @@ class QVTKRenderWindowInteractor(MSWidget):
             # the parent info is not given to it because it assumes that it
             # needs to make room for the title bar.
             if sys.platform == "win32":
-                self._RenderWindow.SetWindowInfo(str(int(pythonapi.PyCObject_AsVoidPtr(self.winId()))))
+                self._RenderWindow.SetWindowInfo(str(int(self.winId())))
             else:
                 self._RenderWindow.SetWindowInfo(str(int(self.winId())))
             parent = self.parent()

@@ -13,6 +13,7 @@ except ImportError:
         raise ImportError("Cannot load either PySide or PyQt")
 
 
+# import sip
 # VOLUME VIEW
 class VTK_Widget1(QtGui.QWidget):
 
