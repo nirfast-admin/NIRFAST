@@ -291,7 +291,7 @@ class QVTKRenderWindowInteractor(MSWidget):
             parent = self.parent()
             if parent is not None:
                 if sys.platform == "win32":
-                    self._RenderWindow.SetParentInfo(str(int(pythonapi.PyCObject_AsVoidPtr(self.winId()))))
+                    self._RenderWindow.SetParentInfo(str(int(self.winId())))
                 else:
                     self._RenderWindow.SetParentInfo(str(int(self.winId())))
             else:
