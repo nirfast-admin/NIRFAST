@@ -132,7 +132,7 @@ if mesh.dimension == 3 ...
                 ' Extracting nirviz executable!\n Please wait...\n');
             nirvizcmd = GetSystemCommand('nirviz');
             if ~isempty(nirvizcmd)
-                addpath(fullfile(fileparts(nirvizcmd),'nirviz-linux'))
+                addpath(fullfile(fileparts(nirvizcmd),'nirviz-linux64'))
                 savepath
             end
         end
