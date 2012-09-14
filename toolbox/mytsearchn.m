@@ -41,7 +41,7 @@ else
             j=1; true = 0;
 
             % find elements with node 'x' as a vertex
-            while true == 0 & j <= 10
+            while true == 0 && j <= 10
                 % temp_ind is list of node numbers in order of distance from
                 % det point.  Find the elements which contain this node:
                 [r,c] = find(mesh.elements == temp_ind(j));
@@ -99,7 +99,7 @@ else
             j=1; true = 0;
 
             % find elements with node 'x' as a vertex
-            while true == 0 & j <= 10
+            while true == 0 && j <= 10
                 % temp_ind is list of node numbers in order of distance from
                 % det point.  Find the elements which contain this node:
                 [r,c] = find(mesh.elements == temp_ind(j));
@@ -113,7 +113,7 @@ else
 
                 % Try each element to see if coord is inside
                 k = 1; true = 0;
-                while true == 0 & k <= n
+                while true == 0 && k <= n
                     % To make the syntax a little easier to read, define points P, Q, R, S
                     %   - vertices of the tetrahedron which we are testing
                     P = mesh.nodes(foo(k,1),1:3); 

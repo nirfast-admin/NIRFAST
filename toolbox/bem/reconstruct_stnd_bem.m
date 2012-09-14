@@ -61,7 +61,7 @@ anom(:,1) = log(anom(:,1)); %take log of amplitude
 anom(:,2) = anom(:,2)/180.0*pi; % phase is in radians and not degrees
 anom(anom(:,2)<0,2) = anom(anom(:,2)<0,2) + (2*pi);
 anom(anom(:,2)>(2*pi),2) = anom(anom(:,2)>(2*pi),2) - (2*pi);
-anom = reshape(anom',length(anom)*2,1); 
+anom = reshape(anom',size(anom,1)*2,1); 
 
 fwd_mesh.link = data_link;
 clear data
@@ -102,9 +102,9 @@ for it = 1 : iteration
   % Read reference data calculated by initial -current- guess
   clear ref;
   ref = data.paa;
-  ref = reshape(ref',length(ref)*2,1);
+  ref = reshape(ref',size(ref,1)*2,1);
   
-  if length(anom) ~= length(ref)
+  if size(anom,1) ~= size(ref,1)
       errordlg('Data size is incorrect','NIRFAST Error');
       error('Data size is incorrect');
   end

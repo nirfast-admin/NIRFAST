@@ -31,7 +31,11 @@ xd = max(mesh.nodes(:,1)) - min(mesh.nodes(:,1));
 yd = max(mesh.nodes(:,2)) - min(mesh.nodes(:,2));
 if scatt_dist*10 > min(xd,yd)
     scatt_dist = 1;
-    errordlg('Mesh is too small for the scattering coefficient given, 1mm will be used for scattering distance. You might want to ensure that the scale of your mesh is in mm.','Nirfast Warning');
+    ho = findobj('type','figure','name','Nirfast Warning - Small Mesh');
+    if ~isempty(ho)
+        close(ho);
+    end
+    errordlg('Mesh is too small for the scattering coefficient given, 1mm will be used for scattering distance. You might want to ensure that the scale of your mesh is in mm.','Nirfast Warning - Small Mesh');
 end
 
 %% get list of boundary faces

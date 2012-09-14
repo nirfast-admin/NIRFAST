@@ -63,7 +63,7 @@ anom(:,1) = log(anom(:,1)); %take log of amplitude
 anom(:,2) = anom(:,2)/180.0*pi; % phase is in radians and not degrees
 anom(anom(:,2)<0,2) = anom(anom(:,2)<0,2) + (2*pi);
 anom(anom(:,2)>(2*pi),2) = anom(anom(:,2)>(2*pi),2) - (2*pi);
-anom = reshape(anom',length(anom)*2,1); 
+anom = reshape(anom',size(anom,1)*2,1); 
 
 fwd_mesh.link = data_link;
 clear data
@@ -163,7 +163,7 @@ for it = 1 : iteration
   ref(:,2) = ref(:,2)/180.0*pi;
   ref(ref(:,2)<0,2) = ref(ref(:,2)<0,2) + (2*pi);
   ref(ref(:,2)>(2*pi),2) = ref(ref(:,2)>(2*pi),2) - (2*pi);
-  ref = reshape(ref',length(ref)*2,1);
+  ref = reshape(ref',size(ref,1)*2,1);
 
   data_diff = (anom-ref);
 
