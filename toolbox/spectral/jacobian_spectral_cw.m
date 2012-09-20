@@ -80,7 +80,7 @@ else
     mesh2_J(1:nwv) = mesh;
 end
 for i = 1:nwv
-    mesh_J(i).link = [mesh.link(:,1:2) mesh.link(:,i+2)];
+    mesh_J(i).link = [mesh.link(:,1:2) mesh.link(:,find(wv_array(i) == mesh.wv)+2)];
     % calculate absorption and scattering coefficients
     [mesh_J(i).mua,mesh_J(i).mus,mesh_J(i).kappa,E(i).val] = calc_mua_mus(mesh,wv_array(i));
     if exist('mesh2') == 1
