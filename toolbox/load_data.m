@@ -137,6 +137,14 @@ end
 % modified for consistency, so that it still outputs Amplitude and phase
 % in radians, and only the wavelength at which it is. HD 07-09-09
 % fixed as data.paa for even wavelengths were wrong HD 07-09-09
+if (nargin > 1 && isfield(data,'wv') && isfield(data,'link'))
+    link = data.link(:,1:2);
+    for i = 1:length(wv_array)
+        link = [link data.link(:,find(data.wv == wv_array(i))+2)];
+    end
+    data.link = link;
+end
+
 if (nargin > 1 && isfield(data,'wv'))
     anom_big = [];
     for i = 1:length(wv_array)
