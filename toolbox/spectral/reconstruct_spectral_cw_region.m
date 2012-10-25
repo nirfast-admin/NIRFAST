@@ -230,28 +230,19 @@ for it = 1:iteration
     %*********************************************************************    
     % build hessian
     [nrow,ncol]=size(J);
-    Hess = zeros(nrow);
+    Hess = zeros(ncol);
     disp('Calculating Hessian');
-    Hess = (J*J');
-    
-    %*********************************************************************
+    Hess = (J'*J);
+
     % Add regularisation
-    reg_amp = lambda*max(diag(Hess));
-    %   reg_phs = lambda*max(diag(Hess(2:2:end,2:2:end)));
-    reg = ones(nrow,1);
-    reg = reg.*reg_amp;
-    %   reg(2:2:end) = reg(2:2:end).*reg_phs;
-    
-    disp(['Amp Regularization        = ' num2str(reg(1))]);
-    %   disp(['Phs Regularization        = ' num2str(reg(2))]);
-    fprintf(fid_log,'Amp Regularization        = %f\n',reg(1));
-    %   fprintf(fid_log,'Phs Regularization        = %f\n',reg(2));
-    for i = 1 : length(reg)
-        Hess(i,i) = Hess(i,i)+reg(i);
-    end
-    
+    reg = lambda.value*max(diag(Hess));
+    disp(['Regularization        = ' num2str(reg)]);
+    fprintf(fid_log,'Regularization        = %f\n',reg);
+    reg = reg*diag(ones(length(Hess),1));
+    Hess = Hess+reg;
+
     disp('Inverting Hessian');
-    foo = J'*(Hess\data_diff);
+    foo = (Hess\J'*data_diff);
     clear J reg Hess;
     
     %******************************************************
