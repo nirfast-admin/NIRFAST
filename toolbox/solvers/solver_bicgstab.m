@@ -39,14 +39,14 @@ end
 
 if any(msg==1)
     disp('some solutions did not converge')
-    errordlg('Some solutions did not converge; this could be caused by noisy/bad data','NIRFAST Error');
-    error('Some solutions did not converge; this could be caused by noisy/bad data');
+    errordlg('Some solutions did not converge; this could be caused by noisy/bad data or mesh issues','NIRFAST Error');
+    error('Some solutions did not converge; this could be caused by noisy/bad data or mesh issues');
 elseif any(msg==2)
     disp('some solutions are unusable')
-    errordlg('Some solutions are unusable; this could be caused by noisy/bad data','NIRFAST Error');
-    error('Some solutions are unusable; this could be caused by noisy/bad data');
+    errordlg('Some solutions are unusable; this could be caused by noisy/bad data or mesh issues','NIRFAST Error');
+    error('Some solutions are unusable; this could be caused by noisy/bad data or mesh issues');
 elseif any(msg==3)
     disp('some solutions from stagnated iterations')
-    errordlg('Some solutions are unusable; this could be caused by noisy/bad data','NIRFAST Error');
-    error('Some solutions are unusable; this could be caused by noisy/bad data');
+    errordlg('Some solutions are unusable; this could be caused by noisy/bad data or mesh issues','NIRFAST Error');
+    error('Some solutions are unusable; this could be caused by noisy/bad data or mesh issues');
 end
