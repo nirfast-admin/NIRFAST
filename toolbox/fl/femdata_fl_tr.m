@@ -220,6 +220,7 @@ rw = find(~isnan(tpsf_tem(:,1)));
 data.tpsfm = tpsf_tem(rw,:);
 data.paa = data.tpsfx;
 data.wv = 0:dt:t;
+data.link = mesh.link;
 clear tpsf_tem
      
             

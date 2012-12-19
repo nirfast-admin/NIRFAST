@@ -150,6 +150,7 @@ rw = find(~isnan(tpsf_tem(:,1)));
 data.tpsf = tpsf_tem(rw,:);
 data.paa = data.tpsf;
 data.wv = 0:dt:t;
+data.link = mesh.link;
 
 clear tpsf_tem 
               
