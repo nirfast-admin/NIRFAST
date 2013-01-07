@@ -142,7 +142,7 @@ batch = get(mainGUIdata.batch_mode,'Value');
 eleloc = strcat('''',get(handles.ele,'String'),'''');
 
 savemeshto = get(handles.savemeshto,'String');
-if isempty(savemshto)
+if isempty(savemeshto)
     [junk1 fn1] = fileparts(eleloc);
     savemeshto = [fn1 '-2-nirfast-' handles.type];
     set(handles.savemeshto,'String',savemeshto);
