@@ -40,20 +40,28 @@ else
             end
         end
     end
+    
 
-    data = [];
-    for i = 1:size(mesh.link,1) 
-        if mesh.link(i,3) == 1
-            sn = source == mesh.link(i,1);
-            dn = find(mesh.meas.num == mesh.link(i,2));
-            vtx_ind = mesh.elements(mesh.meas.int_func(dn,1),:);
-            if isfield(mesh.source,'distributed') && mesh.source.distributed == 1
-                data = [data; mesh.meas.int_func(dn,2:end)*phi(vtx_ind,1)];
-            else
-                data = [data; mesh.meas.int_func(dn,2:end)*phi(vtx_ind,sn)];
+    data = NaN(size(mesh.link(:,1)));
+    
+    linkx = logical(mesh.link(:,3));
+    
+    if isfield(mesh.source,'distributed') && mesh.source.distributed == 1
+        for i = 1:size(mesh.link,1)
+            if linkx(i)
+                dn = mesh.meas.num == mesh.link(i,2);
+                vtx_ind = mesh.elements(mesh.meas.int_func(dn,1),:);
+                data(i) = mesh.meas.int_func(dn,2:end)*phi(vtx_ind,1);
             end
-        elseif mesh.link(i,3) == 0
-            data = [data; NaN];
+        end
+    else
+        for i = 1:size(mesh.link,1)
+            if mesh.link(i,3) == 1
+                sn = source == mesh.link(i,1);
+                dn = mesh.meas.num == mesh.link(i,2);
+                vtx_ind = mesh.elements(mesh.meas.int_func(dn,1),:);
+                data(i) = mesh.meas.int_func(dn,2:end)*phi(vtx_ind,sn);
+            end
         end
     end
     
