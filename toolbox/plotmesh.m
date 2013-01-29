@@ -114,32 +114,38 @@ if mesh.dimension == 3 ...
         nirvizcmd = which('nirviz.');
         if isempty(nirvizcmd) || ...
                 isempty(regexp(nirvizcmd,'nirviz-mac', 'once'))
-            cprintf([1 0.5 0.1],...
-                ' Extracting nirviz executable!\n Please wait...\n');
             nirvizcmd = GetSystemCommand('nirviz');
             if ~isempty(nirvizcmd)
+                cprintf([1 0.5 0.1],...
+                    ' Extracting nirviz executable!\n Please wait...\n');
                 warning('off','MATLAB:dispatcher:pathWarning')
                 addpath(fullfile(fileparts(nirvizcmd),'nirviz-mac'))
                 warning('on','MATLAB:dispatcher:pathWarning')
                 savepath
+            else
+                error(' Couldn''t find nirviz executable!')
             end
         end
+        eval(['! chmod u+x "' nirvizcmd '"']);
         systemcall = ['DYLD_FRAMEWORK_PATH=; "' nirvizcmd '" ' fpath ...
             ' > /dev/null 2>&1 &'];
     elseif strcmpi(os,'glnxa64')
         nirvizcmd = which('nirviz.');
         if isempty(nirvizcmd) || ...
                 isempty(regexp(nirvizcmd,'nirviz-linux', 'once'))
-            cprintf([1 0.5 0.1],...
-                ' Extracting nirviz executable!\n Please wait...\n');
             nirvizcmd = GetSystemCommand('nirviz');
             if ~isempty(nirvizcmd)
+                cprintf([1 0.5 0.1],...
+                    ' Extracting nirviz executable!\n Please wait...\n');
                 warning('off','MATLAB:dispatcher:pathWarning')
                 addpath(fullfile(fileparts(nirvizcmd),'nirviz-linux64'))
                 warning('off','MATLAB:dispatcher:pathWarning')
                 savepath
+            else
+                error(' Couldn''t find nirviz executable!')
             end
         end
+        eval(['! chmod u+x "' nirvizcmd '"']);
         systemcall = ['"' nirvizcmd '" ' fpath ' > /dev/null 2>&1 &'];
     else
         error(['OS is not supported for 3D visualization: ' computer]);
