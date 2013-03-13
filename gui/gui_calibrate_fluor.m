@@ -22,7 +22,7 @@ function varargout = gui_calibrate_fluor(varargin)
 
 % Edit the above text to modify the response to help gui_calibrate_fluor
 
-% Last Modified by GUIDE v2.5 09-Sep-2010 09:55:28
+% Last Modified by GUIDE v2.5 13-Mar-2013 09:49:46
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -84,6 +84,15 @@ end
 if ~isempty(varnames)
     set(handles.variables_data,'String',varnames);
 end
+
+% find alternative calibration methods
+calibrate_loc = what('calibrate');
+calibrates = dir([calibrate_loc.path '/calibrate_fl*']);
+varnames = {};
+for i=1:size(calibrates)
+    varnames{i} = calibrates(i).name(11:end-2);
+end
+set(handles.method,'String',varnames);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -235,7 +244,11 @@ batch = get(mainGUIdata.batch_mode,'Value');
 dataloc = get_pathloc(get(handles.data,'String'));
 meshloc = get_pathloc(get(handles.mesh,'String'));
 
-content{end+1} = strcat('[data_cal,mesh_cal]=calibrate_fl(', meshloc,...
+% find calibration method
+calibrates = get(handles.method,'String');
+calibrate = calibrates(get(handles.method,'Value'));
+
+content{end+1} = strcat('[data_cal,mesh_cal]=calibrate_',calibrate{1},'(', meshloc,...
         ',', dataloc, ',', get(handles.frequency,'String'),',',...
         get(handles.iterations,'String'),',',get(handles.tolerance,'String'),');');
 
@@ -421,6 +434,29 @@ function tolerance_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 
 % Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in method.
+function method_Callback(hObject, eventdata, handles)
+% hObject    handle to method (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns method contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from method
+
+
+% --- Executes during object creation, after setting all properties.
+function method_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to method (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');

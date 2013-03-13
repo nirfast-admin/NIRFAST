@@ -22,7 +22,7 @@ function varargout = gui_calibrate(varargin)
 
 % Edit the above text to modify the response to help gui_calibrate
 
-% Last Modified by GUIDE v2.5 04-Jan-2011 09:13:37
+% Last Modified by GUIDE v2.5 13-Mar-2013 09:31:59
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -95,6 +95,20 @@ if ~isempty(varnames)
     set(handles.variables_hdata,'String',varnames);
     set(handles.variables_adata,'String',varnames);
 end
+
+% find alternative calibration methods
+calibrate_loc = what('calibrate');
+if strcmp(handles.type,'stnd')
+    mytype = 'stnd';
+elseif strcmp(handles.type,'spec')
+    mytype = 'spectral';
+end
+calibrates = dir([calibrate_loc.path '/calibrate_' mytype '*']);
+varnames = {};
+for i=1:size(calibrates)
+    varnames{i} = calibrates(i).name(11:end-2);
+end
+set(handles.method,'String',varnames);
 
 % Update handles structure
 guidata(hObject, handles);
@@ -313,6 +327,10 @@ adataloc = get_pathloc(get(handles.adata,'String'));
 hmeshloc = get_pathloc(get(handles.hmesh,'String'));
 ameshloc = get_pathloc(get(handles.amesh,'String'));
 
+% find calibration method
+calibrates = get(handles.method,'String');
+calibrate = calibrates(get(handles.method,'Value'));
+
 if get(handles.viewdata,'Value') == 1
     nographs = '0';
 else
@@ -320,13 +338,13 @@ else
 end
 
 if strcmp(handles.type,'stnd')
-    content{end+1} = strcat('[data_cal,mesh_cal]=calibrate_stnd(', hdataloc,...
+    content{end+1} = strcat('[data_cal,mesh_cal]=calibrate_',calibrate{1},'(', hdataloc,...
             ',', adataloc,',', hmeshloc,',', ameshloc,...
             ',', get(handles.frequency,'String'),...
             ',', get(handles.iterations,'String'),...
             ',', nographs,');');
 else
-    content{end+1} = strcat('[data_cal,mesh_cal]=calibrate_spectral(', hdataloc,...
+    content{end+1} = strcat('[data_cal,mesh_cal]=calibrate_',calibrate{1},'(', hdataloc,...
             ',', adataloc,',', hmeshloc,',', ameshloc,...
             ',', get(handles.frequency,'String'),...
             ',', get(handles.iterations,'String'),...
@@ -587,3 +605,26 @@ function viewdata_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of viewdata
+
+
+% --- Executes on selection change in method.
+function method_Callback(hObject, eventdata, handles)
+% hObject    handle to method (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns method contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from method
+
+
+% --- Executes during object creation, after setting all properties.
+function method_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to method (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
