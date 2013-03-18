@@ -7,7 +7,7 @@ function mesh = minband_opt(mesh)
 %
 % mesh is the mesh variable or filename
 
-disp('Optimizing Mesh...');
+disp('Optimizing mesh node order...');
 
 if ~(strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'fluor_bem') || strcmp(mesh.type,'spec_bem'))
 
@@ -39,42 +39,53 @@ if ~(strcmp(mesh.type,'stnd_bem') || strcmp(mesh.type,'fluor_bem') || strcmp(mes
         mesh.region = mesh.region(NodeSort);
     end
     
-    % Standard
     if isfield(mesh,'mua')==1
         mesh.mua = mesh.mua(NodeSort);
-    elseif isfield(mesh,'mus')==1
+    end
+    if isfield(mesh,'mus')==1
         mesh.mus = mesh.mus(NodeSort);
-    elseif isfield(mesh,'kappa')==1
+    end
+    if isfield(mesh,'kappa')==1
         mesh.kappa = mesh.kappa(NodeSort);
-        % Fluroescence
-    elseif isfield(mesh,'muax')==1
+    end
+    if isfield(mesh,'muax')==1
         mesh.muax = mesh.muax(NodeSort);
-    elseif isfield(mesh,'musx')==1
+    end
+    if isfield(mesh,'musx')==1
         mesh.musx = mesh.musx(NodeSort);
-    elseif isfield(mesh,'kappax')==1
+    end
+    if isfield(mesh,'kappax')==1
         mesh.kappax = mesh.kappax(NodeSort);
-    elseif isfield(mesh,'muam')==1
+    end
+    if isfield(mesh,'muam')==1
         mesh.muam = mesh.muam(NodeSort);
-    elseif isfield(mesh,'musm')==1
+    end
+    if isfield(mesh,'musm')==1
         mesh.musm = mesh.musm(NodeSort);
-    elseif isfield(mesh,'kappam')==1
+    end
+    if isfield(mesh,'kappam')==1
         mesh.kappam = mesh.kappam(NodeSort);
-    elseif isfield(mesh,'muaf')==1
+    end
+    if isfield(mesh,'muaf')==1
         mesh.muaf = mesh.muaf(NodeSort);
-    elseif isfield(mesh,'eta')==1
+    end
+    if isfield(mesh,'eta')==1
         mesh.eta = mesh.eta(NodeSort);
-    elseif isfield(mesh,'tau')==1
+    end
+    if isfield(mesh,'tau')==1
         mesh.tau = mesh.tau(NodeSort);
-        % Spectral
-    elseif isfield(mesh,'conc')==1
+    end
+    if isfield(mesh,'conc')==1
         mesh.conc = mesh.conc(NodeSort,:);
-    elseif isfield(mesh,'sa')==1
+    end
+    if isfield(mesh,'sa')==1
         mesh.sa = mesh.sa(NodeSort);
-    elseif isfield(mesh,'sa')==1
+    end
+    if isfield(mesh,'sa')==1
         mesh.sp = mesh.sp(NodeSort);
-        % SPN
-    elseif isfield(mesh,'g') == 1
-        mesh.g == mesh.g(NodeSort);
+    end
+    if isfield(mesh,'g') == 1
+        mesh.g = mesh.g(NodeSort);
     end
     
     elm_new = zeros(size(mesh.elements,1),size(mesh.elements,2));
