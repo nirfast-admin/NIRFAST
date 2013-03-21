@@ -242,6 +242,13 @@ for it = 1 : iteration
     % value update:
     recon_mesh.gamma = recon_mesh.gamma+u;
     recon_mesh.etamuaf = recon_mesh.gamma.*(1+(omega.*recon_mesh.tau).^2);
+    
+    % negative constraint
+    neg = find(recon_mesh.etamuaf <= 0);
+    if isempty(neg) ~= 1
+        recon_mesh.etamuaf(neg) = 10^-20;
+    end
+    
     % assuming we know eta
     recon_mesh.muaf = recon_mesh.etamuaf./recon_mesh.eta;
     clear u Hess Hess_norm tmp data_diff G

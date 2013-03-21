@@ -194,6 +194,10 @@ for it = 1 : iteration
     % value update:
     fwd_mesh.gamma = fwd_mesh.gamma+u;
     fwd_mesh.etamuaf = fwd_mesh.gamma.*(1+(omega.*fwd_mesh.tau).^2);
+    
+    % negative constraint
+    fwd_mesh.etamuaf(find(fwd_mesh.etamuaf <= 0)) = 10e-20;
+    
     % assuming we know eta
     fwd_mesh.muaf = fwd_mesh.etamuaf./fwd_mesh.eta;
     clear u Hess Hess_norm tmp data_diff G
