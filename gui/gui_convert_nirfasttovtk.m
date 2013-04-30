@@ -22,7 +22,7 @@ function varargout = gui_convert_nirfasttovtk(varargin)
 
 % Edit the above text to modify the response to help gui_convert_nirfasttovtk
 
-% Last Modified by GUIDE v2.5 30-Mar-2010 13:04:35
+% Last Modified by GUIDE v2.5 29-Apr-2013 10:28:09
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -187,9 +187,7 @@ if ~canwrite(saveto)
     disp(['No write access, writing here instead: ' saveto]);
 end
 
-content{end+1} = strcat('nirfast2vtk(',meshloc,...
-    ',''',saveto,...
-    ''');');
+content{end+1} = strcat('nirfast2vtk(',meshloc,',''',saveto,''');');
 if ~batch
     evalin('base',content{end});
 end
@@ -227,3 +225,11 @@ set(handles.vtk,'String',[pn fn]);
 
 guidata(hObject, handles);
 
+
+% --- Executes on button press in boundary.
+function boundary_Callback(hObject, eventdata, handles)
+% hObject    handle to boundary (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of boundary

@@ -112,9 +112,11 @@ if hbo_loc ~= -1 && deoxyhb_loc ~= -1
 end
 
 %% write to vtk
+
 nodes = mesh.nodes;
-numnodes = length(nodes);
 elems = mesh.elements;
+
+numnodes = length(nodes);
 numelems = length(elems);
 
 outfname = add_extension(outfname,'.vtk');
@@ -137,17 +139,27 @@ line4 = ['POINTS ', num2str(numnodes), ' float']; %node defs
 fprintf(fid,'%s\n',line4);
 fprintf(fid, '%f %f %f\n', nodes');
 
-line5 = ['CELLS ',num2str(numelems),' ',num2str(numelems*4+numelems)]; %connectivity maps
-fprintf(fid,'%s\n',line5);
-fprintf(fid,'%d %d %d %d %d\n',[4*ones(numelems,1) elems-1]');
-line6 = ['CELL_TYPES ', num2str(numelems)]; %specify the mesh basis 10-tetrahedral for all connectivity maps 
-fprintf(fid,'%s\n',line6);
-fprintf(fid,'%d\n', ones(numelems,1)*10);
-fprintf(fid,'%s\n',['POINT_DATA ',num2str(numnodes)]); %specify the data that follows is defined on the nodes
+if mesh.dimension == 2
+    line5 = ['CELLS ',num2str(numelems),' ',num2str(numelems*3+numelems)]; %connectivity maps
+    fprintf(fid,'%s\n',line5);
+    fprintf(fid,'%d %d %d %d\n',[3*ones(numelems,1) elems-1]');
+    line6 = ['CELL_TYPES ', num2str(numelems)]; %specify the mesh basis 10-tetrahedral for all connectivity maps 
+    fprintf(fid,'%s\n',line6);
+    fprintf(fid,'%d\n', ones(numelems,1)*5);
+else
+    line5 = ['CELLS ',num2str(numelems),' ',num2str(numelems*4+numelems)]; %connectivity maps
+    fprintf(fid,'%s\n',line5);
+    fprintf(fid,'%d %d %d %d %d\n',[4*ones(numelems,1) elems-1]');
+    line6 = ['CELL_TYPES ', num2str(numelems)]; %specify the mesh basis 10-tetrahedral for all connectivity maps 
+    fprintf(fid,'%s\n',line6);
+    fprintf(fid,'%d\n', ones(numelems,1)*10);
+    fprintf(fid,'%s\n',['POINT_DATA ',num2str(numnodes)]); %specify the data that follows is defined on the nodes
+end
 
 for i = 1:size(soldata,2)
     fprintf(fid,'%s\n',['SCALARS ', listsolfnames{i}, ' float 1']);
     fprintf(fid,'%s\n','LOOKUP_TABLE default');
     fprintf(fid,'%e\n', soldata(:,i));
-end;
+end
+
 fclose(fid);
