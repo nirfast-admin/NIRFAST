@@ -51,6 +51,9 @@ end
 if isfield(mesh,'muaf')
     listsolfnames{end+1} = 'muaf';
     soldata(:,end+1) = mesh.muaf;
+    if isfield(mesh,'eta') && ~isfield(mesh,'etamuaf')
+        mesh.etamuaf = mesh.eta.*mesh.muaf;
+    end
 end
 if isfield(mesh,'eta')
     listsolfnames{end+1} = 'eta';
