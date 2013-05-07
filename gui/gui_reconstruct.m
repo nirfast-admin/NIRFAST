@@ -488,13 +488,6 @@ else
     else
         foo = evalin('base',meshloc);
     end
-    if foo.dimension ~= length(evalin('base',recbasis))
-        msg = sprintf('\n%s\nMesh dimension: %d\nRecon basis length: %d',...
-            'Recon basis needs to match dimensionality of the mesh!', ...
-            foo.dimension, length(evalin('base',recbasis)));
-        errordlg(msg, 'Bad Reconstruction Basis');
-        error(msg);
-    end
     if ~isempty(get(handles.mesh_basis,'String'))
         warndlg({'Both type of mesh basis are specified!',...
             'nirfast will use ''pixel basis''!'},'Pixel Bais dilemma!');
