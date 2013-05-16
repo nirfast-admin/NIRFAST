@@ -146,7 +146,7 @@ end
 % values to regional values
 disp('calculating regions');
 disp('calculating regions');
-if ~exist('region','var')
+if ~exist('region','var') || (exist('region','var') && isempty(region))
     region = unique(fwd_mesh.region);
 end
 K = region_mapper(fwd_mesh,region);

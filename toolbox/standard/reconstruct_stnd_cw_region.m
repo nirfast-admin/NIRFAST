@@ -79,7 +79,7 @@ fprintf(fid_log,'Initial Guess mua = %d\n',fwd_mesh.mua(1));
 % This calculates the mapping matrix that reduces Jacobian from nodal
 % values to regional values
 disp('calculating regions');
-if ~exist('region','var')
+if ~exist('region','var') || (exist('region','var') && isempty(region))
     region = unique(fwd_mesh.region);
 end
 K = region_mapper(fwd_mesh,region);
