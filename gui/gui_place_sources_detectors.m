@@ -86,6 +86,7 @@ if ~isfield(handles,'dimension')
         axes(handles.mesh)
         hold on
         mesh = load_mesh(handles.meshloc);
+        handles.mymesh = mesh;
         handles.dimension = mesh.dimension;
         ind = find(mesh.bndvtx==1);
         if mesh.dimension == 2
@@ -563,7 +564,7 @@ sources_string = char(sources_string);
 % generate sources/detectors
 fids = get(handles.fiducial_file,'String');
 fid = fids(get(handles.fiducial_file,'Value'));
-eval(strcat('[s,d]=fiducials_',fid{1},'(',sources_string,',handles.mesh);'));
+eval(strcat('[s,d]=fiducials_',fid{1},'(',sources_string,',handles.mymesh);'));
 
 % put new sources/detectors into the gui
 sources = {};
