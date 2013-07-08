@@ -32,7 +32,7 @@ else
 end
 
 for i = 1 : nsource
-    [x,flag] = bicgstab(Mass,qvec(:,i),1e-12,100,R',R);
+    [x,flag] = bicgstabl(Mass,qvec(:,i),1e-12,100,R',R);
     msg = [msg flag];
     phi(:,i) = x;
 end
