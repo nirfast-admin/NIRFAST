@@ -200,7 +200,7 @@ end
 
 
 % Calculate boundary data for Excitation %%%%%%%%%%%%%
-tpsf_tem = zeros(length(mesh.link),ndt);
+tpsf_tem = zeros(size(mesh.link,1),ndt);
 for i = 1 : ndt
         tpsf_tem(:,i)= ...
             get_boundary_data(mesh,data.phix(:,:,i));         
@@ -211,7 +211,7 @@ clear tpsf_tem
 
     
 % Calculate boundary data for Emission %%%%%%%%%%%%%
-tpsf_tem = zeros(length(mesh.link),2*ndt-1);
+tpsf_tem = zeros(size(mesh.link,1),2*ndt-1);
 for i = 1 : 2*ndt-1
         tpsf_tem(:,i)= ...
             get_boundary_data(mesh,data.phim(:,:,i));         

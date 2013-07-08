@@ -140,7 +140,7 @@ for iii = 1:nsource
 end       
 
 % Calculate boundary data  %%%%%%%%%%%%%
-tpsf_tem = zeros(length(mesh.link),ndt);
+tpsf_tem = zeros(size(mesh.link,1),ndt);
 for i = 1 : ndt
         tpsf_tem(:,i)= ...
             get_boundary_data(mesh,data.phi(:,:,i));         
