@@ -84,7 +84,7 @@ for i = 1:nwv
     [mesh_J(i).mua,mesh_J(i).mus,mesh_J(i).kappa,E(i).val] = calc_mua_mus(mesh,wv_array(i));
     if exist('mesh2') == 1
         [mesh2_J(i).mua,mesh2_J(i).mus,mesh2_J(i).kappa, E(i).val] = calc_mua_mus(mesh2,wv_array(i));
-        mesh2_J(i).link = [mesh.link(:,1:2) mesh.link(:,i+2)];
+        mesh2_J(i).link = [mesh.link(:,1:2) mesh.link(:,find(wv_array(i) == mesh.wv)+2)];
     end
     
     % if sources are not fixed, move sources depending on mus
