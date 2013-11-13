@@ -56,6 +56,12 @@ function nirfast_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 set(hObject,'Name','Nirfast 7.3');
 
+
+if nargin>3
+    LaunchNirfastMesher(varargin{1});
+end
+
+
 if ismac
     set(handles.script,'FontSize',13);
     set(handles.script,'FontName','Consolas');
