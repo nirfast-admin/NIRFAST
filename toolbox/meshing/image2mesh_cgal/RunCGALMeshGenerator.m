@@ -24,7 +24,15 @@ tmpinrfn  = fullfile(tmppath,'._cgal_mesher.inr');
 cgalparam_fn = fullfile(tmppath,'._criteria.txt');
 
 savefn = add_extension(tmpinrfn,'.inr');
-saveinr(mask,savefn,param);
+if ~(isa(mask,'uint8') || isa(mask,'uint16') || ...
+        isa(mask,'single') || isa(mask,'double'))
+    warning('image2mesh:UnsupportedType','Converting image to uint8 type');
+    mask = uint8(mask);
+end
+
+% Save to INRIA file format
+write_row_major = false;
+saveinr(mask,savefn,param,write_row_major);
 
 % Set up the necessary parameters for meshing
 facet_angle = 25; facet_size = 3; facet_distance = 2;
@@ -50,6 +58,11 @@ fprintf(fid,'%d\n',special_subdomain_label);
 fprintf(fid,'%f\n',special_size);
 fclose(fid);
 
+
+warning('off','MATLAB:DELETE:FileNotFound');
+delete(tmpmeshfn);
+warning('on','MATLAB:DELETE:FileNotFound');
+
 % Run the executable
 syscommand = GetSystemCommand('image2mesh_cgal');
 if ~ispc
@@ -66,17 +79,16 @@ end
 
 % Remove possible extra nodes that might be left out in 'p' list
 % CGAL tends to do this.
-
-nodes = unique([e(:,1);e(:,2);e(:,3);e(:,4)]);
-p = p(nodes,:);
-[tf ee] = ismember(e(:,1:4),nodes);
-if size(e,2) > 4
-	e = [ee e(:,5:end)];
-else
-    e = ee;
-end
+[e p] = remove_unused_nodes(e,p,4);
+% nodes = unique([e(:,1);e(:,2);e(:,3);e(:,4)]);
+% p = p(nodes,:);
+% [tf ee] = ismember(e(:,1:4),nodes);
+% if size(e,2) > 4
+% 	e = [ee e(:,5:end)];
+% else
+%     e = ee;
+% end
 warning('off','MATLAB:DELETE:FileNotFound');
 delete(cgalparam_fn,tmpinrfn);
 if delmedit, delete(tmpmeshfn); end
 warning('on','MATLAB:DELETE:FileNotFound');
-
