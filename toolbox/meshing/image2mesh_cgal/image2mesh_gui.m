@@ -904,7 +904,7 @@ function sdbrowsebutton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 [fn, pathname] = uigetfile( ...
-    {'*.txt;*.csv','Text Files (*.txt,*.csv)';'*.*','All Files (*.*)'}, ...
+    {'*.txt;*.csv;*.fcsv','Text Files (*.txt,*.csv,*.fcsv)';'*.*','All Files (*.*)'}, ...
    'Pick a file');
 if isequal(fn,0)
     warning('You need to select an image file!');
@@ -927,9 +927,13 @@ end
 function UpdateSDFileInfo(hObject,eventdata,handles)
 set(handles.sdfilename,'ForegroundColor',[0 0 0]);
 sdfname = get(handles.sdfilename,'String');
-if strcmp(sdfname(end-2:end),'csv')
+if strcmp(sdfname(end-3:end),'.csv')
     s = importdata(sdfname);
     handles.sdcoords = [s.data(:,2) s.data(:,3) s.data(:,4)];
+elseif strcmp(sdfname(end-4:end),'.fcsv') % Fiducials list from 3DSlicer
+    fid=fopen(get(handles.sdfilename,'String'),'rt');
+    s=textscan(fid,'%s %f %f %f %n %n %n %n %n %n %n %s %s','Delimiter',',','MultipleDelimsAsOne',1,'CommentStyle','#');
+    handles.sdcoords = [s{2} s{3} s{4}];
 else
     fid=fopen(get(handles.sdfilename,'String'),'rt');
     s=textscan(fid,'%f,%f,%f,%f');
