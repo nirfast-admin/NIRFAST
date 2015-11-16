@@ -46,6 +46,11 @@ end
 fn = fullfile(getuserdir,'Diagnostic-3DMesh');
 nnpe = size(e,2);
 
+if nnpe == 5
+    warning('checkmesh3d:tetrahedral_mesh','Ignoring last columnn of elements and treating it as a tetrahedral mesh')
+    e = e(:,1:4);
+    nnpe = 4;
+end
 if nnpe==3
     if verbose, disp('Checking surface mesh:');end
     if nargin>=3 && ~isempty(nodemap)
@@ -110,6 +115,8 @@ elseif nnpe==4
     [junk q1 q_area1 status1] = CheckMesh3D(foo,p);
     status.surface = status1.surface;
     fprintf('----> Done.\n\n');
+else
+    warning('nirfast:meshing:unsupported_nnpe',['CheckMesh3D doesn''t support ' num2str(nnpe) ' nodes per element!'])
 end
 
 

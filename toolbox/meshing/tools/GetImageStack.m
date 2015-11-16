@@ -38,9 +38,9 @@ if num_flag~=-1 && ~strcmpi(myext,'.mha') && ~strcmpi(myext,'.mhd')
     [nrow ncol]=size(a);
     if pad == 1
         % Add a zero padding to all XY dimensions
-        mask = zeros(nrow+2,ncol+2,endn-startn+1,'int16');
+        mask = zeros(nrow+2,ncol+2,endn-startn+1,'uint16');
     else
-        mask = zeros(nrow, ncol, endn-startn+1,'int16');
+        mask = zeros(nrow, ncol, endn-startn+1,'uint16');
     end
 
     fprintf('\n  Creating a mask stack from input images...');

@@ -65,7 +65,7 @@ fprintf('Avg Min Max volume: %f %f %f\n',mean(abs(vol)),min(abs(vol)),max(abs(vo
 zeroflag = abs(vol) <= TetrahedronZeroVol;
 
 % vol_ratio=quality_vol_ratio(ren_tet,p);
-vol_ratio=simpqual(p,ren_tet,2);
+vol_ratio=simpqual(p,ren_tet,'Min_Sin_Dihedral');
 
 qualflag=vol_ratio<=TetrahedronFailQuality;
 if type~=0
@@ -73,14 +73,14 @@ if type~=0
         mean(vol_ratio), min(vol_ratio), max(vol_ratio));
 end
 nvoids=sum(qualflag);
-
-% if nvoids~=0
-%     voidfn = [tempdir 'voidelements.txt'];
-%     fprintf(' There are %d elements with undesirable quality.\n', nvoids);
-%     fprintf(' Check %s.\n',voidfn);
-%     [tf idx] = ismember(true,qualflag);
-%     dlmwrite(voidfn,[idx e(qualflag,:)],'delimiter',' ','newline',newlinech);
-% end
+en = (1:ntet)';
+if nvoids~=0
+    voidfn = [tempdir 'voidelements.txt'];
+    fprintf(' There are %d elements with undesirable quality.\n', nvoids);
+    fprintf(' Check %s.\n',voidfn);
+    [tf idx] = ismember(qualflag,true);
+    dlmwrite(voidfn,[en(tf) e(qualflag,:)],'delimiter',' ','newline',newlinech);
+end
 
 [st2 badtets bfaces] = check_tetrahedron_faces(e);
 if st2~=0
