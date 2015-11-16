@@ -1,0 +1,11 @@
+# Exclude these files (some are externals/submodules)
+mex
+foo.mesh
+junk.txt
+*.m~
+*.ele
+*.node
+*.face
+*.poly
+# Do NOT exclude these files
+!.gitignore

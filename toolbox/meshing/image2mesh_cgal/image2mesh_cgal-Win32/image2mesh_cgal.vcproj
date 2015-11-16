@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="image2mesh_cgal"
+	ProjectGUID="{959868D3-416B-4A89-B2F9-FFFC9792A53B}"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="0"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="Debug"
+			IntermediateDirectory="image2mesh_cgal.dir\Debug"
+			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				MkTypLibCompatible="false"
+				TargetEnvironment="1"
+				GenerateStublessProxies="true"
+				TypeLibraryName="$(InputName).tlb"
+				OutputDirectory="$(IntDir)"
+				HeaderFileName="$(InputName).h"
+				DLLDataFileName=""
+				InterfaceIdentifierFileName="$(InputName)_i.c"
+				ProxyFileName="$(InputName)_p.c"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions=" /Zm1000 /fp:strict /fp:except-"
+				Optimization="0"
+				InlineFunctionExpansion="0"
+				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32&quot;;C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\include;C:\boost\boost-1_46_1;C:\CGAL\3.8\CGAL-3.8\include;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_DEBUG;CGAL_NO_AUTOLINK_MPFR;CGAL_NO_AUTOLINK_GMP;CMAKE_INTDIR=\&quot;Debug\&quot;"
+				ExceptionHandling="1"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				RuntimeTypeInfo="true"
+				AssemblerListingLocation="Debug"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\Debug/image2mesh_cgal.pdb"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+				CompileAs="2"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_DEBUG;CGAL_NO_AUTOLINK_MPFR;CGAL_NO_AUTOLINK_GMP;CMAKE_INTDIR=\&quot;Debug\&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32&quot;;C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\include;C:\boost\boost-1_46_1;C:\CGAL\3.8\CGAL-3.8\include;"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
+				AdditionalOptions=" /STACK:10000000 /machine:X86 /debug"
+				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib\libmpfr-4.lib C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib\libgmp-10.lib psapi.lib zlib.lib OpenGL32.lib glu32.lib $(NOINHERIT)"
+				OutputFile="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\Debug\image2mesh_cgal.exe"
+				Version="0.0"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="&quot;C:\CGAL\3.8\CGAL-3.8\lib\$(OutDir)&quot;;&quot;C:\CGAL\3.8\CGAL-3.8\lib&quot;;&quot;C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib\$(OutDir)&quot;;&quot;C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib&quot;;&quot;C:\boost\boost-1_46_1\lib\$(OutDir)&quot;;&quot;C:\boost\boost-1_46_1\lib&quot;;&quot;C:\Program Files\Microsoft SDKs\Windows\v6.0A\Lib&quot;;&quot;C:\Program Files\zlib\lib&quot;"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\Debug/image2mesh_cgal.pdb"
+				SubSystem="1"
+				ImportLibrary="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\Debug\image2mesh_cgal.lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="Release"
+			IntermediateDirectory="image2mesh_cgal.dir\Release"
+			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				MkTypLibCompatible="false"
+				TargetEnvironment="1"
+				GenerateStublessProxies="true"
+				TypeLibraryName="$(InputName).tlb"
+				OutputDirectory="$(IntDir)"
+				HeaderFileName="$(InputName).h"
+				DLLDataFileName=""
+				InterfaceIdentifierFileName="$(InputName)_i.c"
+				ProxyFileName="$(InputName)_p.c"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions=" /Zm1000 /fp:strict /fp:except-"
+				Optimization="2"
+				InlineFunctionExpansion="2"
+				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32&quot;;C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\include;C:\boost\boost-1_46_1;C:\CGAL\3.8\CGAL-3.8\include;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;NDEBUG;CGAL_NO_AUTOLINK_MPFR;CGAL_NO_AUTOLINK_GMP;CMAKE_INTDIR=\&quot;Release\&quot;"
+				ExceptionHandling="1"
+				RuntimeLibrary="2"
+				RuntimeTypeInfo="true"
+				AssemblerListingLocation="Release"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\Release/image2mesh_cgal.pdb"
+				WarningLevel="3"
+				CompileAs="2"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;NDEBUG;CGAL_NO_AUTOLINK_MPFR;CGAL_NO_AUTOLINK_GMP;CMAKE_INTDIR=\&quot;Release\&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32&quot;;C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\include;C:\boost\boost-1_46_1;C:\CGAL\3.8\CGAL-3.8\include;"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
+				AdditionalOptions=" /STACK:10000000 /machine:X86"
+				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib\libmpfr-4.lib C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib\libgmp-10.lib psapi.lib OpenGL32.lib glu32.lib zlib.lib $(NOINHERIT)"
+				OutputFile="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\Release\image2mesh_cgal.exe"
+				Version="0.0"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;C:\CGAL\3.8\CGAL-3.8\lib\$(OutDir)&quot;;&quot;C:\CGAL\3.8\CGAL-3.8\lib&quot;;&quot;C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib\$(OutDir)&quot;;&quot;C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib&quot;;&quot;C:\boost\boost-1_46_1\lib\$(OutDir)&quot;;&quot;C:\boost\boost-1_46_1\lib&quot;;&quot;C:\Program Files\Microsoft SDKs\Windows\v6.0A\Lib&quot;;&quot;C:\Program Files\zlib\lib&quot;"
+				ProgramDatabaseFile="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\Release/image2mesh_cgal.pdb"
+				SubSystem="1"
+				ImportLibrary="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\Release\image2mesh_cgal.lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="MinSizeRel|Win32"
+			OutputDirectory="MinSizeRel"
+			IntermediateDirectory="image2mesh_cgal.dir\MinSizeRel"
+			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				MkTypLibCompatible="false"
+				TargetEnvironment="1"
+				GenerateStublessProxies="true"
+				TypeLibraryName="$(InputName).tlb"
+				OutputDirectory="$(IntDir)"
+				HeaderFileName="$(InputName).h"
+				DLLDataFileName=""
+				InterfaceIdentifierFileName="$(InputName)_i.c"
+				ProxyFileName="$(InputName)_p.c"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions=" /Zm1000 /fp:strict /fp:except-"
+				Optimization="1"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32&quot;;C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\include;C:\boost\boost-1_46_1;C:\CGAL\3.8\CGAL-3.8\include;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;NDEBUG;CGAL_NO_AUTOLINK_MPFR;CGAL_NO_AUTOLINK_GMP;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"
+				ExceptionHandling="1"
+				RuntimeLibrary="2"
+				RuntimeTypeInfo="true"
+				AssemblerListingLocation="MinSizeRel"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\MinSizeRel/image2mesh_cgal.pdb"
+				WarningLevel="3"
+				CompileAs="2"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;NDEBUG;CGAL_NO_AUTOLINK_MPFR;CGAL_NO_AUTOLINK_GMP;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32&quot;;C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\include;C:\boost\boost-1_46_1;C:\CGAL\3.8\CGAL-3.8\include;"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
+				AdditionalOptions=" /STACK:10000000 /machine:X86"
+				AdditionalDependencies="$(NOINHERIT) kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib  C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib\libmpfr-4.lib C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib\libgmp-10.lib psapi.lib C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib\libmpfr-4.lib C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib\libgmp-10.lib psapi.lib "
+				OutputFile="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\MinSizeRel\image2mesh_cgal.exe"
+				Version="0.0"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="C:\CGAL\3.8\CGAL-3.8\lib\$(OutDir),C:\CGAL\3.8\CGAL-3.8\lib,C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib\$(OutDir),C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib,C:\boost\boost-1_46_1\lib\$(OutDir),C:\boost\boost-1_46_1\lib"
+				ProgramDatabaseFile="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\MinSizeRel/image2mesh_cgal.pdb"
+				SubSystem="1"
+				ImportLibrary="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\MinSizeRel\image2mesh_cgal.lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="RelWithDebInfo|Win32"
+			OutputDirectory="RelWithDebInfo"
+			IntermediateDirectory="image2mesh_cgal.dir\RelWithDebInfo"
+			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				MkTypLibCompatible="false"
+				TargetEnvironment="1"
+				GenerateStublessProxies="true"
+				TypeLibraryName="$(InputName).tlb"
+				OutputDirectory="$(IntDir)"
+				HeaderFileName="$(InputName).h"
+				DLLDataFileName=""
+				InterfaceIdentifierFileName="$(InputName)_i.c"
+				ProxyFileName="$(InputName)_p.c"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions=" /Zm1000 /fp:strict /fp:except-"
+				Optimization="2"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32&quot;;C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\include;C:\boost\boost-1_46_1;C:\CGAL\3.8\CGAL-3.8\include;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;NDEBUG;CGAL_NO_AUTOLINK_MPFR;CGAL_NO_AUTOLINK_GMP;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"
+				ExceptionHandling="1"
+				RuntimeLibrary="2"
+				RuntimeTypeInfo="true"
+				AssemblerListingLocation="RelWithDebInfo"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\RelWithDebInfo/image2mesh_cgal.pdb"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+				CompileAs="2"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;NDEBUG;CGAL_NO_AUTOLINK_MPFR;CGAL_NO_AUTOLINK_GMP;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32&quot;;C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\include;C:\boost\boost-1_46_1;C:\CGAL\3.8\CGAL-3.8\include;"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
+				AdditionalOptions=" /STACK:10000000 /machine:X86 /debug"
+				AdditionalDependencies="$(NOINHERIT) kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib  C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib\libmpfr-4.lib C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib\libgmp-10.lib psapi.lib C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib\libmpfr-4.lib C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib\libgmp-10.lib psapi.lib "
+				OutputFile="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\RelWithDebInfo\image2mesh_cgal.exe"
+				Version="0.0"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="C:\CGAL\3.8\CGAL-3.8\lib\$(OutDir),C:\CGAL\3.8\CGAL-3.8\lib,C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib\$(OutDir),C:\CGAL\3.8\CGAL-3.8\auxiliary\gmp\lib,C:\boost\boost-1_46_1\lib\$(OutDir),C:\boost\boost-1_46_1\lib"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\RelWithDebInfo/image2mesh_cgal.pdb"
+				SubSystem="1"
+				ImportLibrary="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\RelWithDebInfo\image2mesh_cgal.lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="Source Files"
+			>
+			<File
+				RelativePath="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal.cpp"
+				>
+			</File>
+		</Filter>
+		<File
+			RelativePath="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\CMakeLists.txt"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Building Custom Rule C:/Documents and Settings/hamid/Desktop/Incoming/codes/image2mesh_cgal/CMakeLists.txt"
+					CommandLine="&quot;C:\Program Files\CMake 2.8\bin\cmake.exe&quot; &quot;-HC:/Documents and Settings/hamid/Desktop/Incoming/codes/image2mesh_cgal&quot; &quot;-BC:/Documents and Settings/hamid/Desktop/Incoming/codes/image2mesh_cgal/image2mesh_cgal-Win32&quot; --check-stamp-file &quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\generate.stamp&quot;&#x0D;&#x0A;if errorlevel 1 goto :VCReportError&#x0D;&#x0A;"
+					AdditionalDependencies="&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\CMakeLists.txt&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeSystem.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCCompiler.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCXXCompiler.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\Windows-cl.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCPlatform.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCXXPlatform.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\cl.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeRCCompiler.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\Windows-cl.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCPlatform.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCXXPlatform.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\cl.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindCGAL.cmake&quot;;C:\CGAL\3.8\CGAL-3.8\CGALConfig.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\UseCGAL.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_Macros.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_VersionUtils.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_Common.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_Macros.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_SetupFlags.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_GeneratorSpecificSettings.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_CreateSingleSourceCGALProgram.cmake;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\CMakeLists.txt&quot;;"
+					Outputs="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\generate.stamp"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Building Custom Rule C:/Documents and Settings/hamid/Desktop/Incoming/codes/image2mesh_cgal/CMakeLists.txt"
+					CommandLine="&quot;C:\Program Files\CMake 2.8\bin\cmake.exe&quot; &quot;-HC:/Documents and Settings/hamid/Desktop/Incoming/codes/image2mesh_cgal&quot; &quot;-BC:/Documents and Settings/hamid/Desktop/Incoming/codes/image2mesh_cgal/image2mesh_cgal-Win32&quot; --check-stamp-file &quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\generate.stamp&quot;&#x0D;&#x0A;if errorlevel 1 goto :VCReportError&#x0D;&#x0A;"
+					AdditionalDependencies="&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\CMakeLists.txt&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeSystem.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCCompiler.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCXXCompiler.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\Windows-cl.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCPlatform.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCXXPlatform.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\cl.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeRCCompiler.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\Windows-cl.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCPlatform.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCXXPlatform.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\cl.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindCGAL.cmake&quot;;C:\CGAL\3.8\CGAL-3.8\CGALConfig.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\UseCGAL.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_Macros.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_VersionUtils.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_Common.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_Macros.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_SetupFlags.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_GeneratorSpecificSettings.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_CreateSingleSourceCGALProgram.cmake;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\CMakeLists.txt&quot;;"
+					Outputs="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\generate.stamp"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="MinSizeRel|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Building Custom Rule C:/Documents and Settings/hamid/Desktop/Incoming/codes/image2mesh_cgal/CMakeLists.txt"
+					CommandLine="&quot;C:\Program Files\CMake 2.8\bin\cmake.exe&quot; &quot;-HC:/Documents and Settings/hamid/Desktop/Incoming/codes/image2mesh_cgal&quot; &quot;-BC:/Documents and Settings/hamid/Desktop/Incoming/codes/image2mesh_cgal/image2mesh_cgal-Win32&quot; --check-stamp-file &quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\generate.stamp&quot;&#x0D;&#x0A;if errorlevel 1 goto :VCReportError&#x0D;&#x0A;"
+					AdditionalDependencies="&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\CMakeLists.txt&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeSystem.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCCompiler.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCXXCompiler.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\Windows-cl.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCPlatform.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCXXPlatform.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\cl.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeRCCompiler.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\Windows-cl.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCPlatform.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCXXPlatform.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\cl.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindCGAL.cmake&quot;;C:\CGAL\3.8\CGAL-3.8\CGALConfig.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\UseCGAL.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_Macros.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_VersionUtils.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_Common.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_Macros.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_SetupFlags.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_GeneratorSpecificSettings.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_CreateSingleSourceCGALProgram.cmake;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\CMakeLists.txt&quot;;"
+					Outputs="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\generate.stamp"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="RelWithDebInfo|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Building Custom Rule C:/Documents and Settings/hamid/Desktop/Incoming/codes/image2mesh_cgal/CMakeLists.txt"
+					CommandLine="&quot;C:\Program Files\CMake 2.8\bin\cmake.exe&quot; &quot;-HC:/Documents and Settings/hamid/Desktop/Incoming/codes/image2mesh_cgal&quot; &quot;-BC:/Documents and Settings/hamid/Desktop/Incoming/codes/image2mesh_cgal/image2mesh_cgal-Win32&quot; --check-stamp-file &quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\generate.stamp&quot;&#x0D;&#x0A;if errorlevel 1 goto :VCReportError&#x0D;&#x0A;"
+					AdditionalDependencies="&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\CMakeLists.txt&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeSystem.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCCompiler.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCXXCompiler.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeSystemSpecificInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeGenericSystem.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\Windows.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\WindowsPaths.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\Windows-cl.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCPlatform.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCXXPlatform.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\cl.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeRCCompiler.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeRCInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeCXXInformation.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\Windows-cl.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCPlatform.cmake&quot;;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\CMakeCXXPlatform.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\Platform\cl.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeCommonLanguageInclude.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindCGAL.cmake&quot;;C:\CGAL\3.8\CGAL-3.8\CGALConfig.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\UseCGAL.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_Macros.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_VersionUtils.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_Common.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_Macros.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_SetupFlags.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_GeneratorSpecificSettings.cmake;C:\CGAL\3.8\CGAL-3.8\cmake\modules\CGAL_CreateSingleSourceCGALProgram.cmake;&quot;C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\CMakeLists.txt&quot;;"
+					Outputs="C:\Documents and Settings\hamid\Desktop\Incoming\codes\image2mesh_cgal\image2mesh_cgal-Win32\CMakeFiles\generate.stamp"
+				/>
+			</FileConfiguration>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>
