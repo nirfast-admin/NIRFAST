@@ -74,7 +74,13 @@ eval(makemeshcommand);
 % Read the resulting mesh
 [e p] = readMEDIT(tmpmeshfn);
 if isfield(param,'Offset')
-    p = p + repmat(param.Offset,size(p,1),1);
+    if isfield(param,'TransformMatrix')
+        transformM = [param.TransformMatrix(1:3);param.TransformMatrix(4:6);param.TransformMatrix(7:9)]
+        finalOffset = param.Offset*transformM
+    else
+        finalOffset = param.Offset;
+    end
+    p = p + repmat(finalOffset,size(p,1),1);
 end
 
 % Remove possible extra nodes that might be left out in 'p' list

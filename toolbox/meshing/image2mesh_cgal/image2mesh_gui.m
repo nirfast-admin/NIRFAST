@@ -318,8 +318,13 @@ regions = unique(mask(:));
 s={};
 if ~isempty(info)
     s{1} = 'Info from file header:';
-    s{2} = sprintf('Rows: %d, Cols: %d, Slices: %d',info.Dimensions(1), ...
+    if isfield(info,'Dimensions')
+        set(handles.nrows,  'String',num2str(info.Dimensions(1)));
+        set(handles.ncols,  'String',num2str(info.Dimensions(2)));
+        set(handles.nslices,'String',num2str(info.Dimensions(3)));
+        s{end+1} = sprintf('Rows: %d, Cols: %d, Slices: %d',info.Dimensions(1), ...
         info.Dimensions(2), info.Dimensions(3));
+    end
     if isfield(info,'PixelDimensions')
         set(handles.xpixel,'String',num2str(info.PixelDimensions(1)));
         set(handles.ypixel,'String',num2str(info.PixelDimensions(2)));
@@ -333,14 +338,15 @@ if ~isempty(info)
         set(handles.zpixel,'String','');
         UpdateTetAndFacetSize(hObject,handles,0);
     end
-    if isfield(info,'Dimensions')
-        set(handles.nrows,  'String',num2str(info.Dimensions(1)));
-        set(handles.ncols,  'String',num2str(info.Dimensions(2)));
-        set(handles.nslices,'String',num2str(info.Dimensions(3)));
-    end
     if isfield(info,'Offset')
-        s{end+1} = sprintf('Offset: [%.2f %.2f %.2f]',info.Offset);
-        handles.offset = info.Offset;
+        if isfield(info,'TransformMatrix')
+            transformM = [info.TransformMatrix(1:3);info.TransformMatrix(4:6);info.TransformMatrix(7:9)]
+            finalOffset = info.Offset*transformM
+        else
+            finalOffset = info.Offset;
+        end
+        s{end+1} = sprintf('Offset: [%.2f %.2f %.2f]',finalOffset);
+        handles.offset = finalOffset;
     end
     set(handles.imageinfotxt,'String',s);
 end
