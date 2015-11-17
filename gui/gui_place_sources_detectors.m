@@ -111,7 +111,8 @@ end
 
 % find fiducial files
 fid_loc = what('fiducials');
-fids = dir([fid_loc.path '/fiducials_*']);
+foote = fid_loc.path;
+fids = dir([foote '/fiducials_*']);
 varnames = {'Select System'};
 for i=1:size(fids)
     varnames{i+1} = fids(i).name(11:end-2);
