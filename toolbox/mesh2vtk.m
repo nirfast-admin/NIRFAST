@@ -5,14 +5,14 @@ function mesh2vtk(mesh,value,spacing,outfname)
 % convert nirfast mesh into vtk structured format with a single solution
 %
 % mesh is the nirfast mesh
-% value is the parameter to save (array, # nodes)
+% value is the parameter to save
 % spacing the voxel resolution
 % outfname is the location to save the vtk file
 
 
 %% load mesh and get optical properties
 if ischar(mesh)== 1
-    mesh = load_mesh(mesh);
+  mesh = load_mesh(mesh);
 end
 
 tmp = mesh.nodes(:,1);
@@ -34,20 +34,15 @@ else
 end
 clear nodense vol foo defspace
 
-
-[xi,yi,zi] = meshgrid(minn(1)-spacing(1):spacing(1):maxn(1)+spacing(1),...
-    minn(2)-spacing(2):spacing(2):maxn(2)+spacing(2),...
-    minn(3)-spacing(3):spacing(3):maxn(3)+spacing(3));
+[xi,yi,zi] = meshgrid(minn(1):spacing(1):maxn(1)+spacing(1),...
+                      minn(2):spacing(2):maxn(2)+spacing(2),...
+                      minn(3):spacing(3):maxn(3)+spacing(3));
 dimension = size(xi);
-
 
 F = TriScatteredInterp(mesh.nodes(:,1),mesh.nodes(:,2),mesh.nodes(:,3),value);
 w = F(xi,yi,zi);
 
-origin = [xi(round(end/2),round(end/2),round(end/2)) ...
-    yi(round(end/2),round(end/2),round(end/2)) ...
-    zi(round(end/2),round(end/2),round(end/2))];
-origin = [0 0 0];
+origin = [minn(2) minn(1) minn(3)];
 
 point_data = numel(w);
 w = reshape(w,[],1);
@@ -70,21 +65,19 @@ line2 = 'ASCII';
 line3 = 'DATASET STRUCTURED_POINTS';
 fprintf(fid,'%s\n%s\n%s\n',line0,line1,line2,line3);
 
-line4 = ['DIMENSIONS ', num2str(dimension)];
+line4 = ['DIMENSIONS ', num2str(dimension)]; 
 fprintf(fid,'%s\n',line4);
 
-line5 = ['SPACING ', num2str(spacing)];
+line5 = ['SPACING ', num2str(spacing)]; 
 fprintf(fid,'%s\n',line5);
 
-line6 = ['ORIGIN ', num2str(origin)];
+line6 = ['ORIGIN ', num2str(origin)]; 
 fprintf(fid,'%s\n',line6);
 
 line7 = ['POINT_DATA ', num2str(point_data)];
 fprintf(fid,'%s\n',line7);
 
-fprintf(fid,'%s\n',['SCALARS value float 1']);
+fprintf(fid,'%s\n',['SCALARS value1 float 1']);
 fprintf(fid,'%s\n','LOOKUP_TABLE default');
 fprintf(fid,'%e\n', w);
-
-
 fclose(fid);
