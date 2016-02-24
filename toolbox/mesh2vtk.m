@@ -39,7 +39,7 @@ clear nodense vol foo defspace
                       minn(3):spacing(3):maxn(3)+spacing(3));
 dimension = size(xi);
 
-F = TriScatteredInterp(mesh.nodes(:,1),mesh.nodes(:,2),mesh.nodes(:,3),value,'nearest');
+F = TriScatteredInterp(mesh.nodes(:,1),mesh.nodes(:,2),mesh.nodes(:,3),value);
 w = F(xi,yi,zi);
 
 origin = [minn(2) minn(1) minn(3)];

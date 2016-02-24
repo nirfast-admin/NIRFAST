@@ -6,8 +6,6 @@ function save_mesh(mesh,fn)
 % and fn is the filename to be saved
 % Save mesh as seperate file of *.node, *.elem, *.param, etc
 % Input mesh and filename to be saved.
-scale_res = 4;
-
 
 % check if the user reversed the inputs
 if ischar(mesh)
