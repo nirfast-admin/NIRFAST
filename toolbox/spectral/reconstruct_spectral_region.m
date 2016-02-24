@@ -367,7 +367,7 @@ fprintf(fid_log,'Computation Time = %f\n',time);
 fprintf(fid_log,'Final Solution:\n');
 fprintf(fid_log,'%g',it-1);
 fclose(fid_log);
-
+save_mesh(fwd_mesh,['solmesh_',output_fn]);
 % END RECONSTRUCTION
 %**************************************************************************
 

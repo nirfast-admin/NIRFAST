@@ -7,8 +7,6 @@ function save_mesh(mesh,fn)
 % Save mesh as seperate file of *.node, *.elem, *.param, etc
 % Input mesh and filename to be saved.
 
-
-
 % check if the user reversed the inputs
 if ischar(mesh)
     temp = mesh;
@@ -160,6 +158,11 @@ if isfield(mesh,'ident') == 1
     mysave([fn '.ident'],mesh.ident);
 else
     delete([fn '.ident']);
+end
+
+% for 3-D meshes, write a vtk file for visualization
+if mesh.dimension == 3
+    nirfast2vtk(mesh,[fn,'.vtk']);
 end
 
 warning('on','MATLAB:DELETE:FileNotFound');

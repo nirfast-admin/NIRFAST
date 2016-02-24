@@ -249,7 +249,7 @@ end
 time = toc;
 fprintf(fid_log,'Computation TimeRegularization = %f\n',time);
 fclose(fid_log);
-
+save_mesh(fwd_mesh,['solmesh_',output_fn]);
 
 
 function KKK=region_mapper(mesh,region)

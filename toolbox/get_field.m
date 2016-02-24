@@ -59,8 +59,8 @@ else
     
     if sum(strcmp(pardisohost,hostname)) ~= 0 && pardiso == 1
         solver = 'pardiso';
-    elseif length(mesh.nodes) >= 3800
-        solver = 'bicgstab';
+    %elseif length(mesh.nodes) >= 3800
+        %solver = 'bicgstab';
     else
         solver = 'matlab';
     end

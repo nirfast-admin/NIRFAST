@@ -70,7 +70,7 @@ tempdata(ind,:) = [];
 lnI = log(tempdata);
 err = [];
 muafa = 10^-10;
-muafb = 1;
+muafb = 10^-1;
 deltamuaf = 10^-10;
 
 disp('Initializing Bisection method points...')
