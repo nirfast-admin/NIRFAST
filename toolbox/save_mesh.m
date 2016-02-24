@@ -6,7 +6,7 @@ function save_mesh(mesh,fn)
 % and fn is the filename to be saved
 % Save mesh as seperate file of *.node, *.elem, *.param, etc
 % Input mesh and filename to be saved.
-scale_res = 2;
+scale_res = 4;
 
 
 % check if the user reversed the inputs
@@ -28,12 +28,6 @@ mysave([fn '.elem'],mesh.elements);
 if strcmp(mesh.type,'stnd') == 1
     mesh.kappa = 1./(3.*(mesh.mua+mesh.mus));
     data = [mesh.mua mesh.kappa mesh.ri];
-    % for 3-D meshes, write a vtk file for visualization
-    if mesh.dimension == 3
-        mesh2vtk(mesh, mesh.mua, scale_res, [fn,'_mua']);
-        mesh2vtk(mesh, mesh.kappa, scale_res, [fn,'_kappa']);
-        mesh2vtk(mesh, mesh.mus, scale_res, [fn,'_mus']);
-    end
 elseif strcmp(mesh.type,'stnd_spn') == 1
     data = [mesh.mua mesh.mus mesh.g mesh.ri];
 elseif strcmp(mesh.type,'stnd_bem') == 1
@@ -44,40 +38,15 @@ elseif strcmp(mesh.type,'fluor') || strcmp(mesh.type,'fluor_bem')
     mesh.kappam = 1./(3.*(mesh.muam+mesh.musm));
     data = [mesh.muax mesh.kappax mesh.ri mesh.muam ...
         mesh.kappam mesh.muaf mesh.eta mesh.tau];
-    % for 3-D meshes, write a vtk file for visualization
-    if mesh.dimension == 3
-        mesh2vtk(mesh, mesh.muax, scale_res, [fn,'_muax']);
-        mesh2vtk(mesh, mesh.musx, scale_res, [fn,'_musx']);
-        mesh2vtk(mesh, mesh.muam, scale_res, [fn,'_muam']);
-        mesh2vtk(mesh, mesh.musm, scale_res, [fn,'_musm']);
-        mesh2vtk(mesh, mesh.muaf, scale_res, [fn,'_muaf']);
-        mesh2vtk(mesh, mesh.eta, scale_res, [fn,'_eta']);
-        mesh2vtk(mesh, mesh.eta.*mesh.muaf, scale_res, [fn,'_etamuaf']);
-        %mesh2vtk(mesh, mesh.tau, [], [fn,'_tau']);
-    end
 elseif strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')
     data = [];
     for i = 1 : length(mesh.chromscattlist)
         if strcmpi(mesh.chromscattlist(i),'S-Amplitude') == 0 & ...
                 strcmpi(mesh.chromscattlist(i),'S-Power') == 0
             data = [data mesh.conc(:,i)];
-            % for 3-D meshes, write a vtk file for visualization
-            if mesh.dimension == 3
-                mesh2vtk(mesh, mesh.conc(:,i), scale_res, [fn,'_',char(mesh.chromscattlist(i))]);
-            end
-        elseif strcmpi(mesh.chromscattlist(i),'S-Amplitude') == 1
-            % for 3-D meshes, write a vtk file for visualization
-            if mesh.dimension == 3
-                mesh2vtk(mesh, mesh.sa, scale_res, [fn,'_S_Amplitude']);
-            end
-        elseif strcmpi(mesh.chromscattlist(i),'S-Power') == 1
-            % for 3-D meshes, write a vtk file for visualization
-            if mesh.dimension == 3
-                mesh2vtk(mesh, mesh.sp, scale_res, [fn,'_S_Power']);
-            end
         end
-        data = [data mesh.sa mesh.sp];
     end
+    data = [data mesh.sa mesh.sp];
 end
 
 [nrow,ncol]=size(data);
@@ -191,6 +160,11 @@ if isfield(mesh,'ident') == 1
     mysave([fn '.ident'],mesh.ident);
 else
     delete([fn '.ident']);
+end
+
+% for 3-D meshes, write a vtk file for visualization
+if mesh.dimension == 3
+    nirfast2vtk(mesh,[fn,'.vtk']);
 end
 
 warning('on','MATLAB:DELETE:FileNotFound');
