@@ -259,7 +259,7 @@ fclose(fid_log);
 % Output recon basis mesh to use in subsequent reconstruction attempts.
 recon_mesh.fine2coarse = fwd_mesh.fine2coarse;
 fwd_mesh.recon_mesh = rmfield(recon_mesh,{'gamma','etamuaf','muaf','eta','tau'});
-save_mesh(fwd_mesh,['solmesh_',output_fn]);
+save_mesh(fwd_mesh,[output_fn,'_solmesh']);
 
 %******************************************************
 % Sub functions
