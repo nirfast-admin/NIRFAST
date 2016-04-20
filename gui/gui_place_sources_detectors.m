@@ -311,7 +311,7 @@ mesh = load_mesh(handles.meshloc);
 if strcmp(mesh.type,'spec') || strcmp(mesh.type,'spec_bem')   
     gui_set_chromophores('mesh',handles.meshloc);
 else
-    gui_launcher
+   % gui_launcher
 end
 
 

@@ -301,7 +301,7 @@ end
 
 fin_it = it-1;
 mesh.type='fluor';
-save_mesh(fwd_mesh,['solmesh_',output_fn]);
+save_mesh(fwd_mesh,[output_fn,'_solmesh']);
 
 
 %% Sub functions

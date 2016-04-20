@@ -22,7 +22,7 @@ function varargout = gui_reconstruct_multispectral(varargin)
 
 % Edit the above text to modify the response to help gui_reconstruct_multispectral
 
-% Last Modified by GUIDE v2.5 01-Feb-2010 09:30:57
+% Last Modified by GUIDE v2.5 07-Apr-2016 10:33:50
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -698,5 +698,3 @@ function wv_array_emiss_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-

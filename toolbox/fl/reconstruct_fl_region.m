@@ -228,4 +228,4 @@ for it = 1 : iteration
 end
 fin_it = it-1;
 fclose(fid_log);
-save_mesh(fwd_mesh,['solmesh_',output_fn]);
+save_mesh(fwd_mesh,[output_fn,'_solmesh']);
