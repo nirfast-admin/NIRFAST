@@ -93,67 +93,15 @@ end
 
 %% plot optical properties
 
-os=computer;
 if mesh.dimension == 3 ... 
         && ~strcmp(mesh.type,'stnd_bem') ... % Not BEM mesh isempty(strfind(os,'GLNX')) ... % Not Linux && ( strcmpi(os,'maci') || ~isempty(strfind(os,'PCWIN')) ) ... % Not MAC64
         && ~strcmp(mesh.type,'fluor_bem') ...
-        && ~strcmp(mesh.type,'spec_bem') && ~strcmpi(os,'maci') ...
-        && ~strcmp(os,'glnx86')
-    
-    fpath = [tempdir 'temp_nirfast.vtk'];
-    disp(['Saving vtk file to: ' fpath]);
-    cpwd = pwd;
-    cd(fullfile(get_nirfast_root(),'toolbox/visualization/bin'))
-    
-    nirfast2vtk(mesh,fpath);
-    if strcmpi(os,'PCWIN64')
-        systemcall = ['"' which('nirviz64.exe') '" ' fpath];
-    elseif strcmpi(os,'PCWIN')
-        systemcall = ['"' which('nirviz.exe') '" ' fpath];
-    elseif strcmpi(os,'maci64')
-        nirvizcmd = which('nirviz.');
-        if isempty(nirvizcmd) || ...
-                isempty(regexp(nirvizcmd,'nirviz-mac', 'once'))
-            nirvizcmd = GetSystemCommand('nirviz');
-            if ~isempty(nirvizcmd)
-                cprintf([1 0.5 0.1],...
-                    ' Extracting nirviz executable!\n Please wait...\n');
-                warning('off','MATLAB:dispatcher:pathWarning')
-                addpath(fullfile(fileparts(nirvizcmd),'nirviz-mac'))
-                warning('on','MATLAB:dispatcher:pathWarning')
-                savepath
-            else
-                error(' Couldn''t find nirviz executable!')
-            end
-        end
-        eval(['! chmod u+x "' nirvizcmd '"']);
-        systemcall = ['DYLD_FRAMEWORK_PATH=; "' nirvizcmd '" ' fpath ...
-            ' > /dev/null 2>&1 &'];
-    elseif strcmpi(os,'glnxa64')
-        nirvizcmd = which('nirviz.');
-        if isempty(nirvizcmd) || ...
-                isempty(regexp(nirvizcmd,'nirviz-linux', 'once'))
-            nirvizcmd = GetSystemCommand('nirviz');
-            if ~isempty(nirvizcmd)
-                cprintf([1 0.5 0.1],...
-                    ' Extracting nirviz executable!\n Please wait...\n');
-                warning('off','MATLAB:dispatcher:pathWarning')
-                addpath(fullfile(fileparts(nirvizcmd),'nirviz-linux64'))
-                warning('off','MATLAB:dispatcher:pathWarning')
-                savepath
-            else
-                error(' Couldn''t find nirviz executable!')
-            end
-        end
-        eval(['! chmod u+x "' nirvizcmd '"']);
-        systemcall = ['"' nirvizcmd '" ' fpath ' > /dev/null 2>&1 &'];
-    else
-        error(['OS is not supported for 3D visualization: ' computer]);
-    end
-    system(systemcall);
-    cd(cpwd);
-else
+        && ~strcmp(mesh.type,'spec_bem')
+    disp('3-D meshes are now only viewable using the NIRFASTSlicer interface.')
+    disp('Drag and drop the mesh?s .vtk file into NIRFASTSlicer (as a Model) and');
+    disp('use the ?Models? module to adjust visualization parameters...');
 
+else
     figure;
     set(gca,'FontSize',28)
 
