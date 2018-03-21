@@ -97,9 +97,11 @@ if mesh.dimension == 3 ...
         && ~strcmp(mesh.type,'stnd_bem') ... % Not BEM mesh isempty(strfind(os,'GLNX')) ... % Not Linux && ( strcmpi(os,'maci') || ~isempty(strfind(os,'PCWIN')) ) ... % Not MAC64
         && ~strcmp(mesh.type,'fluor_bem') ...
         && ~strcmp(mesh.type,'spec_bem')
-    disp('3-D meshes are now only viewable using the NIRFASTSlicer interface.')
-    disp('Drag and drop the mesh?s .vtk file into NIRFASTSlicer (as a Model) and');
-    disp('use the ?Models? module to adjust visualization parameters...');
+    disp(' ');
+    disp('NOTICE: 3-D meshes are now only viewable using the NIRFASTSlicer interface.')
+    disp('TO VIEW: Make sure the 3-D mesh is saved and has an associated .vtk file.')
+    disp('         Drag and drop the mesh''s .vtk file into NIRFASTSlicer (as a Model).')
+    disp('         Use the Models module to adjust viewing parameters.');
 
 else
     figure;
