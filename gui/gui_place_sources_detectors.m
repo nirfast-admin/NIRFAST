@@ -383,6 +383,7 @@ function figure1_WindowButtonDownFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 if handles.dimension == 3
+    % Use bundled SELECT3D implementation for modern MATLAB versions
     p = select3d;
     if ~isempty(p)
         if handles.sourceflag == 1

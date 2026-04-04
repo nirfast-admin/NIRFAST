@@ -3,29 +3,30 @@ function mysave(fn,data)
 % mysave(fn,data)
 %
 % save function that will work with matlab compiler
-% 
+%
 % fn is the filename to be saved
 % data is the variable to be saved
 
-
-dlim = '\t';
 data = data';
 [nrow,ncol]=size(data);
 fid = OpenFile(fn,'w');
 
-str = ['fprintf(fid, ', '''', '%g'];
-if nrow>1
-    str1 = [];
-    for i = 2: nrow
-        str1 = [str1, dlim, '%g'];
-    end
-end
-if exist('str1', 'var')
-    str = [str, str1, '\n', '''', ',data);'];
+% Use %d for integer-valued data (e.g. element indices, region labels)
+% to avoid precision loss from %g scientific notation on large integers.
+% %g defaults to 6 significant digits, which silently corrupts node
+% indices above ~1e6 when saving .elem files, causing invalid
+% triangulation errors on mesh reload.
+if isequal(data, round(data))
+    fmt = '%d';
 else
-    str = [str, '\n', '''', ',data);'];
+    fmt = '%g';
 end
 
-eval(str)
+fmtstr = fmt;
+for i = 2:nrow
+    fmtstr = [fmtstr, '\t', fmt];
+end
+fmtstr = [fmtstr, '\n'];
 
+fprintf(fid, fmtstr, data);
 fclose(fid);
